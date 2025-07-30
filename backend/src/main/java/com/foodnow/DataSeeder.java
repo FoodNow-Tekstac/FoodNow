@@ -27,7 +27,6 @@ public class DataSeeder implements CommandLineRunner {
             adminUser.setPhoneNumber("0000000000"); // Dummy phone number
             adminUser.setPassword(passwordEncoder.encode("admin123")); // Use a strong password
             adminUser.setRole(Role.ADMIN);
-            
             userRepository.save(adminUser);
             System.out.println("Default admin user created.");
         }

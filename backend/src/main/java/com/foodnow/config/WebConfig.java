@@ -13,8 +13,7 @@ public class WebConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                // This configuration allows the frontend server (running on any port)
-                // to make requests to the backend.
+                
                 registry.addMapping("/api/**") // Apply to all API endpoints
                         .allowedOrigins("*") // Allow all origins for simplicity in development
                         .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
