@@ -31,6 +31,7 @@ CREATE TABLE `restaurant_applications` (
   `applicant_user_id` int DEFAULT NULL,
   `rejection_reason` varchar(255) DEFAULT NULL,
   `location_pin` varchar(255) NOT NULL,
+  `image_url` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UKk8u84v2ysuaqg7sgd3gtufkbi` (`applicant_user_id`),
   CONSTRAINT `FKp8x0yh09mrlh3tqbslntcjqx1` FOREIGN KEY (`applicant_user_id`) REFERENCES `users` (`id`)
@@ -43,7 +44,18 @@ CREATE TABLE `restaurant_applications` (
 
 LOCK TABLES `restaurant_applications` WRITE;
 /*!40000 ALTER TABLE `restaurant_applications` DISABLE KEYS */;
-INSERT INTO `restaurant_applications` VALUES (1,'123 API Lane, Hyderabad','The Test Kitchen','9988776655','APPROVED',6,NULL,''),(2,'ABCD','Sitara','6958525455','APPROVED',7,NULL,''),(3,'123 Jubilee Hills, Hyderabad','Priya\'s Kitchen','1122334455','APPROVED',8,NULL,''),(4,'1 Wonder Lane','Alice\'s Eatery','555-ALICE','APPROVED',1,NULL,'40.7128,-74.0060'),(5,'123 Jubilee Hills, Hyderabad','Priya\'s Kitchen','1122334455','APPROVED',15,NULL,'17.4334,78.4069'),(6,'ssfs','sfssf','1212413132123','APPROVED',26,NULL,'17.9358,15.4777'),(7,'ganesh','Ganesh','9548661651','APPROVED',27,NULL,'17.6544,18.6557'),(8,'tester','tester','000000000','APPROVED',29,NULL,'00.0000,00.000'),(9,'ABCD','5star','777777777777','APPROVED',30,NULL,'17.6544,18.6557'),(10,'deve','7star','1212413132123','APPROVED',31,NULL,'17.6544,18.6557'),(11,'hyd','nidhi bawarchi','1212413132123','APPROVED',32,NULL,'17.9358,15.4777');
+INSERT INTO `restaurant_applications` (`id`, `restaurant_address`, `restaurant_name`, `restaurant_phone`, `status`, `applicant_user_id`, `rejection_reason`, `location_pin`, `image_url`) VALUES 
+(1,'123 API Lane, Hyderabad','The Test Kitchen','9988776655','APPROVED',6,NULL,'',''),
+(2,'ABCD','Sitara','6958525455','APPROVED',7,NULL,'',''),
+(3,'123 Jubilee Hills, Hyderabad','Priya\'s Kitchen','1122334455','APPROVED',8,NULL,'',''),
+(4,'1 Wonder Lane','Alice\'s Eatery','555-ALICE','APPROVED',1,NULL,'40.7128,-74.0060',''),
+(5,'123 Jubilee Hills, Hyderabad','Priya\'s Kitchen','1122334455','APPROVED',15,NULL,'17.4334,78.4069',''),
+(6,'ssfs','sfssf','1212413132123','APPROVED',26,NULL,'17.9358,15.4777',''),
+(7,'ganesh','Ganesh','9548661651','APPROVED',27,NULL,'17.6544,18.6557',''),
+(8,'tester','tester','000000000','APPROVED',29,NULL,'00.0000,00.000',''),
+(9,'ABCD','5star','777777777777','APPROVED',30,NULL,'17.6544,18.6557',''),
+(10,'deve','7star','1212413132123','APPROVED',31,NULL,'17.6544,18.6557',''),
+(11,'hyd','nidhi bawarchi','1212413132123','APPROVED',32,NULL,'17.9358,15.4777','');
 /*!40000 ALTER TABLE `restaurant_applications` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
