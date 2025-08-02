@@ -52,7 +52,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/cart/**").hasRole("CUSTOMER")
                 .requestMatchers("/api/orders/**").hasRole("CUSTOMER")
                 .requestMatchers("/api/payments/**").hasRole("CUSTOMER")
-                .requestMatchers("/api/manage/orders/**").hasAnyRole("ADMIN", "RESTA-URANT_OWNER", "DELIVERY_PERSONNEL")
+.requestMatchers("/api/manage/orders/**").hasAnyRole("ADMIN", "RESTAURANT_OWNER", "DELIVERY_PERSONNEL")
                 .anyRequest().authenticated()
             );
 
