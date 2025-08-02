@@ -1,37 +1,20 @@
 package com.foodnow.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "food_items")
 public class FoodItem {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-
-    @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false)
-    private String description;
-
-    @Column(nullable = false)
-    private double price;
-
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private int id;
+    @Column(nullable = false) private String name;
+    @Column(nullable = false) private String description;
+    @Column(nullable = false) private double price;
     private String imageUrl;
+    @Column(nullable = false) private boolean available = true;
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "restaurant_id", nullable = false) @JsonIgnore private Restaurant restaurant;
 
-    @Column(nullable = false)
-    private boolean available = true;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-@JoinColumn(name = "restaurant_id", nullable = false)
-@JsonIgnore  // Prevent deep serialization of restaurant
-private Restaurant restaurant;
-
-    // Getters and Setters
+    // Getters and Setters...
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     public String getName() { return name; }

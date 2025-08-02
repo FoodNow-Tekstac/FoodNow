@@ -65,6 +65,13 @@
                     <input type="text" id="item-name" name="name" class="form-input" placeholder="Item Name" required>
                     <textarea id="item-description" name="description" class="form-input" placeholder="Description" required></textarea>
                     <input type="number" id="item-price" name="price" step="0.01" class="form-input" placeholder="Price" required>
+                    
+                    <!-- THIS IS THE FIX: Added the file input for image uploads -->
+                    <div>
+                        <label for="item-image" class="block text-sm font-medium text-text-muted mb-2">Food Image</label>
+                        <input type="file" id="item-image" name="image" class="form-input file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-black hover:file:bg-primary-light">
+                        <input type="hidden" id="item-imageUrl" name="imageUrl">
+                    </div>
                 </div>
                 <div class="mt-8 flex justify-end gap-4">
                     <button type="button" id="close-modal-btn" class="btn-secondary px-6 py-2 rounded-lg font-semibold">Cancel</button>

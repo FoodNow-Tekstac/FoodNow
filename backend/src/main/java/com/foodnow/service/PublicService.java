@@ -8,6 +8,7 @@ import com.foodnow.model.Restaurant;
 import com.foodnow.repository.RestaurantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,18 +19,17 @@ public class PublicService {
     @Autowired
     private RestaurantRepository restaurantRepository;
 
+    @Transactional(readOnly = true)
     public List<RestaurantDto> getAllActiveRestaurants() {
-        // In a real app, you'd filter by an "ACTIVE" status
         return restaurantRepository.findAll().stream()
-                // This now uses the more efficient helper that omits the menu
                 .map(this::toRestaurantDtoSimple)
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public RestaurantDto getRestaurantWithMenu(int restaurantId) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found with ID: " + restaurantId));
-        // This uses the detailed helper that includes the full menu
         return toRestaurantDtoWithMenu(restaurant);
     }
 
@@ -46,10 +46,6 @@ public class PublicService {
         return dto;
     }
 
-    /**
-     * Helper to convert a Restaurant to a DTO *with* its full menu.
-     * Used when fetching details for a single restaurant.
-     */
     private RestaurantDto toRestaurantDtoWithMenu(Restaurant restaurant) {
         RestaurantDto dto = new RestaurantDto();
         dto.setId(restaurant.getId());
@@ -57,8 +53,8 @@ public class PublicService {
         dto.setAddress(restaurant.getAddress());
         dto.setPhoneNumber(restaurant.getPhoneNumber());
         dto.setLocationPin(restaurant.getLocationPin());
+        dto.setImageUrl(restaurant.getImageUrl());
         
-        // Convert the menu items to DTOs, but only include available items
         List<FoodItemDto> menuDto = restaurant.getMenu().stream()
                                               .filter(FoodItem::isAvailable)
                                               .map(this::toFoodItemDto)
@@ -67,10 +63,6 @@ public class PublicService {
         return dto;
     }
 
-    /**
-     * Helper to convert a Restaurant to a DTO *without* its menu.
-     * Used for the list of all restaurants to improve performance.
-     */
     private RestaurantDto toRestaurantDtoSimple(Restaurant restaurant) {
         RestaurantDto dto = new RestaurantDto();
         dto.setId(restaurant.getId());
@@ -78,7 +70,8 @@ public class PublicService {
         dto.setAddress(restaurant.getAddress());
         dto.setPhoneNumber(restaurant.getPhoneNumber());
         dto.setLocationPin(restaurant.getLocationPin());
-        // Note: The menu is intentionally not set here.
+        // THIS IS THE FIX: Ensure the imageUrl is always included.
+        dto.setImageUrl(restaurant.getImageUrl()); 
         return dto;
     }
 }

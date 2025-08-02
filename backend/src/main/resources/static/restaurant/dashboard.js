@@ -24,11 +24,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- API Functions ---
     const apiFetch = async (endpoint, options = {}) => {
+        // Don't set Content-Type for FormData, browser does it automatically with boundary
+        if (!(options.body instanceof FormData)) {
+            options.headers = { ...options.headers, 'Content-Type': 'application/json' };
+        }
         options.headers = { ...options.headers, 'Authorization': `Bearer ${token}` };
+        
         const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
         if (!response.ok) {
             if(response.status === 403) setTimeout(() => window.location.href = '../index.html', 2000);
-            throw new Error('API request failed.');
+            const errorData = await response.json().catch(() => ({ message: 'API request failed.' }));
+            throw new Error(errorData.message || 'API request failed.');
         }
         return response.status === 204 ? null : response.json();
     };
@@ -88,7 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (container) {
                 const orderCard = document.createElement('div');
                 orderCard.className = 'bg-surface p-4 rounded-lg';
-                // THIS IS THE FIX: Access 'itemName' directly from the item DTO.
                 const itemsHtml = order.items.map(item => `<li>${item.quantity} x ${item.itemName}</li>`).join('');
                 orderCard.innerHTML = `
                     <p class="font-bold">Order #${order.id} (Customer: ${order.customerName})</p>
@@ -117,10 +122,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <table class="min-w-full">
                     <thead class="border-b border-border">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Name</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Price</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Available</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-text-muted uppercase tracking-wider">Actions</th>
+                            <th class="px-6 py-3 text-left">Item</th>
+                            <th class="px-6 py-3 text-left">Price</th>
+                            <th class="px-6 py-3 text-left">Available</th>
+                            <th class="px-6 py-3 text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="menu-table-body"></tbody>
@@ -131,14 +136,25 @@ document.addEventListener('DOMContentLoaded', () => {
         restaurantData.menu.forEach(item => {
             const row = document.createElement('tr');
             row.className = 'border-b border-border';
+            
+            const backendBaseUrl = API_BASE_URL.replace('/api', '');
+            const imageUrl = item.imageUrl ? `${backendBaseUrl}${item.imageUrl}` : 'https://placehold.co/40x40/1f2937/9ca3af?text=No+Img';
+
             row.innerHTML = `
-                <td class="px-6 py-4 whitespace-nowrap"><div class="font-medium">${item.name}</div><div class="text-sm text-text-muted">${item.description}</div></td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 h-10 w-10">
+                            <img class="h-10 w-10 rounded-full object-cover" src="${imageUrl}" alt="${item.name}">
+                        </div>
+                        <div class="ml-4">
+                            <div class="font-medium">${item.name}</div>
+                            <div class="text-sm text-text-muted">${item.description}</div>
+                        </div>
+                    </div>
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap">₹${item.price.toFixed(2)}</td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                    <label class="switch">
-                        <input type="checkbox" data-id="${item.id}" class="availability-toggle" ${item.available ? 'checked' : ''}>
-                        <span class="slider"></span>
-                    </label>
+                    <label class="switch"><input type="checkbox" data-id="${item.id}" class="availability-toggle" ${item.available ? 'checked' : ''}><span class="slider"></span></label>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button class="text-indigo-400 hover:text-indigo-300 mr-4" data-id="${item.id}" data-action="edit">Edit</button>
@@ -155,12 +171,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const openItemModal = (item = null) => {
         itemForm.reset();
+        document.getElementById('item-imageUrl').value = '';
         if (item) {
             modalTitle.textContent = 'Edit Item';
             document.getElementById('item-id').value = item.id;
             document.getElementById('item-name').value = item.name;
             document.getElementById('item-description').value = item.description;
             document.getElementById('item-price').value = item.price;
+            document.getElementById('item-imageUrl').value = item.imageUrl;
         } else {
             modalTitle.textContent = 'Add New Item';
             document.getElementById('item-id').value = '';
@@ -176,19 +194,35 @@ document.addEventListener('DOMContentLoaded', () => {
         const formData = new FormData(itemForm);
         const itemData = Object.fromEntries(formData.entries());
         const itemId = itemData.id;
-        
+        const imageFile = formData.get('image');
+
+        showToast('Saving item...', 'loading');
+
         try {
-            if (itemId) {
-                await apiFetch(`/restaurant/menu/${itemId}`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(itemData) });
-                showToast('Item updated successfully!', 'success');
-            } else {
-                await apiFetch('/restaurant/menu', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(itemData) });
-                showToast('Item added successfully!', 'success');
+            if (imageFile && imageFile.size > 0) {
+                const imageFormData = new FormData();
+                imageFormData.append('image', imageFile);
+                const uploadResult = await apiFetch('/files/upload', {
+                    method: 'POST',
+                    body: imageFormData
+                });
+                itemData.imageUrl = uploadResult.filePath;
             }
+
+            const url = itemId ? `/restaurant/menu/${itemId}` : '/restaurant/menu';
+            const method = itemId ? 'PUT' : 'POST';
+            
+            await apiFetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(itemData)
+            });
+            
+            showToast(`Item ${itemId ? 'updated' : 'added'} successfully!`, 'success');
             closeItemModal();
             fetchDashboardData();
         } catch (error) {
-            showToast('Failed to save item.', 'error');
+            showToast(error.message, 'error');
         }
     });
 
@@ -201,9 +235,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const newPendingCount = newData.orders.filter(o => o.status === 'PENDING').length;
                 
                 if (newPendingCount > oldPendingCount) {
-                    document.getElementById('notification-sound').play();
+                    document.getElementById('notification-sound')?.play?.();
                     showToast(`You have ${newPendingCount - oldPendingCount} new order(s)!`, 'success');
                 }
+
                 restaurantData = newData;
                 if (currentSection === 'orders' || currentSection === 'overview') {
                     renderContent(currentSection);
@@ -218,21 +253,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target.tagName === 'A') {
             e.preventDefault();
             currentSection = e.target.dataset.section;
-            navContainer.querySelector('.active').classList.remove('active');
+            navContainer.querySelector('.active')?.classList.remove('active');
             e.target.classList.add('active');
             renderContent(currentSection);
         }
     });
     
     mainContent.addEventListener('click', async (e) => {
-        const action = e.target.dataset.action;
-        const id = e.target.dataset.id;
-
-        if (e.target.id === 'add-item-btn') {
+        const target = e.target;
+        
+        if (target.id === 'add-item-btn') {
             openItemModal();
             return;
         }
 
+        const action = target.dataset.action;
+        const id = target.dataset.id;
         if (!action || !id) return;
 
         if (action === 'edit') {
@@ -244,12 +280,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 showToast('Item deleted.', 'success');
                 fetchDashboardData();
             }
-        } else if (e.target.classList.contains('availability-toggle')) {
+        } else if (target.classList.contains('availability-toggle')) {
             await apiFetch(`/restaurant/menu/${id}/availability`, { method: 'PATCH' });
             showToast('Availability updated.', 'success');
         } else if (['CONFIRM', 'CANCEL', 'READY'].includes(action)) {
-            const newStatus = action === 'READY' ? 'OUT_FOR_DELIVERY' : action === 'CONFIRM' ? 'PREPARING' : 'CANCELLED';
-            await apiFetch(`/manage/orders/${id}/status`, { method: 'PATCH', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({status: newStatus}) });
+            const newStatus = action === 'READY' ? 'OUT_FOR_DELIVERY' :
+                              action === 'CONFIRM' ? 'PREPARING' : 'CANCELLED';
+            await apiFetch(`/manage/orders/${id}/status`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: newStatus })
+            });
             showToast('Order status updated.', 'success');
             fetchDashboardData();
         }

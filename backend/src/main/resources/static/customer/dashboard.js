@@ -16,6 +16,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalBackdrop = document.getElementById('modal-backdrop');
     const applicationForm = document.getElementById('application-form');
 
+    const apiFetch = async (endpoint, options = {}) => {
+        // Don't set Content-Type for FormData, browser does it automatically with boundary
+        if (!(options.body instanceof FormData)) {
+            options.headers = { ...options.headers, 'Content-Type': 'application/json' };
+        }
+        options.headers = { ...options.headers, 'Authorization': `Bearer ${token}` };
+        
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+        if (!response.ok) throw new Error('API request failed.');
+        return response.json();
+    };
+
     const fetchRestaurants = async () => {
         try {
             const response = await fetch(`${API_BASE_URL}/public/restaurants`);
@@ -36,11 +48,20 @@ document.addEventListener('DOMContentLoaded', () => {
         restaurants.forEach(restaurant => {
             const card = document.createElement('a');
             card.href = `restaurant.html?id=${restaurant.id}`;
-            card.className = 'bg-surface p-6 rounded-lg shadow-md hover:shadow-primary/20 hover:-translate-y-1 transition-all duration-300';
+            card.className = 'bg-surface rounded-lg shadow-md hover:shadow-primary/20 hover:-translate-y-1 transition-all duration-300 overflow-hidden';
+            
+            const backendBaseUrl = API_BASE_URL.replace('/api', '');
+            // THIS IS THE FIX: Removed the incorrect markdown formatting from the placeholder URL.
+const imageUrl = restaurant.imageUrl
+    ? `${backendBaseUrl}${restaurant.imageUrl}`
+    : 'https://placehold.co/600x400/1f2937/9ca3af?text=FoodNow';
+
             card.innerHTML = `
-                <div class="h-32 bg-gray-700 rounded-md mb-4"></div> <!-- Image Placeholder -->
-                <h3 class="text-xl font-bold text-primary">${restaurant.name}</h3>
-                <p class="text-text-muted mt-1">${restaurant.address}</p>
+                <img class="h-40 w-full object-cover" src="${imageUrl}" alt="${restaurant.name}">
+                <div class="p-4">
+                    <h3 class="text-xl font-bold text-primary">${restaurant.name}</h3>
+                    <p class="text-text-muted mt-1">${restaurant.address}</p>
+                </div>
             `;
             restaurantsContainer.appendChild(card);
         });
@@ -93,27 +114,31 @@ document.addEventListener('DOMContentLoaded', () => {
     applicationForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         const formData = new FormData(applicationForm);
-        const data = Object.fromEntries(formData.entries());
+        const appData = Object.fromEntries(formData.entries());
+        const imageFile = formData.get('image');
         showToast('Submitting application...', 'loading');
 
         try {
-            const response = await fetch(`${API_BASE_URL}/restaurant/apply`, {
+            // Step 1: If an image was selected, upload it first.
+            if (imageFile && imageFile.size > 0) {
+                const imageFormData = new FormData();
+                imageFormData.append('image', imageFile);
+                const uploadResult = await apiFetch('/files/upload', {
+                    method: 'POST',
+                    body: imageFormData
+                });
+                appData.imageUrl = uploadResult.filePath; // Add the returned path to our data
+            }
+
+            // Step 2: Submit the application form data (with the new imageUrl if applicable).
+            await apiFetch('/restaurant/apply', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(data)
+                body: JSON.stringify(appData)
             });
 
-            if (response.ok) {
-                showToast('Application submitted successfully!', 'success');
-                applicationForm.reset();
-                setTimeout(closeModal, 1500);
-            } else {
-                const error = await response.json();
-                showToast(error.message || 'Submission failed.', 'error');
-            }
+            showToast('Application submitted successfully!', 'success');
+            applicationForm.reset();
+            setTimeout(closeModal, 1500);
         } catch (error) {
             showToast('An error occurred. Please try again.', 'error');
         }

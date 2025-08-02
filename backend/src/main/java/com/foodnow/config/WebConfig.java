@@ -1,24 +1,37 @@
 package com.foodnow.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig {
+
+    // Inject the upload directory path from application.properties
+    @Value("${file.upload-dir}")
+    private String uploadDir;
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                
-                registry.addMapping("/api/**") // Apply to all API endpoints
-                        .allowedOrigins("*") // Allow all origins for simplicity in development
+                registry.addMapping("/api/**")
+                        .allowedOrigins("*")
                         .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
-                        .allowCredentials(false); // Set to false if you are not using cookies/sessions for auth
+                        .allowCredentials(false);
+            }
+
+            // THIS IS THE NEW PART: It tells Spring Boot to serve the uploaded files
+            @Override
+            public void addResourceHandlers(ResourceHandlerRegistry registry) {
+                // This maps the URL path /uploads/** to the physical directory on your server
+                registry.addResourceHandler("/uploads/**")
+                        .addResourceLocations("file:" + uploadDir + "/");
             }
         };
     }

@@ -35,16 +35,16 @@ public class RestaurantService {
     @Transactional(readOnly = true)
     public RestaurantDashboardDto getDashboardData() {
         Restaurant restaurant = getRestaurantByCurrentOwner();
-        
+
         RestaurantDashboardDto dashboardDto = new RestaurantDashboardDto();
         dashboardDto.setRestaurantProfile(toRestaurantDto(restaurant));
-        
+
         List<Order> orders = orderRepository.findByRestaurantId(restaurant.getId());
         dashboardDto.setOrders(orders.stream().map(this::toOrderDto).collect(Collectors.toList()));
-        
+
         List<FoodItem> menu = restaurant.getMenu();
         dashboardDto.setMenu(menu.stream().map(this::toFoodItemDto).collect(Collectors.toList()));
-        
+
         return dashboardDto;
     }
 
@@ -52,7 +52,7 @@ public class RestaurantService {
         return restaurantRepository.findByOwnerId(ownerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found for owner ID: " + ownerId));
     }
-    
+
     public Restaurant getRestaurantByCurrentOwner() {
         User currentUser = getCurrentUser();
         return getRestaurantByOwnerId(currentUser.getId());
@@ -68,6 +68,12 @@ public class RestaurantService {
         Restaurant restaurant = getRestaurantByCurrentOwner();
         foodItem.setRestaurant(restaurant);
         return foodItemRepository.save(foodItem);
+    }
+
+    @Transactional(readOnly = true)
+    public FoodItem getFoodItemById(int itemId) {
+        return foodItemRepository.findById(itemId)
+                .orElseThrow(() -> new ResourceNotFoundException("Food item not found with ID: " + itemId));
     }
 
     @Transactional
@@ -108,13 +114,15 @@ public class RestaurantService {
         item.setAvailable(!item.isAvailable());
         return foodItemRepository.save(item);
     }
-    
+
     @Transactional
     public Restaurant updateRestaurantProfile(Restaurant updatedRestaurant) {
         Restaurant existingRestaurant = getRestaurantByCurrentOwner();
         existingRestaurant.setName(updatedRestaurant.getName());
         existingRestaurant.setAddress(updatedRestaurant.getAddress());
         existingRestaurant.setPhoneNumber(updatedRestaurant.getPhoneNumber());
+        existingRestaurant.setImageUrl(updatedRestaurant.getImageUrl());
+        existingRestaurant.setLocationPin(updatedRestaurant.getLocationPin());
         return restaurantRepository.save(existingRestaurant);
     }
 
@@ -124,7 +132,7 @@ public class RestaurantService {
         return userRepository.findById(userDetails.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userDetails.getId()));
     }
-    
+
     // --- DTO Helper Methods ---
     private RestaurantDto toRestaurantDto(Restaurant restaurant) {
         RestaurantDto dto = new RestaurantDto();
@@ -132,6 +140,11 @@ public class RestaurantService {
         dto.setName(restaurant.getName());
         dto.setAddress(restaurant.getAddress());
         dto.setPhoneNumber(restaurant.getPhoneNumber());
+        dto.setLocationPin(restaurant.getLocationPin());
+        dto.setImageUrl(restaurant.getImageUrl());
+        if (restaurant.getOwner() != null) {
+            dto.setOwnerName(restaurant.getOwner().getName());
+        }
         return dto;
     }
 

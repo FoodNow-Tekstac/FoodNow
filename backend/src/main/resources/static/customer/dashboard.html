@@ -57,6 +57,13 @@
                     <input type="text" name="restaurantAddress" class="form-input w-full" placeholder="Full Restaurant Address" required>
                     <input type="tel" name="restaurantPhone" class="form-input w-full" placeholder="Restaurant Phone Number" required>
                     <input type="text" name="locationPin" class="form-input w-full" placeholder="Location Pin (e.g., 17.3850,78.4867)" required>
+                    
+                    <!-- ADDED THIS FOR IMAGE UPLOAD -->
+                    <div>
+                        <label for="restaurant-image" class="block text-sm font-medium text-text-muted mb-2">Restaurant Image/Logo</label>
+                        <input type="file" id="restaurant-image" name="image" class="form-input file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-black hover:file:bg-primary-light">
+                        <input type="hidden" id="restaurant-imageUrl" name="imageUrl">
+                    </div>
                 </div>
                 <div class="mt-8 flex justify-end gap-4">
                     <button type="button" id="close-modal-btn" class="btn-secondary px-6 py-2 rounded-lg font-semibold">Cancel</button>

@@ -51,17 +51,33 @@ public class RestaurantController {
         return ResponseEntity.ok(dtoList);
     }
 
-    @PostMapping("/menu")
-    public ResponseEntity<FoodItemDto> addFoodItem(@RequestBody FoodItem foodItem) {
-        FoodItem newFoodItem = restaurantService.addFoodItem(foodItem);
-        return ResponseEntity.ok(toFoodItemDto(newFoodItem));
-    }
+@PostMapping("/menu")
+public ResponseEntity<FoodItemDto> addFoodItem(@RequestBody FoodItemDto foodItemDto) {
+    FoodItem item = new FoodItem();
+    item.setName(foodItemDto.getName());
+    item.setDescription(foodItemDto.getDescription());
+    item.setPrice(foodItemDto.getPrice());
+    item.setImageUrl(foodItemDto.getImageUrl());
+    item.setAvailable(true); // default to true
+    item.setRestaurant(restaurantService.getRestaurantByCurrentOwner());
 
-    @PutMapping("/menu/{itemId}")
-    public ResponseEntity<FoodItemDto> updateFoodItem(@PathVariable int itemId, @RequestBody FoodItem foodItem) {
-        FoodItem updatedItem = restaurantService.updateFoodItem(itemId, foodItem);
-        return ResponseEntity.ok(toFoodItemDto(updatedItem));
-    }
+    FoodItem savedItem = restaurantService.addFoodItem(item);
+    return ResponseEntity.ok(toFoodItemDto(savedItem));
+}
+
+
+  @PutMapping("/menu/{itemId}")
+public ResponseEntity<FoodItemDto> updateFoodItem(@PathVariable int itemId, @RequestBody FoodItemDto foodItemDto) {
+    FoodItem existingItem = restaurantService.getFoodItemById(itemId);
+    existingItem.setName(foodItemDto.getName());
+    existingItem.setDescription(foodItemDto.getDescription());
+    existingItem.setPrice(foodItemDto.getPrice());
+    existingItem.setImageUrl(foodItemDto.getImageUrl());
+
+    FoodItem updated = restaurantService.updateFoodItem(itemId, existingItem);
+    return ResponseEntity.ok(toFoodItemDto(updated));
+}
+
 
     @PatchMapping("/menu/{itemId}/availability")
     public ResponseEntity<FoodItemDto> toggleFoodItemAvailability(@PathVariable int itemId) {
@@ -87,18 +103,22 @@ public class RestaurantController {
         return dto;
     }
 
-    private RestaurantDto toRestaurantDto(Restaurant restaurant) {
-        RestaurantDto dto = new RestaurantDto();
-        dto.setId(restaurant.getId());
-        dto.setName(restaurant.getName());
-        dto.setAddress(restaurant.getAddress());
-        dto.setPhoneNumber(restaurant.getPhoneNumber());
-        dto.setLocationPin(restaurant.getLocationPin());
-        
-        List<FoodItemDto> menuDto = restaurant.getMenu().stream()
-                                            .map(this::toFoodItemDto)
-                                            .collect(Collectors.toList());
-        dto.setMenu(menuDto);
-        return dto;
-    }
+private RestaurantDto toRestaurantDto(Restaurant restaurant) {
+    RestaurantDto dto = new RestaurantDto();
+    dto.setId(restaurant.getId());
+    dto.setName(restaurant.getName());
+    dto.setAddress(restaurant.getAddress());
+    dto.setPhoneNumber(restaurant.getPhoneNumber());
+    dto.setLocationPin(restaurant.getLocationPin());
+
+    // ✅ Fix here
+    dto.setImageUrl(restaurant.getImageUrl());
+
+    List<FoodItemDto> menuDto = restaurant.getMenu().stream()
+                                        .map(this::toFoodItemDto)
+                                        .collect(Collectors.toList());
+    dto.setMenu(menuDto);
+    return dto;
+}
+
 }

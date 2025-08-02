@@ -39,6 +39,8 @@ public class RestaurantApplicationService {
         newApplication.setAddress(request.getRestaurantAddress());
         newApplication.setPhoneNumber(request.getRestaurantPhone());
         newApplication.setLocationPin(request.getLocationPin()); // Set location pin from DTO
+            newApplication.setImageUrl(request.getImageUrl()); // ✅ Add this line
+
         newApplication.setApplicant(applicant);
         newApplication.setStatus(ApplicationStatus.PENDING);
         
@@ -69,6 +71,8 @@ public class RestaurantApplicationService {
         restaurant.setAddress(application.getAddress());
         restaurant.setPhoneNumber(application.getPhoneNumber());
         restaurant.setLocationPin(application.getLocationPin()); // Set location pin from application
+            restaurant.setImageUrl(application.getImageUrl());
+
         restaurant.setOwner(applicant);
         return restaurantRepository.save(restaurant);
     }
