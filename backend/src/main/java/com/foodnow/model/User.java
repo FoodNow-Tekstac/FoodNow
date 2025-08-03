@@ -42,6 +42,11 @@ public class User {
     private List<Review> reviews = new ArrayList<>();
     private String profileImageUrl;
 
+
+       // ADD THIS RELATIONSHIP for password reset tokens
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private PasswordResetToken passwordResetToken;
     @Enumerated(EnumType.STRING)
     private DeliveryAgentStatus deliveryStatus;
 
@@ -66,5 +71,8 @@ public class User {
     public void setAddresses(Set<Address> addresses) { this.addresses = addresses; }
     public List<Review> getReviews() { return reviews; } // ADD THIS GETTER
     public void setReviews(List<Review> reviews) { this.reviews = reviews; } // ADD THIS SETTER
+    public PasswordResetToken getPasswordResetToken() { return passwordResetToken; } // ADD THIS GETTER
+    public void setPasswordResetToken(PasswordResetToken token) { this.passwordResetToken = token; } // ADD THIS SETTER
+
 }
 

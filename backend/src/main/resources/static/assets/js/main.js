@@ -1,3 +1,4 @@
+/* FILE: assets/js/main.js (UPDATED) */
 const API_BASE_URL = 'http://localhost:8080/api';
 
 // --- Reusable Utility Functions ---
@@ -26,8 +27,9 @@ function parseJwt(token) {
 
 // --- Authentication Logic (For index.html) ---
 document.addEventListener('DOMContentLoaded', () => {
-    // Only run this specific logic on the login page
-    if (document.body.classList.contains('login-page')) {
+    // THIS IS THE FIX: Only run this code if we are on the login page
+    const authContainer = document.getElementById('auth-container');
+    if (authContainer) {
         const loginFormEl = document.getElementById('login-form');
         const registerFormEl = document.getElementById('register-form');
         const showRegisterLink = document.getElementById('show-register');
@@ -66,13 +68,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     const userRole = decodedToken.roles[0]; 
 
                     setTimeout(() => {
-                        // THIS IS THE FIX: Use relative paths for redirection.
                         if (userRole === 'ROLE_ADMIN') window.location.href = 'admin/dashboard.html';
                         else if (userRole === 'ROLE_RESTAURANT_OWNER') window.location.href = 'restaurant/dashboard.html';
                         else if (userRole === 'ROLE_DELIVERY_PERSONNEL') window.location.href = 'delivery/dashboard.html';
                         else window.location.href = 'customer/dashboard.html';
                     }, 1500);
-
                 } else {
                     const error = await response.json();
                     showToast(error.message || 'Login failed.', 'error');
@@ -81,7 +81,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 showToast('An error occurred. Please try again.', 'error');
             }
         });
-
         registerFormElement.addEventListener('submit', async (event) => {
             event.preventDefault();
             const formData = new FormData(registerFormElement);

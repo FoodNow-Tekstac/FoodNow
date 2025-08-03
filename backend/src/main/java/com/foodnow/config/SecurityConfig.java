@@ -40,25 +40,37 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // THIS IS THE FIX: Allow public access to the frontend files.
-                .requestMatchers("/", "/index.html", "/assets/**", "/customer/**", "/admin/**", "/restaurant/**", "/delivery/**").permitAll()
-                .requestMatchers("/uploads/**").permitAll()
-
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() 
+                // THIS IS THE FIX: Explicitly permit all frontend pages and assets.
+                .requestMatchers(
+                    "/", 
+                    "/index.html", 
+                    "/forgot-password.html", 
+                    "/reset-password.html", 
+                    "/assets/**", 
+                    "/uploads/**",
+                    "/customer/**", 
+                    "/admin/**", 
+                    "/forgot-password-confirmation.html",
+                    "/restaurant/**", 
+                    "/delivery/**"
+                ).permitAll()
+                
+                // Permit public API endpoints
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/public/**").permitAll() 
+                
+                // Secure API endpoints by role
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/profile/**").authenticated()
                 .requestMatchers("/api/restaurant/apply").hasRole("CUSTOMER")
                 .requestMatchers("/api/restaurant/**").hasRole("RESTAURANT_OWNER")
                 .requestMatchers("/api/cart/**").hasRole("CUSTOMER")
+                .requestMatchers(HttpMethod.POST, "/api/orders/{orderId}/review").hasRole("CUSTOMER")
                 .requestMatchers("/api/orders/**").hasRole("CUSTOMER")
-                .requestMatchers("/api/payments/**").hasRole("CUSTOMER")
-                                .requestMatchers("/api/profile/**").authenticated() // ADD THIS RULE
-
-                                .requestMatchers("/api/delivery/**").hasRole("DELIVERY_PERSONNEL") // ADD THIS RULE
-                .requestMatchers(HttpMethod.POST, "/api/orders/{orderId}/review").hasRole("CUSTOMER") // ADD THIS RULE
-
- .requestMatchers("/api/manage/orders/**").hasAnyRole("ADMIN", "RESTAURANT_OWNER", "DELIVERY_PERSONNEL", "CUSTOMER")
+                .requestMatchers("/api/delivery/**").hasRole("DELIVERY_PERSONNEL")
+                .requestMatchers("/api/manage/orders/**").hasAnyRole("ADMIN", "RESTAURANT_OWNER", "DELIVERY_PERSONNEL")
+                
+                // All other requests must be authenticated
                 .anyRequest().authenticated()
             );
 
