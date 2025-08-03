@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - FoodNow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="bg-bg">
+    <div id="toast-container"></div>
+    <header class="fixed top-0 left-0 right-0 bg-surface shadow-md z-50 border-b border-border">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <a href="dashboard.html" class="text-2xl font-bold text-white">Food<span class="text-primary">Now</span></a>
+            <button id="logout-btn" class="btn-secondary px-4 py-2 rounded-lg font-semibold">Logout</button>
+        </nav>
+    </header>
+
+    <main class="container mx-auto mt-24 px-6">
+        <div class="max-w-2xl mx-auto">
+            <h1 class="text-5xl font-extrabold mb-8">My Profile</h1>
+            <div class="bg-surface rounded-lg p-8">
+                <form id="profile-form">
+                    <div class="flex items-center gap-6 mb-8">
+                        <img id="profile-image-preview" src="https://placehold.co/96x96/1f2937/9ca3af?text=DP" class="w-24 h-24 rounded-full object-cover border-2 border-border">
+                        <div>
+                            <label for="profile-image-upload" class="btn-secondary cursor-pointer px-4 py-2 rounded-lg font-semibold">
+                                Upload New Picture
+                            </label>
+                            <input type="file" id="profile-image-upload" class="hidden">
+                            <input type="hidden" id="profileImageUrl" name="profileImageUrl">
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="profile-name" class="block text-sm font-medium text-text-muted mb-1">Full Name</label>
+                            <input type="text" id="profile-name" name="name" class="form-input w-full" required>
+                        </div>
+                        <div>
+                            <label for="profile-email" class="block text-sm font-medium text-text-muted mb-1">Email Address</label>
+                            <input type="email" id="profile-email" name="email" class="form-input w-full" disabled>
+                        </div>
+                        <div>
+                            <label for="profile-phone" class="block text-sm font-medium text-text-muted mb-1">Phone Number</label>
+                            <input type="tel" id="profile-phone" name="phoneNumber" class="form-input w-full" required>
+                        </div>
+                    </div>
+                    <div class="mt-8">
+                        <button type="submit" class="btn-primary w-full py-3 rounded-lg font-semibold text-lg">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/main.js"></script>
+    <script src="profile.js"></script>
+</body>
+</html>
+
