@@ -145,7 +145,8 @@ public class RestaurantService {
         existingItem.setPrice(updatedItem.getPrice());
         existingItem.setImageUrl(updatedItem.getImageUrl());
         existingItem.setAvailable(updatedItem.isAvailable());
-
+existingItem.setCategory(updatedItem.getCategory()); // Persist category
+        existingItem.setDietaryType(updatedItem.getDietaryType()); // Persist dietary type
         return foodItemRepository.save(existingItem);
     }
 
@@ -209,6 +210,8 @@ public class RestaurantService {
         dto.setPrice(item.getPrice());
         dto.setAvailable(item.isAvailable());
         dto.setImageUrl(item.getImageUrl());
+        dto.setCategory(item.getCategory()); // Include in DTO
+        dto.setDietaryType(item.getDietaryType()); // Include in DTO
         return dto;
     }
 

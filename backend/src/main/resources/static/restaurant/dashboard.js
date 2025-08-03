@@ -5,34 +5,29 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // --- State Management ---
     let restaurantData = {};
     let currentSection = 'overview';
     let orderCheckInterval;
 
-    // --- Element References ---
     const mainContent = document.getElementById('main-content');
     const navContainer = document.getElementById('dashboard-nav');
     const logoutBtn = document.getElementById('logout-btn');
     const restaurantNameHeader = document.getElementById('restaurant-name-header');
-    
-    // Modal Elements
+
     const itemModal = document.getElementById('item-modal');
     const modalTitle = document.getElementById('modal-title');
     const itemForm = document.getElementById('item-form');
     const closeBtn = document.getElementById('close-modal-btn');
 
-    // --- API Functions ---
     const apiFetch = async (endpoint, options = {}) => {
-        // Don't set Content-Type for FormData, browser does it automatically with boundary
         if (!(options.body instanceof FormData)) {
             options.headers = { ...options.headers, 'Content-Type': 'application/json' };
         }
         options.headers = { ...options.headers, 'Authorization': `Bearer ${token}` };
-        
+
         const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
         if (!response.ok) {
-            if(response.status === 403) setTimeout(() => window.location.href = '../index.html', 2000);
+            if (response.status === 403) setTimeout(() => window.location.href = '../index.html', 2000);
             const errorData = await response.json().catch(() => ({ message: 'API request failed.' }));
             throw new Error(errorData.message || 'API request failed.');
         }
@@ -50,7 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- Rendering Functions ---
     const renderContent = (section) => {
         mainContent.innerHTML = '';
         anime({ targets: '#main-content', opacity: [0, 1], translateY: [10, 0], duration: 400, easing: 'easeOutQuad' });
@@ -67,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalRevenue = restaurantData.orders
             .filter(o => o.status === 'DELIVERED')
             .reduce((sum, o) => sum + o.totalPrice, 0);
-        
+
         mainContent.innerHTML = `
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="bg-surface p-6 rounded-lg"><p class="text-sm text-text-muted">Pending Orders</p><p class="text-4xl font-bold">${pendingOrders}</p></div>
@@ -123,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <thead class="border-b border-border">
                         <tr>
                             <th class="px-6 py-3 text-left">Item</th>
+                            <th class="px-6 py-3 text-left">Category</th>
                             <th class="px-6 py-3 text-left">Price</th>
                             <th class="px-6 py-3 text-left">Available</th>
                             <th class="px-6 py-3 text-right">Actions</th>
@@ -136,21 +131,23 @@ document.addEventListener('DOMContentLoaded', () => {
         restaurantData.menu.forEach(item => {
             const row = document.createElement('tr');
             row.className = 'border-b border-border';
-            
+
             const backendBaseUrl = API_BASE_URL.replace('/api', '');
             const imageUrl = item.imageUrl ? `${backendBaseUrl}${item.imageUrl}` : 'https://placehold.co/40x40/1f2937/9ca3af?text=No+Img';
 
             row.innerHTML = `
                 <td class="px-6 py-4 whitespace-nowrap">
                     <div class="flex items-center">
-                        <div class="flex-shrink-0 h-10 w-10">
-                            <img class="h-10 w-10 rounded-full object-cover" src="${imageUrl}" alt="${item.name}">
-                        </div>
+                        <img class="h-10 w-10 rounded-full object-cover" src="${imageUrl}" alt="${item.name}">
                         <div class="ml-4">
                             <div class="font-medium">${item.name}</div>
                             <div class="text-sm text-text-muted">${item.description}</div>
                         </div>
                     </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-text-muted">
+                    <div class="font-semibold">${item.dietaryType.replace('_', ' ')}</div>
+                    <div class="text-xs">${item.category.replace('_', ' ')}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">₹${item.price.toFixed(2)}</td>
                 <td class="px-6 py-4 whitespace-nowrap">
@@ -164,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
             menuTableBody.appendChild(row);
         });
     };
-    
+
     const renderReviews = () => {
         mainContent.innerHTML = `<p class="text-text-muted">Customer reviews feature is coming soon.</p>`;
     };
@@ -179,6 +176,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('item-description').value = item.description;
             document.getElementById('item-price').value = item.price;
             document.getElementById('item-imageUrl').value = item.imageUrl;
+            document.getElementById('item-category').value = item.category;
+            document.getElementById('item-dietaryType').value = item.dietaryType;
         } else {
             modalTitle.textContent = 'Add New Item';
             document.getElementById('item-id').value = '';
@@ -188,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const closeItemModal = () => itemModal.classList.add('hidden');
-    
+
     itemForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const formData = new FormData(itemForm);
@@ -211,13 +210,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const url = itemId ? `/restaurant/menu/${itemId}` : '/restaurant/menu';
             const method = itemId ? 'PUT' : 'POST';
-            
+
             await apiFetch(url, {
                 method,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(itemData)
             });
-            
+
             showToast(`Item ${itemId ? 'updated' : 'added'} successfully!`, 'success');
             closeItemModal();
             fetchDashboardData();
@@ -233,14 +232,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 const newData = await apiFetch('/restaurant/dashboard');
                 const oldPendingCount = restaurantData.orders.filter(o => o.status === 'PENDING').length;
                 const newPendingCount = newData.orders.filter(o => o.status === 'PENDING').length;
-                
+
                 if (newPendingCount > oldPendingCount) {
                     document.getElementById('notification-sound')?.play?.();
                     showToast(`You have ${newPendingCount - oldPendingCount} new order(s)!`, 'success');
                 }
 
                 restaurantData = newData;
-                if (currentSection === 'orders' || currentSection === 'overview') {
+                if (['orders', 'overview'].includes(currentSection)) {
                     renderContent(currentSection);
                 }
             } catch (error) {
@@ -258,17 +257,17 @@ document.addEventListener('DOMContentLoaded', () => {
             renderContent(currentSection);
         }
     });
-    
+
     mainContent.addEventListener('click', async (e) => {
         const target = e.target;
-        
+        const action = target.dataset.action;
+        const id = target.dataset.id;
+
         if (target.id === 'add-item-btn') {
             openItemModal();
             return;
         }
 
-        const action = target.dataset.action;
-        const id = target.dataset.id;
         if (!action || !id) return;
 
         if (action === 'edit') {
@@ -295,14 +294,14 @@ document.addEventListener('DOMContentLoaded', () => {
             fetchDashboardData();
         }
     });
-    
+
     logoutBtn.addEventListener('click', () => {
         clearInterval(orderCheckInterval);
         localStorage.removeItem('foodnow_token');
         window.location.href = '../index.html';
     });
-    
+
     closeBtn.addEventListener('click', closeItemModal);
-    
+
     fetchDashboardData();
 });

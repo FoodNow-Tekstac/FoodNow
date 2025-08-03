@@ -22,7 +22,7 @@ public class PublicService {
     @Transactional(readOnly = true)
     public List<RestaurantDto> getAllActiveRestaurants() {
         return restaurantRepository.findAll().stream()
-                .map(this::toRestaurantDtoSimple)
+                .map(this::toRestaurantDtoWithMenu) // Use the detailed helper to send full menu
                 .collect(Collectors.toList());
     }
 
@@ -34,7 +34,6 @@ public class PublicService {
     }
 
     // --- Helper Methods for DTO Conversion ---
-
     private FoodItemDto toFoodItemDto(FoodItem item) {
         FoodItemDto dto = new FoodItemDto();
         dto.setId(item.getId());
@@ -43,6 +42,8 @@ public class PublicService {
         dto.setPrice(item.getPrice());
         dto.setImageUrl(item.getImageUrl());
         dto.setAvailable(item.isAvailable());
+        dto.setCategory(item.getCategory());
+        dto.setDietaryType(item.getDietaryType());
         return dto;
     }
 
@@ -60,18 +61,6 @@ public class PublicService {
                                               .map(this::toFoodItemDto)
                                               .collect(Collectors.toList());
         dto.setMenu(menuDto);
-        return dto;
-    }
-
-    private RestaurantDto toRestaurantDtoSimple(Restaurant restaurant) {
-        RestaurantDto dto = new RestaurantDto();
-        dto.setId(restaurant.getId());
-        dto.setName(restaurant.getName());
-        dto.setAddress(restaurant.getAddress());
-        dto.setPhoneNumber(restaurant.getPhoneNumber());
-        dto.setLocationPin(restaurant.getLocationPin());
-        // THIS IS THE FIX: Ensure the imageUrl is always included.
-        dto.setImageUrl(restaurant.getImageUrl()); 
         return dto;
     }
 }

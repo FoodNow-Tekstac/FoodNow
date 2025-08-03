@@ -42,23 +42,36 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const itemsHtml = cart.items.map(item => `
-            <div class="flex justify-between items-center py-4 border-b border-border">
-                <div>
-                    <p class="font-bold">${item.foodItem.name}</p>
-                    <p class="text-sm text-text-muted">₹${item.foodItem.price.toFixed(2)} each</p>
-                </div>
-                <div class="flex items-center gap-4">
-                    <div class="flex items-center gap-2">
-                        <button class="font-bold text-lg" data-id="${item.id}" data-quantity="${item.quantity}" data-action="decrease">-</button>
-                        <span class="font-semibold w-8 text-center">${item.quantity}</span>
-                        <button class="font-bold text-lg" data-id="${item.id}" data-quantity="${item.quantity}" data-action="increase">+</button>
+        const backendBaseUrl = API_BASE_URL.replace('/api', '');
+
+        const itemsHtml = cart.items.map(item => {
+            // THIS IS THE FIX: The backend sends a FoodItemDto inside the CartItemDto
+            const foodItem = item.foodItem;
+            const imageUrl = foodItem.imageUrl 
+                ? `${backendBaseUrl}${foodItem.imageUrl}` 
+                : 'https://placehold.co/48x48/1f2937/9ca3af?text=No+Img';
+
+            return `
+                <div class="flex justify-between items-center py-4 border-b border-border">
+                    <div class="flex items-center gap-4">
+                        <img src="${imageUrl}" alt="${foodItem.name}" class="w-12 h-12 rounded-full object-cover">
+                        <div>
+                            <p class="font-bold">${foodItem.name}</p>
+                            <p class="text-sm text-text-muted">₹${foodItem.price.toFixed(2)} each</p>
+                        </div>
                     </div>
-                    <p class="font-semibold w-24 text-right">₹${(item.foodItem.price * item.quantity).toFixed(2)}</p>
-                    <button class="text-red-500 hover:text-red-400 text-2xl font-bold" data-id="${item.id}" data-action="remove">&times;</button>
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-2">
+                            <button class="font-bold text-lg" data-id="${item.id}" data-quantity="${item.quantity}" data-action="decrease">-</button>
+                            <span class="font-semibold w-8 text-center">${item.quantity}</span>
+                            <button class="font-bold text-lg" data-id="${item.id}" data-quantity="${item.quantity}" data-action="increase">+</button>
+                        </div>
+                        <p class="font-semibold w-24 text-right">₹${(foodItem.price * item.quantity).toFixed(2)}</p>
+                        <button class="text-red-500 hover:text-red-400 text-2xl font-bold" data-id="${item.id}" data-action="remove">&times;</button>
+                    </div>
                 </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
 
         cartContent.innerHTML = `
             <div id="cart-items">
@@ -91,7 +104,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     cartContent.addEventListener('click', (e) => {
-        // THIS IS THE FIX: The checkout button now navigates to the payment page.
         if (e.target.id === 'checkout-btn') {
             window.location.href = 'payment.html';
             return;

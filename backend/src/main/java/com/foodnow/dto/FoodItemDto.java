@@ -1,5 +1,8 @@
 package com.foodnow.dto;
 
+import com.foodnow.model.DietaryType;
+import com.foodnow.model.FoodCategory;
+
 public class FoodItemDto {
     private int id;
     private String name;
@@ -10,7 +13,9 @@ public class FoodItemDto {
     // These are the missing fields that caused your error
     private String restaurantName;
     private int restaurantId;
-
+    // --- NEW FIELDS ---
+    private FoodCategory category;
+    private DietaryType dietaryType;
     // Constructors
     public FoodItemDto() {}
 
@@ -79,4 +84,9 @@ public class FoodItemDto {
     public void setRestaurantId(int restaurantId) { 
         this.restaurantId = restaurantId; 
     }
+
+     public FoodCategory getCategory() { return category; } // ADD THIS GETTER
+    public void setCategory(FoodCategory category) { this.category = category; } // ADD THIS SETTER
+    public DietaryType getDietaryType() { return dietaryType; } // ADD THIS GETTER
+    public void setDietaryType(DietaryType dietaryType) { this.dietaryType = dietaryType; } // ADD THIS SETTER
 }

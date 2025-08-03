@@ -62,7 +62,8 @@ public class RestaurantController {
         item.setPrice(foodItemDto.getPrice());
         item.setImageUrl(foodItemDto.getImageUrl());
         item.setAvailable(true);
-
+item.setCategory(foodItemDto.getCategory()); // Set category
+        item.setDietaryType(foodItemDto.getDietaryType()); // Set dietary type
         FoodItem savedItem = restaurantService.addFoodItem(item);
         return ResponseEntity.ok(toFoodItemDto(savedItem));
     }
@@ -74,7 +75,8 @@ public class RestaurantController {
         existingItem.setDescription(foodItemDto.getDescription());
         existingItem.setPrice(foodItemDto.getPrice());
         existingItem.setImageUrl(foodItemDto.getImageUrl());
-
+existingItem.setCategory(foodItemDto.getCategory()); // Update category
+        existingItem.setDietaryType(foodItemDto.getDietaryType()); // Update dietary type
         FoodItem updated = restaurantService.updateFoodItem(itemId, existingItem);
         return ResponseEntity.ok(toFoodItemDto(updated));
     }
@@ -100,6 +102,8 @@ public class RestaurantController {
         dto.setPrice(item.getPrice());
         dto.setImageUrl(item.getImageUrl());
         dto.setAvailable(item.isAvailable());
+        dto.setCategory(item.getCategory()); // Include in DTO
+        dto.setDietaryType(item.getDietaryType()); // Include in DTO
         return dto;
     }
 

@@ -139,8 +139,14 @@ public class CartService {
         FoodItemDto dto = new FoodItemDto();
         dto.setId(foodItem.getId());
         dto.setName(foodItem.getName());
+        dto.setDescription(foodItem.getDescription());
         dto.setPrice(foodItem.getPrice());
-        // Add other fields if needed by the cart frontend
+        dto.setImageUrl(foodItem.getImageUrl()); // It was missing this line
+        dto.setAvailable(foodItem.isAvailable());
+        if (foodItem.getRestaurant() != null) {
+            dto.setRestaurantName(foodItem.getRestaurant().getName());
+            dto.setRestaurantId(foodItem.getRestaurant().getId());
+        }
         return dto;
     }
 }

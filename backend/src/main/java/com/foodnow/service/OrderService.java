@@ -168,7 +168,10 @@ if (agent != null) {
 
     private OrderItemDto toOrderItemDto(OrderItem item) {
         OrderItemDto itemDto = new OrderItemDto();
-        itemDto.setItemName(item.getFoodItem().getName());
+        if (item.getFoodItem() != null) {
+            itemDto.setItemName(item.getFoodItem().getName());
+            itemDto.setImageUrl(item.getFoodItem().getImageUrl()); // ADD THIS LINE
+        }
         itemDto.setQuantity(item.getQuantity());
         itemDto.setPrice(item.getPrice());
         return itemDto;

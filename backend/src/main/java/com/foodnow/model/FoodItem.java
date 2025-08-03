@@ -12,6 +12,15 @@ public class FoodItem {
     @Column(nullable = false) private double price;
     private String imageUrl;
     @Column(nullable = false) private boolean available = true;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private FoodCategory category;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private DietaryType dietaryType;
+
+
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "restaurant_id", nullable = false) @JsonIgnore private Restaurant restaurant;
 
     // Getters and Setters...
@@ -29,4 +38,8 @@ public class FoodItem {
     public void setAvailable(boolean available) { this.available = available; }
     public Restaurant getRestaurant() { return restaurant; }
     public void setRestaurant(Restaurant restaurant) { this.restaurant = restaurant; }
+        public FoodCategory getCategory() { return category; } // ADD THIS GETTER
+    public void setCategory(FoodCategory category) { this.category = category; } // ADD THIS SETTER
+    public DietaryType getDietaryType() { return dietaryType; } // ADD THIS GETTER
+    public void setDietaryType(DietaryType dietaryType) { this.dietaryType = dietaryType;}
 }

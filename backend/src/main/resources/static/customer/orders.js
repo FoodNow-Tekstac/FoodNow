@@ -1,4 +1,3 @@
-/* FILE: customer/orders.js */
 document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('foodnow_token');
     if (!token) {
@@ -36,15 +35,23 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        orders.sort((a, b) => new Date(b.orderTime) - new Date(a.orderTime)); // Show newest first
+        orders.sort((a, b) => new Date(b.orderTime) - new Date(a.orderTime));
+        const backendBaseUrl = API_BASE_URL.replace('/api', '');
 
         orders.forEach(order => {
             const orderCardWrapper = document.createElement('a');
-            // This now links to the new tracking page
             orderCardWrapper.href = `track-order.html?orderId=${order.id}`;
             orderCardWrapper.className = 'block bg-surface p-6 rounded-lg shadow-lg hover:bg-gray-700 transition';
             
-            const itemsHtml = order.items.map(item => `<li>${item.quantity} x ${item.itemName}</li>`).join('');
+            const itemsHtml = order.items.map(item => {
+                const imageUrl = item.imageUrl ? `${backendBaseUrl}${item.imageUrl}` : 'https://placehold.co/40x40/1f2937/9ca3af?text=No+Img';
+                return `
+                    <li class="flex items-center gap-3">
+                        <img src="${imageUrl}" alt="${item.itemName}" class="w-8 h-8 rounded-full object-cover">
+                        <span>${item.quantity} x ${item.itemName}</span>
+                    </li>
+                `;
+            }).join('');
             
             orderCardWrapper.innerHTML = `
                 <div class="flex justify-between items-start">
@@ -59,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="mt-4 pt-4 border-t border-border">
                     <h4 class="font-semibold mb-2">Items:</h4>
-                    <ul class="list-disc list-inside text-text-muted">
+                    <ul class="space-y-2 text-text-muted">
                         ${itemsHtml}
                     </ul>
                 </div>
