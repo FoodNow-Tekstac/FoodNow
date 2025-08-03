@@ -6,8 +6,11 @@ import org.springframework.boot.context.event.ApplicationReadyEvent; // 1. Add t
 import org.springframework.context.event.EventListener; // 2. Add this import
 import org.springframework.core.env.Environment; // 3. Add this import
 import org.springframework.beans.factory.annotation.Autowired; // 4. Add this import
+import org.springframework.scheduling.annotation.EnableScheduling; // ADD THIS ANNOTATION
 
 @SpringBootApplication
+@EnableScheduling // This enables the TaskScheduler for the 10-second delay
+
 public class FoodNowApplication {
 
     public static void main(String[] args) {

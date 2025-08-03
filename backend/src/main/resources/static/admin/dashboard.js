@@ -5,19 +5,29 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // --- Element References ---
     const mainContent = document.getElementById('main-content');
     const mainTitle = document.getElementById('main-title');
     const navLinks = document.querySelectorAll('.nav-link');
-
-    // --- Initial State ---
     let currentSection = 'applications';
 
-    // --- API Fetching Functions ---
+    const apiFetch = async (endpoint, options = {}) => {
+        const isFormData = options.body instanceof FormData;
+        if (!isFormData) {
+            options.headers = { ...options.headers, 'Content-Type': 'application/json' };
+        }
+        options.headers = { ...options.headers, 'Authorization': `Bearer ${token}` };
+        
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({ message: 'API request failed.' }));
+            throw new Error(errorData.message || 'API request failed.');
+        }
+        return response.status === 204 ? null : response.json();
+    };
 
     const fetchAndRender = async (section) => {
         mainContent.innerHTML = `<p class="text-text-muted">Loading...</p>`;
-        anime({ targets: '#main-content', opacity: [0, 1], duration: 500 });
+        anime({ targets: '#main-content', opacity: [0, 1], duration: 400, easing: 'easeOutQuad' });
 
         try {
             switch (section) {
@@ -52,36 +62,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const apiFetch = async (endpoint) => {
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (!response.ok) {
-            if (response.status === 403) {
-                showToast('Access Denied. Redirecting to login.', 'error');
-                setTimeout(() => window.location.href = '../index.html', 2000);
-            }
-            throw new Error(`Failed to fetch data from ${endpoint}`);
-        }
-        return response.json();
-    };
-
     // --- Rendering Functions ---
 
-    const renderTable = (data, headers, rowRenderer) => {
-        if (data.length === 0) {
-            mainContent.innerHTML = `<p class="text-text-muted">No data found.</p>`;
+    const renderTable = (parentElement, data, headers, rowRenderer) => {
+        parentElement.innerHTML = ''; // Clear the container first
+        if (!Array.isArray(data) || data.length === 0) {
+            parentElement.innerHTML = `<p class="text-text-muted">No data found.</p>`;
             return;
         }
         const table = createTable(headers);
         data.forEach(item => table.tBody.appendChild(rowRenderer(item)));
-        mainContent.innerHTML = '';
-        mainContent.appendChild(table.container);
+        parentElement.appendChild(table.container);
     };
 
     const renderPendingApplications = async () => {
         const applications = await apiFetch('/admin/applications/pending');
-        renderTable(applications, ['Restaurant Name', 'Applicant', 'Contact', 'Actions'], app => {
+        renderTable(mainContent, applications, ['Restaurant Name', 'Applicant', 'Contact', 'Actions'], app => {
             const row = document.createElement('tr');
             row.className = 'border-b border-border';
             row.innerHTML = `
@@ -97,9 +93,79 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    const renderDeliveryAgents = async () => {
+        const agents = await apiFetch('/admin/delivery-agents');
+
+        const container = document.createElement('div');
+        container.innerHTML = `
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold">Manage Delivery Agents</h3>
+                <button id="add-agent-btn" class="btn-primary px-4 py-2 rounded-lg font-semibold">+ Add Delivery Agent</button>
+            </div>
+            <div id="delivery-agent-table"></div>
+        `;
+        
+        const tableContainer = container.querySelector('#delivery-agent-table');
+        renderTable(tableContainer, agents, ['ID', 'Name', 'Email', 'Phone'], agent => {
+            const row = document.createElement('tr');
+            row.className = 'border-b border-border';
+            row.innerHTML = `
+                <td class="px-6 py-4 font-medium">${agent.id}</td>
+                <td class="px-6 py-4">${agent.name}</td>
+                <td class="px-6 py-4 text-text-muted">${agent.email}</td>
+                <td class="px-6 py-4 text-text-muted">${agent.phoneNumber}</td>
+            `;
+            return row;
+        });
+        
+        mainContent.innerHTML = '';
+        mainContent.appendChild(container);
+
+        const modal = document.createElement('div');
+        modal.id = 'agent-modal';
+        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden';
+        modal.innerHTML = `
+            <div class="bg-surface p-6 rounded-xl shadow-lg w-full max-w-lg relative">
+                <button id="close-agent-modal" class="absolute top-3 right-3 text-white text-xl font-bold">&times;</button>
+                <h3 class="text-xl font-bold mb-4">Add New Delivery Agent</h3>
+                <form id="add-agent-form" class="grid grid-cols-1 gap-4">
+                    <input type="text" name="name" placeholder="Name" required class="form-input p-2 border rounded-lg" />
+                    <input type="email" name="email" placeholder="Email" required class="form-input p-2 border rounded-lg" />
+                    <input type="text" name="phoneNumber" placeholder="Phone Number" required class="form-input p-2 border rounded-lg" />
+                    <input type="password" name="password" placeholder="Password" required class="form-input p-2 border rounded-lg" />
+                    <button type="submit" class="btn-primary px-4 py-2 rounded-lg font-semibold">Create Agent</button>
+                </form>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        document.getElementById('add-agent-btn').addEventListener('click', () => modal.classList.remove('hidden'));
+        document.getElementById('close-agent-modal').addEventListener('click', () => modal.classList.add('hidden'));
+
+        document.getElementById('add-agent-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                showToast('Creating agent...', 'loading');
+                await apiFetch('/admin/delivery-personnel', {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+                showToast('Agent created successfully', 'success');
+                modal.classList.add('hidden');
+                fetchAndRender('delivery');
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        });
+    };
+
     const renderAllRestaurants = async () => {
         const restaurants = await apiFetch('/admin/restaurants');
-        renderTable(restaurants, ['ID', 'Name', 'Address', 'Owner'], restaurant => {
+        renderTable(mainContent, restaurants, ['ID', 'Name', 'Address', 'Owner'], restaurant => {
             const row = document.createElement('tr');
             row.className = 'border-b border-border';
             row.innerHTML = `
@@ -114,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const renderAllUsers = async () => {
         const users = await apiFetch('/admin/users');
-        renderTable(users, ['ID', 'Name', 'Email', 'Phone', 'Role'], user => {
+        renderTable(mainContent, users, ['ID', 'Name', 'Email', 'Phone', 'Role'], user => {
             const row = document.createElement('tr');
             row.className = 'border-b border-border';
             row.innerHTML = `
@@ -130,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const renderAllOrders = async () => {
         const orders = await apiFetch('/admin/orders');
-        renderTable(orders, ['Order ID', 'Customer', 'Restaurant', 'Total', 'Status', 'Time'], order => {
+        renderTable(mainContent, orders, ['Order ID', 'Customer', 'Restaurant', 'Total', 'Status', 'Time'], order => {
             const row = document.createElement('tr');
             row.className = 'border-b border-border';
             row.innerHTML = `
@@ -145,21 +211,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    const renderDeliveryAgents = async () => {
-        const agents = await apiFetch('/admin/delivery-agents');
-        renderTable(agents, ['ID', 'Name', 'Email', 'Phone'], agent => {
-            const row = document.createElement('tr');
-            row.className = 'border-b border-border';
-            row.innerHTML = `
-                <td class="px-6 py-4 font-medium">${agent.id}</td>
-                <td class="px-6 py-4">${agent.name}</td>
-                <td class="px-6 py-4 text-text-muted">${agent.email}</td>
-                <td class="px-6 py-4 text-text-muted">${agent.phoneNumber}</td>
-            `;
-            return row;
-        });
-    };
-    
     const renderAnalytics = async () => {
         const data = await apiFetch('/admin/analytics');
         mainContent.innerHTML = `
@@ -199,6 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return { container, table, tBody };
     }
 
+    // --- Event Listeners ---
     document.getElementById('logout-btn').addEventListener('click', () => {
         localStorage.removeItem('foodnow_token');
         window.location.href = '../index.html';
@@ -209,10 +261,8 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const section = e.target.dataset.section;
             if (section === currentSection) return;
-
             navLinks.forEach(l => l.classList.remove('active'));
             e.target.classList.add('active');
-            
             currentSection = section;
             fetchAndRender(section);
         });

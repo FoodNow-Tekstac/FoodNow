@@ -13,7 +13,7 @@ import java.util.Map;
 @PreAuthorize("hasRole('CUSTOMER')")
 public class CartController {
 
-    @Autowired
+    @Autowired 
     private CartService cartService;
 
     @GetMapping
@@ -25,18 +25,11 @@ public class CartController {
     public ResponseEntity<CartDto> addItemToCart(@RequestBody Map<String, Integer> payload) {
         int foodItemId = payload.get("foodItemId");
         int quantity = payload.get("quantity");
-        
-        if (quantity <= 0) {
-            throw new IllegalArgumentException("Quantity must be greater than 0");
-        }
-        
         return ResponseEntity.ok(cartService.addItemToCart(foodItemId, quantity));
     }
 
     @PutMapping("/items/{cartItemId}")
-    public ResponseEntity<CartDto> updateItemQuantity(
-            @PathVariable int cartItemId, 
-            @RequestBody Map<String, Integer> payload) {
+    public ResponseEntity<CartDto> updateItemQuantity(@PathVariable int cartItemId, @RequestBody Map<String, Integer> payload) {
         int quantity = payload.get("quantity");
         return ResponseEntity.ok(cartService.updateItemQuantity(cartItemId, quantity));
     }
@@ -44,10 +37,5 @@ public class CartController {
     @DeleteMapping("/items/{cartItemId}")
     public ResponseEntity<CartDto> removeItemFromCart(@PathVariable int cartItemId) {
         return ResponseEntity.ok(cartService.removeItemFromCart(cartItemId));
-    }
-
-    @DeleteMapping("/clear")
-    public ResponseEntity<CartDto> clearCart() {
-        return ResponseEntity.ok(cartService.clearCart());
     }
 }

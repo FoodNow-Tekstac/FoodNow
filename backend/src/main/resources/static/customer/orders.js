@@ -1,3 +1,4 @@
+/* FILE: customer/orders.js */
 document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('foodnow_token');
     if (!token) {
@@ -38,11 +39,14 @@ document.addEventListener('DOMContentLoaded', () => {
         orders.sort((a, b) => new Date(b.orderTime) - new Date(a.orderTime)); // Show newest first
 
         orders.forEach(order => {
-            const orderEl = document.createElement('div');
-            orderEl.className = 'bg-surface p-6 rounded-lg shadow-lg';
+            const orderCardWrapper = document.createElement('a');
+            // This now links to the new tracking page
+            orderCardWrapper.href = `track-order.html?orderId=${order.id}`;
+            orderCardWrapper.className = 'block bg-surface p-6 rounded-lg shadow-lg hover:bg-gray-700 transition';
+            
             const itemsHtml = order.items.map(item => `<li>${item.quantity} x ${item.itemName}</li>`).join('');
             
-            orderEl.innerHTML = `
+            orderCardWrapper.innerHTML = `
                 <div class="flex justify-between items-start">
                     <div>
                         <h3 class="text-xl font-bold">${order.restaurantName}</h3>
@@ -59,8 +63,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${itemsHtml}
                     </ul>
                 </div>
+                <div class="text-right mt-4 text-primary font-semibold">
+                    Track Order &rarr;
+                </div>
             `;
-            ordersContainer.appendChild(orderEl);
+            ordersContainer.appendChild(orderCardWrapper);
         });
     };
 

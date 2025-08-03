@@ -1,5 +1,6 @@
 package com.foodnow.repository;
 
+import com.foodnow.model.DeliveryAgentStatus;
 import com.foodnow.model.Role;
 import com.foodnow.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +16,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     // New method to find all users with a specific role
     List<User> findByRole(Role role);
+        List<User> findByRoleAndDeliveryStatus(Role role, DeliveryAgentStatus status);
+
 }

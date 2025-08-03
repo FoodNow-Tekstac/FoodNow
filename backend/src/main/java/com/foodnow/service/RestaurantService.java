@@ -6,10 +6,13 @@ import com.foodnow.dto.OrderItemDto;
 import com.foodnow.dto.RestaurantDashboardDto;
 import com.foodnow.dto.RestaurantDto;
 import com.foodnow.exception.ResourceNotFoundException;
+import com.foodnow.model.DeliveryAgentStatus;
 import com.foodnow.model.FoodItem;
 import com.foodnow.model.Order;
 import com.foodnow.model.OrderItem;
+import com.foodnow.model.OrderStatus;
 import com.foodnow.model.Restaurant;
+import com.foodnow.model.Role;
 import com.foodnow.model.User;
 import com.foodnow.repository.FoodItemRepository;
 import com.foodnow.repository.OrderRepository;
@@ -17,10 +20,12 @@ import com.foodnow.repository.RestaurantRepository;
 import com.foodnow.repository.UserRepository;
 import com.foodnow.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,20 +36,71 @@ public class RestaurantService {
     @Autowired private FoodItemRepository foodItemRepository;
     @Autowired private UserRepository userRepository;
     @Autowired private OrderRepository orderRepository;
+    @Autowired private TaskScheduler taskScheduler; // Injected for scheduled tasks
 
+    @Transactional
+    public void readyForPickup(int orderId) {
+        Restaurant restaurant = getRestaurantByCurrentOwner();
+        Order order = orderRepository.findById(orderId)
+            .orElseThrow(() -> new ResourceNotFoundException("Order not found with ID: " + orderId));
+
+        if (order.getRestaurant().getId() != restaurant.getId()) {
+            throw new SecurityException("Unauthorized to manage this order.");
+        }
+        
+        List<User> availableAgents = userRepository.findByRoleAndDeliveryStatus(Role.DELIVERY_PERSONNEL, DeliveryAgentStatus.ONLINE);
+        if (availableAgents.isEmpty()) {
+            throw new IllegalStateException("No delivery agents are currently available to assign.");
+        }
+        
+        User agentToAssign = availableAgents.get(0); // Assign the first available agent
+        order.setDeliveryPersonnel(agentToAssign);
+        order.setStatus(OrderStatus.OUT_FOR_DELIVERY);
+        
+        agentToAssign.setDeliveryStatus(DeliveryAgentStatus.OFFLINE);
+        userRepository.save(agentToAssign);
+        orderRepository.save(order);
+
+        // Schedule the automatic delivery completion
+        scheduleAutoDelivery(orderId, agentToAssign.getId());
+    }
+
+    private void scheduleAutoDelivery(int orderId, int agentId) {
+        taskScheduler.schedule(() -> {
+            // This code runs after 10 seconds in a separate thread
+            updateOrderAndAgentStatus(orderId, agentId);
+        }, Instant.now().plusSeconds(10));
+    }
+
+    @Transactional
+    public void updateOrderAndAgentStatus(int orderId, int agentId) {
+        // Re-fetch entities within this new transaction
+        Order order = orderRepository.findById(orderId).orElse(null);
+        User agent = userRepository.findById(agentId).orElse(null);
+
+        if (order != null && agent != null) {
+            order.setStatus(OrderStatus.DELIVERED);
+            agent.setDeliveryStatus(DeliveryAgentStatus.ONLINE);
+            
+            orderRepository.save(order);
+            userRepository.save(agent);
+            
+            System.out.println("Order #" + orderId + " automatically marked as DELIVERED.");
+            System.out.println("Agent " + agent.getName() + " is now back ONLINE.");
+        }
+    }
+    
+    // --- All other existing methods from your file ---
+    
     @Transactional(readOnly = true)
     public RestaurantDashboardDto getDashboardData() {
         Restaurant restaurant = getRestaurantByCurrentOwner();
-
         RestaurantDashboardDto dashboardDto = new RestaurantDashboardDto();
         dashboardDto.setRestaurantProfile(toRestaurantDto(restaurant));
-
         List<Order> orders = orderRepository.findByRestaurantId(restaurant.getId());
         dashboardDto.setOrders(orders.stream().map(this::toOrderDto).collect(Collectors.toList()));
-
         List<FoodItem> menu = restaurant.getMenu();
         dashboardDto.setMenu(menu.stream().map(this::toFoodItemDto).collect(Collectors.toList()));
-
         return dashboardDto;
     }
 
@@ -78,8 +134,7 @@ public class RestaurantService {
 
     @Transactional
     public FoodItem updateFoodItem(int itemId, FoodItem updatedItem) {
-        FoodItem existingItem = foodItemRepository.findById(itemId)
-                .orElseThrow(() -> new ResourceNotFoundException("Food item not found with ID: " + itemId));
+        FoodItem existingItem = getFoodItemById(itemId);
 
         if (existingItem.getRestaurant().getId() != getRestaurantByCurrentOwner().getId()) {
             throw new SecurityException("Unauthorized to update this food item");
@@ -96,8 +151,7 @@ public class RestaurantService {
 
     @Transactional
     public void deleteFoodItem(int itemId) {
-        FoodItem item = foodItemRepository.findById(itemId)
-                .orElseThrow(() -> new ResourceNotFoundException("Food item not found with ID: " + itemId));
+        FoodItem item = getFoodItemById(itemId);
         if (item.getRestaurant().getId() != getRestaurantByCurrentOwner().getId()) {
             throw new SecurityException("Unauthorized to delete this food item");
         }
@@ -106,8 +160,7 @@ public class RestaurantService {
 
     @Transactional
     public FoodItem toggleFoodItemAvailability(int itemId) {
-        FoodItem item = foodItemRepository.findById(itemId)
-                .orElseThrow(() -> new ResourceNotFoundException("Food item not found with ID: " + itemId));
+        FoodItem item = getFoodItemById(itemId);
         if (item.getRestaurant().getId() != getRestaurantByCurrentOwner().getId()) {
             throw new SecurityException("Unauthorized to update this food item");
         }

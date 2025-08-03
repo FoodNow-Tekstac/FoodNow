@@ -1,16 +1,15 @@
+
+// File: src/main/java/com/foodnow/controller/OrderController.java (UPDATED)
 package com.foodnow.controller;
 
 import com.foodnow.dto.OrderDto;
-import com.foodnow.dto.OrderItemDto;
-import com.foodnow.model.Order;
+import com.foodnow.dto.OrderTrackingDto;
 import com.foodnow.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -23,8 +22,9 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<OrderDto> placeOrder() {
         try {
-            Order order = orderService.placeOrderFromCart();
-            return ResponseEntity.ok(toOrderDto(order));
+            // The service now returns the DTO directly.
+            OrderDto orderDto = orderService.placeOrderFromCart();
+            return ResponseEntity.ok(orderDto);
         } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().body(null);
         }
@@ -32,30 +32,16 @@ public class OrderController {
 
     @GetMapping("/my-orders")
     public ResponseEntity<List<OrderDto>> getMyOrders() {
-        List<Order> orders = orderService.getMyOrders();
-        List<OrderDto> dtoList = orders.stream().map(this::toOrderDto).collect(Collectors.toList());
+        // The service now returns a List<OrderDto> directly.
+        List<OrderDto> dtoList = orderService.getMyOrders();
         return ResponseEntity.ok(dtoList);
     }
-    
-    // --- DTO Conversion Helper ---
-    private OrderDto toOrderDto(Order order) {
-        OrderDto dto = new OrderDto();
-        dto.setId(order.getId());
-        dto.setRestaurantName(order.getRestaurant().getName());
-        dto.setTotalPrice(order.getTotalPrice());
-        dto.setStatus(order.getStatus());
-        dto.setOrderTime(order.getOrderTime());
 
-        List<OrderItemDto> itemDtos = order.getItems().stream().map(item -> {
-            OrderItemDto itemDto = new OrderItemDto();
-            // CORRECTED: Changed setFoodItemName to setItemName to match the DTO
-            itemDto.setItemName(item.getFoodItem().getName());
-            itemDto.setQuantity(item.getQuantity());
-            itemDto.setPrice(item.getPrice());
-            return itemDto;
-        }).collect(Collectors.toList());
-        
-        dto.setItems(itemDtos);
-        return dto;
+    @GetMapping("/my-orders/{orderId}")
+    public ResponseEntity<OrderTrackingDto> getOrderById(@PathVariable int orderId) {
+        return ResponseEntity.ok(orderService.getOrderForTracking(orderId));
     }
+    
+    // The DTO conversion logic is now correctly handled in the service layer,
+    // so the helper methods are no longer needed in the controller.
 }

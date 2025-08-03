@@ -12,7 +12,6 @@ import com.foodnow.model.RestaurantApplication;
 import com.foodnow.model.User;
 import com.foodnow.service.AdminService;
 import com.foodnow.service.AuthenticationService;
-import com.foodnow.service.OrderManagementService;
 import com.foodnow.service.RestaurantApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,7 +29,6 @@ public class AdminController {
 
     @Autowired private RestaurantApplicationService applicationService;
     @Autowired private AuthenticationService authenticationService;
-    @Autowired private OrderManagementService orderManagementService;
     @Autowired private AdminService adminService;
 
     // --- Restaurant Application Management ---
@@ -78,23 +76,7 @@ public class AdminController {
         }
     }
 
-    // --- Order Management ---
-    
-    @PostMapping("/orders/{orderId}/assign-delivery")
-    public ResponseEntity<ApiResponse> assignDelivery(@PathVariable int orderId, @RequestBody Map<String, Integer> payload) {
-        Integer deliveryPersonnelId = payload.get("deliveryPersonnelId");
-        if (deliveryPersonnelId == null) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, "deliveryPersonnelId is required."));
-        }
-        try {
-            orderManagementService.assignDeliveryPersonnel(orderId, deliveryPersonnelId);
-            return ResponseEntity.ok(new ApiResponse(true, "Order assigned successfully."));
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(false, e.getMessage()));
-        }
-    }
-
-    // --- NEW ENDPOINTS FOR ADMIN DASHBOARD ---
+    // --- Dashboard Endpoints ---
 
     @GetMapping("/users")
     public ResponseEntity<List<UserDto>> getAllUsers() {

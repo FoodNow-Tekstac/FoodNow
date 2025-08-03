@@ -38,7 +38,7 @@ public class OrderManagementController {
      * Added 'DELIVERY_PERSONNEL' to the list of roles that can access this endpoint.
      */
     @PatchMapping("/{orderId}/status")
-    @PreAuthorize("hasAnyRole('RESTAURANT_OWNER', 'ADMIN', 'DELIVERY_PERSONNEL')")
+@PreAuthorize("hasAnyRole('RESTAURANT_OWNER', 'ADMIN', 'DELIVERY_PERSONNEL', 'CUSTOMER')")
     public ResponseEntity<OrderDto> updateOrderStatus(@PathVariable int orderId, @RequestBody UpdateOrderStatusRequest request) {
         Order updatedOrder = orderManagementService.updateOrderStatus(orderId, request.getStatus());
         return ResponseEntity.ok(toOrderDto(updatedOrder));

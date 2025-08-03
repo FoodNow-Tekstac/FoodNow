@@ -32,6 +32,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Address> addresses = new HashSet<>();
 
+    @Enumerated(EnumType.STRING)
+    private DeliveryAgentStatus deliveryStatus;
+
     // Getters and Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
@@ -45,6 +48,8 @@ public class User {
     public void setPassword(String password) { this.password = password; }
     public Role getRole() { return role; }
     public void setRole(Role role) { this.role = role; }
+     public DeliveryAgentStatus getDeliveryStatus() { return deliveryStatus; } // ADD THIS GETTER
+    public void setDeliveryStatus(DeliveryAgentStatus status) { this.deliveryStatus = status; } // ADD THIS SETTER
     public Set<Address> getAddresses() { return addresses; }
     public void setAddresses(Set<Address> addresses) { this.addresses = addresses; }
 }
