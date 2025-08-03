@@ -23,6 +23,9 @@ public class Restaurant {
     @OneToOne @JoinColumn(name = "owner_id", referencedColumnName = "id") @JsonIgnore private User owner;
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true) @JsonIgnore private List<FoodItem> menu = new ArrayList<>();
     
+        @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Review> reviews = new ArrayList<>();
     // Getters and Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
@@ -42,4 +45,6 @@ public class Restaurant {
     public void setOwner(User owner) { this.owner = owner; }
     public List<FoodItem> getMenu() { return menu; }
     public void setMenu(List<FoodItem> menu) { this.menu = menu; }
+     public List<Review> getReviews() { return reviews; } // ADD THIS GETTER
+    public void setReviews(List<Review> reviews) { this.reviews = reviews; } // ADD THIS SETTER
 }

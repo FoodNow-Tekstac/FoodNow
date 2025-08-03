@@ -1,8 +1,13 @@
 package com.foodnow.model;
 
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 @Entity
@@ -32,6 +37,10 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Address> addresses = new HashSet<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Review> reviews = new ArrayList<>();
+
     @Enumerated(EnumType.STRING)
     private DeliveryAgentStatus deliveryStatus;
 
@@ -52,5 +61,7 @@ public class User {
     public void setDeliveryStatus(DeliveryAgentStatus status) { this.deliveryStatus = status; } // ADD THIS SETTER
     public Set<Address> getAddresses() { return addresses; }
     public void setAddresses(Set<Address> addresses) { this.addresses = addresses; }
+    public List<Review> getReviews() { return reviews; } // ADD THIS GETTER
+    public void setReviews(List<Review> reviews) { this.reviews = reviews; } // ADD THIS SETTER
 }
 

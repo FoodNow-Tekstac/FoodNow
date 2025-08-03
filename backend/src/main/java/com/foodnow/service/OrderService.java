@@ -163,6 +163,8 @@ if (agent != null) {
         dto.setStatus(order.getStatus());
         dto.setOrderTime(order.getOrderTime());
         dto.setItems(order.getItems().stream().map(this::toOrderItemDto).collect(Collectors.toList()));
+                dto.setHasReview(order.getReview() != null);
+
         return dto;
     }
 

@@ -12,7 +12,9 @@ public class OrderDto {
     private double totalPrice;
     private OrderStatus status;
     private LocalDateTime orderTime;
-
+    private boolean hasReview; // ADD THIS FIELD
+   private Integer reviewRating;
+    private String reviewComment;
     // Getters and Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
@@ -28,4 +30,10 @@ public class OrderDto {
     public void setStatus(OrderStatus status) { this.status = status; }
     public LocalDateTime getOrderTime() { return orderTime; }
     public void setOrderTime(LocalDateTime orderTime) { this.orderTime = orderTime; }
+    public boolean isHasReview() { return hasReview; } // ADD THIS GETTER
+    public void setHasReview(boolean hasReview) { this.hasReview = hasReview; } // ADD THIS SETTER
+    public Integer getReviewRating() { return reviewRating; } // ADD THIS GETTER
+    public void setReviewRating(Integer reviewRating) { this.reviewRating = reviewRating; } // ADD THIS SETTER
+    public String getReviewComment() { return reviewComment; } // ADD THIS GETTER
+    public void setReviewComment(String reviewComment) { this.reviewComment = reviewComment; } // ADD THIS SETTER
 }

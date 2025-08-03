@@ -141,6 +141,10 @@ public class AdminService {
         if (order.getItems() != null) {
             dto.setItems(order.getItems().stream().map(this::toOrderItemDto).collect(Collectors.toList()));
         }
+        if (order.getReview() != null) {
+            dto.setReviewRating(order.getReview().getRating());
+            dto.setReviewComment(order.getReview().getComment());
+        }
         return dto;
     }
 }

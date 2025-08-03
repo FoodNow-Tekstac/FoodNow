@@ -50,9 +50,11 @@
             </nav>
         </div>
         <div id="main-content" class="opacity-0">
-            </div>
+            <!-- Content will be injected by JavaScript -->
+        </div>
     </main>
 
+    <!-- Add/Edit Item Modal -->
     <div id="item-modal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center p-4 z-50">
         <div class="bg-surface w-full max-w-lg p-8 rounded-2xl shadow-2xl border border-border">
             <h3 id="modal-title" class="text-2xl font-bold mb-6 text-center">Add New Item</h3>
@@ -62,7 +64,6 @@
                     <input type="text" id="item-name" name="name" class="form-input" placeholder="Item Name" required>
                     <textarea id="item-description" name="description" class="form-input" placeholder="Description" required></textarea>
                     <input type="number" id="item-price" name="price" step="0.01" class="form-input" placeholder="Price" required>
-                    
                     <div class="grid grid-cols-2 gap-4">
                         <select id="item-category" name="category" class="form-input" required>
                             <option value="" disabled selected>Select Category</option>
@@ -79,7 +80,6 @@
                             <option value="VEGAN">Vegan</option>
                         </select>
                     </div>
-                    
                     <div>
                         <label for="item-image" class="block text-sm font-medium text-text-muted mb-2">Food Image</label>
                         <input type="file" id="item-image" name="image" class="form-input file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-black hover:file:bg-primary-light">

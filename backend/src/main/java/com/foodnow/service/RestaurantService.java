@@ -5,6 +5,7 @@ import com.foodnow.dto.OrderDto;
 import com.foodnow.dto.OrderItemDto;
 import com.foodnow.dto.RestaurantDashboardDto;
 import com.foodnow.dto.RestaurantDto;
+import com.foodnow.dto.ReviewDto;
 import com.foodnow.exception.ResourceNotFoundException;
 import com.foodnow.model.DeliveryAgentStatus;
 import com.foodnow.model.FoodItem;
@@ -12,6 +13,7 @@ import com.foodnow.model.Order;
 import com.foodnow.model.OrderItem;
 import com.foodnow.model.OrderStatus;
 import com.foodnow.model.Restaurant;
+import com.foodnow.model.Review;
 import com.foodnow.model.Role;
 import com.foodnow.model.User;
 import com.foodnow.repository.FoodItemRepository;
@@ -36,7 +38,26 @@ public class RestaurantService {
     @Autowired private FoodItemRepository foodItemRepository;
     @Autowired private UserRepository userRepository;
     @Autowired private OrderRepository orderRepository;
-    @Autowired private TaskScheduler taskScheduler; // Injected for scheduled tasks
+    @Autowired private TaskScheduler taskScheduler;
+
+    @Transactional(readOnly = true)
+    public RestaurantDashboardDto getDashboardData() {
+        Restaurant restaurant = getRestaurantByCurrentOwner();
+        RestaurantDashboardDto dashboardDto = new RestaurantDashboardDto();
+        dashboardDto.setRestaurantProfile(toRestaurantDto(restaurant));
+
+        // THIS IS THE FIX: Use the single, correct query to fetch orders with their items
+        List<Order> orders = orderRepository.findByRestaurantIdWithItems(restaurant.getId());
+        dashboardDto.setOrders(orders.stream().map(this::toOrderDto).collect(Collectors.toList()));
+
+        List<FoodItem> menu = restaurant.getMenu();
+        dashboardDto.setMenu(menu.stream().map(this::toFoodItemDto).collect(Collectors.toList()));
+
+        List<Review> reviews = restaurant.getReviews();
+        dashboardDto.setReviews(reviews.stream().map(this::toReviewDto).collect(Collectors.toList()));
+        
+        return dashboardDto;
+    }
 
     @Transactional
     public void readyForPickup(int orderId) {
@@ -53,7 +74,7 @@ public class RestaurantService {
             throw new IllegalStateException("No delivery agents are currently available to assign.");
         }
         
-        User agentToAssign = availableAgents.get(0); // Assign the first available agent
+        User agentToAssign = availableAgents.get(0);
         order.setDeliveryPersonnel(agentToAssign);
         order.setStatus(OrderStatus.OUT_FOR_DELIVERY);
         
@@ -61,30 +82,25 @@ public class RestaurantService {
         userRepository.save(agentToAssign);
         orderRepository.save(order);
 
-        // Schedule the automatic delivery completion
         scheduleAutoDelivery(orderId, agentToAssign.getId());
     }
 
     private void scheduleAutoDelivery(int orderId, int agentId) {
         taskScheduler.schedule(() -> {
-            // This code runs after 10 seconds in a separate thread
             updateOrderAndAgentStatus(orderId, agentId);
         }, Instant.now().plusSeconds(10));
     }
 
     @Transactional
     public void updateOrderAndAgentStatus(int orderId, int agentId) {
-        // Re-fetch entities within this new transaction
         Order order = orderRepository.findById(orderId).orElse(null);
         User agent = userRepository.findById(agentId).orElse(null);
 
         if (order != null && agent != null) {
             order.setStatus(OrderStatus.DELIVERED);
             agent.setDeliveryStatus(DeliveryAgentStatus.ONLINE);
-            
             orderRepository.save(order);
             userRepository.save(agent);
-            
             System.out.println("Order #" + orderId + " automatically marked as DELIVERED.");
             System.out.println("Agent " + agent.getName() + " is now back ONLINE.");
         }
@@ -92,18 +108,6 @@ public class RestaurantService {
     
     // --- All other existing methods from your file ---
     
-    @Transactional(readOnly = true)
-    public RestaurantDashboardDto getDashboardData() {
-        Restaurant restaurant = getRestaurantByCurrentOwner();
-        RestaurantDashboardDto dashboardDto = new RestaurantDashboardDto();
-        dashboardDto.setRestaurantProfile(toRestaurantDto(restaurant));
-        List<Order> orders = orderRepository.findByRestaurantId(restaurant.getId());
-        dashboardDto.setOrders(orders.stream().map(this::toOrderDto).collect(Collectors.toList()));
-        List<FoodItem> menu = restaurant.getMenu();
-        dashboardDto.setMenu(menu.stream().map(this::toFoodItemDto).collect(Collectors.toList()));
-        return dashboardDto;
-    }
-
     public Restaurant getRestaurantByOwnerId(int ownerId) {
         return restaurantRepository.findByOwnerId(ownerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found for owner ID: " + ownerId));
@@ -135,18 +139,16 @@ public class RestaurantService {
     @Transactional
     public FoodItem updateFoodItem(int itemId, FoodItem updatedItem) {
         FoodItem existingItem = getFoodItemById(itemId);
-
         if (existingItem.getRestaurant().getId() != getRestaurantByCurrentOwner().getId()) {
             throw new SecurityException("Unauthorized to update this food item");
         }
-
         existingItem.setName(updatedItem.getName());
         existingItem.setDescription(updatedItem.getDescription());
         existingItem.setPrice(updatedItem.getPrice());
         existingItem.setImageUrl(updatedItem.getImageUrl());
         existingItem.setAvailable(updatedItem.isAvailable());
-existingItem.setCategory(updatedItem.getCategory()); // Persist category
-        existingItem.setDietaryType(updatedItem.getDietaryType()); // Persist dietary type
+        existingItem.setCategory(updatedItem.getCategory());
+        existingItem.setDietaryType(updatedItem.getDietaryType());
         return foodItemRepository.save(existingItem);
     }
 
@@ -202,6 +204,17 @@ existingItem.setCategory(updatedItem.getCategory()); // Persist category
         return dto;
     }
 
+    private ReviewDto toReviewDto(Review review) {
+        ReviewDto dto = new ReviewDto();
+        dto.setRating(review.getRating());
+        dto.setComment(review.getComment());
+        dto.setReviewDate(review.getReviewDate());
+        if (review.getUser() != null) {
+            dto.setCustomerName(review.getUser().getName());
+        }
+        return dto;
+    }
+
     private FoodItemDto toFoodItemDto(FoodItem item) {
         FoodItemDto dto = new FoodItemDto();
         dto.setId(item.getId());
@@ -210,8 +223,8 @@ existingItem.setCategory(updatedItem.getCategory()); // Persist category
         dto.setPrice(item.getPrice());
         dto.setAvailable(item.isAvailable());
         dto.setImageUrl(item.getImageUrl());
-        dto.setCategory(item.getCategory()); // Include in DTO
-        dto.setDietaryType(item.getDietaryType()); // Include in DTO
+        dto.setCategory(item.getCategory());
+        dto.setDietaryType(item.getDietaryType());
         return dto;
     }
 
@@ -228,6 +241,14 @@ existingItem.setCategory(updatedItem.getCategory()); // Persist category
         dto.setCustomerName(order.getCustomer() != null ? order.getCustomer().getName() : "N/A");
         dto.setTotalPrice(order.getTotalPrice());
         dto.setStatus(order.getStatus());
+        dto.setOrderTime(order.getOrderTime());
+        if (order.getReview() != null) {
+            dto.setHasReview(true);
+            dto.setReviewRating(order.getReview().getRating());
+            dto.setReviewComment(order.getReview().getComment());
+        } else {
+            dto.setHasReview(false);
+        }
         if (order.getItems() != null) {
             dto.setItems(order.getItems().stream().map(this::toOrderItemDto).collect(Collectors.toList()));
         }

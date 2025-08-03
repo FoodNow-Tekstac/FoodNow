@@ -54,6 +54,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/orders/**").hasRole("CUSTOMER")
                 .requestMatchers("/api/payments/**").hasRole("CUSTOMER")
                                 .requestMatchers("/api/delivery/**").hasRole("DELIVERY_PERSONNEL") // ADD THIS RULE
+                .requestMatchers(HttpMethod.POST, "/api/orders/{orderId}/review").hasRole("CUSTOMER") // ADD THIS RULE
 
  .requestMatchers("/api/manage/orders/**").hasAnyRole("ADMIN", "RESTAURANT_OWNER", "DELIVERY_PERSONNEL", "CUSTOMER")
                 .anyRequest().authenticated()

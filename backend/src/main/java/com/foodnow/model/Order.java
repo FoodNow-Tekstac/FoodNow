@@ -26,6 +26,9 @@ public class Order {
     @JoinColumn(name = "delivery_personnel_id")
     private User deliveryPersonnel;
 
+
+        @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Review review;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items = new ArrayList<>();
 
@@ -56,4 +59,6 @@ public class Order {
     public void setStatus(OrderStatus status) { this.status = status; }
     public LocalDateTime getOrderTime() { return orderTime; }
     public void setOrderTime(LocalDateTime orderTime) { this.orderTime = orderTime; }
+       public Review getReview() { return review; } // ADD THIS GETTER
+    public void setReview(Review review) { this.review = review; } // ADD THIS SETTER
 }

@@ -194,17 +194,25 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    const renderAllOrders = async () => {
+        const renderAllOrders = async () => {
         const orders = await apiFetch('/admin/orders');
-        renderTable(mainContent, orders, ['Order ID', 'Customer', 'Restaurant', 'Total', 'Status', 'Time'], order => {
+        // Add "Rating" to the table headers
+        renderTable(mainContent, orders, ['Order ID', 'Customer', 'Restaurant', 'Total', 'Status', 'Rating', 'Time'], order => {
             const row = document.createElement('tr');
             row.className = 'border-b border-border';
+            
+            // Display star rating if it exists
+            const ratingHtml = order.reviewRating 
+                ? `<span class="text-yellow-400 font-semibold">${'&#9733;'.repeat(order.reviewRating)}</span>`
+                : 'N/A';
+
             row.innerHTML = `
                 <td class="px-6 py-4 font-medium">#${order.id}</td>
                 <td class="px-6 py-4">${order.customerName}</td>
                 <td class="px-6 py-4 text-text-muted">${order.restaurantName}</td>
                 <td class="px-6 py-4 text-text-muted">₹${order.totalPrice.toFixed(2)}</td>
                 <td class="px-6 py-4 text-text-muted">${order.status}</td>
+                <td class="px-6 py-4 text-text-muted">${ratingHtml}</td>
                 <td class="px-6 py-4 text-text-muted">${new Date(order.orderTime).toLocaleString()}</td>
             `;
             return row;
