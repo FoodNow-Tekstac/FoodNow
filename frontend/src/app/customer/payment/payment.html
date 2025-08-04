@@ -1,0 +1,68 @@
+<main class="container mx-auto mt-24 px-6 pb-12">
+  <div class="max-w-4xl mx-auto">
+    <div class="mb-8">
+      <a routerLink="/customer/cart" class="text-primary hover:underline">&larr; Back to Cart</a>
+      <h1 class="text-5xl font-extrabold mt-4">Confirm Your Order</h1>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-8">
+      <div class="bg-surface rounded-lg p-8">
+        @if(cart(); as c) {
+          <h3 class="text-2xl font-bold mb-6">Order Summary</h3>
+          <div class="space-y-2">
+            @for(item of c.items; track item.id) {
+              <div class="flex justify-between items-center py-3 border-b border-border last:border-b-0">
+                <div>
+                  <p class="font-semibold text-white">{{ item.foodItem.name }}</p>
+                  <p class="text-sm text-text-muted">Quantity: {{ item.quantity }}</p>
+                </div>
+                <span class="font-bold text-primary">₹{{ (item.foodItem.price * item.quantity).toFixed(2) }}</span>
+              </div>
+            }
+          </div>
+          <div class="mt-6 space-y-3 text-sm">
+            <div class="flex justify-between py-2"><span class="text-text-muted">Subtotal</span><span>₹{{ c.totalPrice.toFixed(2) }}</span></div>
+            <div class="flex justify-between py-2"><span class="text-text-muted">Taxes & Fees (5%)</span><span>₹{{ (c.totalPrice * 0.05).toFixed(2) }}</span></div>
+            <div class="border-t border-border pt-3">
+              <div class="flex justify-between items-center"><span class="text-xl font-bold">Total</span><span class="text-2xl font-bold text-primary">₹{{ (c.totalPrice * 1.05).toFixed(2) }}</span></div>
+            </div>
+          </div>
+        } @else {
+          <p class="text-text-muted">Loading order summary...</p>
+        }
+      </div>
+
+      <div class="space-y-6">
+        <div class="bg-surface rounded-lg p-6">
+          <h3 class="text-xl font-bold mb-4">Delivery Address</h3>
+          <p class="text-text-muted">123 Food Street, Hyderabad, 500001</p>
+        </div>
+
+        <div class="bg-surface rounded-lg p-6">
+          <h3 class="text-xl font-bold mb-4">Payment Method</h3>
+          <div class="space-y-3">
+            <div class="payment-method p-4" (click)="selectPaymentMethod('card')" [ngClass]="{'selected': selectedPaymentMethod() === 'card'}">Card</div>
+            <div class="payment-method p-4" (click)="selectPaymentMethod('upi')" [ngClass]="{'selected': selectedPaymentMethod() === 'upi'}">UPI</div>
+            <div class="payment-method p-4" (click)="selectPaymentMethod('wallet')" [ngClass]="{'selected': selectedPaymentMethod() === 'wallet'}">Wallet</div>
+            <div class="payment-method p-4" (click)="selectPaymentMethod('cod')" [ngClass]="{'selected': selectedPaymentMethod() === 'cod'}">Cash on Delivery</div>
+          </div>
+        </div>
+
+        @if(selectedPaymentMethod() === 'upi') {
+          <div class="bg-surface rounded-lg p-6">
+            <h3 class="text-xl font-bold mb-4">Scan QR to Pay</h3>
+            <div class="text-center">
+              <div #qrCodeContainer class="inline-block p-4 bg-white rounded-lg"></div>
+            </div>
+          </div>
+        }
+
+        <div class="bg-surface rounded-lg p-6">
+          <button (click)="onPlaceOrder()" [disabled]="!cart() || cart()!.items.length === 0" class="btn-primary w-full py-4 rounded-lg font-semibold text-lg">
+            Confirm Payment & Place Order
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Dashboard - FoodNow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        .nav-link {
+            padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: 500;
+            color: var(--color-text-muted); transition: all 0.2s;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover { color: var(--color-text); }
+        .nav-link.active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+        .switch { position: relative; display: inline-block; width: 48px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #4b5563; transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--color-success); }
+        input:checked + .slider:before { transform: translateX(24px); }
+    </style>
+</head>
+<body class="bg-bg">
+    <div id="toast-container"></div>
+    <audio id="notification-sound" src="https://actions.google.com/sounds/v1/alarms/notification_sound.ogg" preload="auto"></audio>
+
+    <header class="fixed top-0 left-0 right-0 bg-surface shadow-md z-50 border-b border-border">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <h1 id="restaurant-name-header" class="text-2xl font-bold text-white"></h1>
+            <button id="logout-btn" class="btn-secondary px-4 py-2 rounded-lg font-semibold">Logout</button>
+        </nav>
+    </header>
+
+    <main class="container mx-auto mt-24 px-6">
+        <div class="border-b border-border mb-8">
+            <nav id="dashboard-nav" class="flex -mb-px space-x-6">
+                <a href="#" data-section="overview" class="nav-link active">Overview</a>
+                <a href="#" data-section="orders" class="nav-link">Order Management</a>
+                <a href="#" data-section="menu" class="nav-link">Menu Management</a>
+                <a href="#" data-section="reviews" class="nav-link">Customer Reviews</a>
+            </nav>
+        </div>
+        <div id="main-content" class="opacity-0">
+            <!-- Content will be injected by JavaScript -->
+        </div>
+    </main>
+
+    <!-- Add/Edit Item Modal -->
+    <div id="item-modal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center p-4 z-50">
+        <div class="bg-surface w-full max-w-lg p-8 rounded-2xl shadow-2xl border border-border">
+            <h3 id="modal-title" class="text-2xl font-bold mb-6 text-center">Add New Item</h3>
+            <form id="item-form">
+                <input type="hidden" id="item-id" name="id">
+                <div class="space-y-4">
+                    <input type="text" id="item-name" name="name" class="form-input" placeholder="Item Name" required>
+                    <textarea id="item-description" name="description" class="form-input" placeholder="Description" required></textarea>
+                    <input type="number" id="item-price" name="price" step="0.01" class="form-input" placeholder="Price" required>
+                    <div class="grid grid-cols-2 gap-4">
+                        <select id="item-category" name="category" class="form-input" required>
+                            <option value="" disabled selected>Select Category</option>
+                            <option value="STARTER">Starter</option>
+                            <option value="MAIN_COURSE">Main Course</option>
+                            <option value="DESSERT">Dessert</option>
+                            <option value="DRINK">Drink</option>
+                            <option value="SIDE">Side</option>
+                        </select>
+                        <select id="item-dietaryType" name="dietaryType" class="form-input" required>
+                            <option value="" disabled selected>Select Dietary Type</option>
+                            <option value="VEG">Veg</option>
+                            <option value="NON_VEG">Non-Veg</option>
+                            <option value="VEGAN">Vegan</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="item-image" class="block text-sm font-medium text-text-muted mb-2">Food Image</label>
+                        <input type="file" id="item-image" name="image" class="form-input file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-black hover:file:bg-primary-light">
+                        <input type="hidden" id="item-imageUrl" name="imageUrl">
+                    </div>
+                </div>
+                <div class="mt-8 flex justify-end gap-4">
+                    <button type="button" id="close-modal-btn" class="btn-secondary px-6 py-2 rounded-lg font-semibold">Cancel</button>
+                    <button type="submit" class="btn-primary px-6 py-2 rounded-lg font-semibold">Save Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../assets/js/main.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>

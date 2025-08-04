@@ -1,0 +1,466 @@
+openapi: 3.0.3
+info:
+  title: FoodNow API
+  description: The complete API specification for the FoodNow food delivery application.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+paths:
+  # ===============================================================
+  # Authentication Endpoints
+  # ===============================================================
+  /api/auth/register:
+    post:
+      summary: Register a new customer
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignUpRequest'
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Bad Request (e.g., email already in use)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /api/auth/login:
+    post:
+      summary: Login a user
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JwtAuthenticationResponse'
+        '401':
+          description: Unauthorized (invalid credentials)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  # ===============================================================
+  # Public Endpoints
+  # ===============================================================
+  /api/public/restaurants:
+    get:
+      summary: Get all active restaurants
+      tags: [Public]
+      responses:
+        '200':
+          description: A list of active restaurants
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RestaurantDto'
+
+  /api/public/restaurants/{restaurantId}/menu:
+    get:
+      summary: Get a specific restaurant's menu
+      tags: [Public]
+      parameters:
+        - name: restaurantId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The restaurant details with its full menu
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestaurantDto'
+        '404':
+          description: Restaurant not found
+
+  # ===============================================================
+  # Customer Endpoints
+  # ===============================================================
+  /api/restaurant/apply:
+    post:
+      summary: Apply to become a restaurant owner
+      tags: [Customer Actions]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RestaurantApplicationRequest'
+      responses:
+        '200':
+          description: Application submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestaurantApplication'
+        '409':
+          description: Conflict (e.g., user already has an application)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /api/cart/items:
+    post:
+      summary: Add an item to the cart
+      tags: [Customer Actions]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                foodItemId:
+                  type: integer
+                quantity:
+                  type: integer
+      responses:
+        '200':
+          description: Item added to cart successfully
+
+  /api/orders:
+    post:
+      summary: Place an order from the cart
+      tags: [Customer Actions]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Order placed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDto'
+        '400':
+          description: Bad Request (e.g., cart is empty)
+
+  /api/orders/my-orders:
+    get:
+      summary: Get the current user's order history
+      tags: [Customer Actions]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: A list of the user's past orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderDto'
+
+  # ===============================================================
+  # Admin & Management Endpoints
+  # ===============================================================
+  /api/admin/delivery-personnel:
+    post:
+      summary: Create a delivery personnel account
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeliveryPersonnelSignUpRequest'
+      responses:
+        '201':
+          description: Delivery personnel created successfully
+        '403':
+          description: Forbidden (not an admin)
+
+  /api/admin/applications/{applicationId}/approve:
+    post:
+      summary: Approve a restaurant application
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Application approved, new restaurant created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Restaurant'
+        '404':
+          description: Application not found
+
+  /api/admin/orders/{orderId}/assign-delivery:
+    post:
+      summary: Assign a delivery person to an order
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deliveryPersonnelId:
+                  type: integer
+      responses:
+        '200':
+          description: Delivery person assigned successfully
+        '404':
+          description: Order or delivery person not found
+
+  /api/restaurant/menu:
+    post:
+      summary: Add a food item to the restaurant's menu
+      tags: [Restaurant Management]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoodItem'
+      responses:
+        '200':
+          description: Food item added successfully
+
+  /api/manage/orders/restaurant:
+    get:
+      summary: Get all orders for the owner's restaurant
+      tags: [Order Management]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: A list of orders for the restaurant
+
+  /api/manage/orders/delivery:
+    get:
+      summary: Get all orders assigned to the delivery person
+      tags: [Order Management]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: A list of assigned orders
+
+  /api/manage/orders/{orderId}/status:
+    patch:
+      summary: Update the status of an order
+      tags: [Order Management]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateOrderStatusRequest'
+      responses:
+        '200':
+          description: Order status updated successfully
+
+# ===============================================================
+# Reusable Components
+# ===============================================================
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    # --- Request Bodies ---
+    SignUpRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        phoneNumber:
+          type: string
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    DeliveryPersonnelSignUpRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        phoneNumber:
+          type: string
+    RestaurantApplicationRequest:
+      type: object
+      properties:
+        restaurantName:
+          type: string
+        restaurantAddress:
+          type: string
+        restaurantPhone:
+          type: string
+        locationPin:
+          type: string
+    UpdateOrderStatusRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [PENDING, CONFIRMED, PREPARING, OUT_FOR_DELIVERY, DELIVERED, CANCELLED]
+
+    # --- Response Bodies ---
+    JwtAuthenticationResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        tokenType:
+          type: string
+          default: Bearer
+    ApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+    Restaurant:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        address:
+          type: string
+    RestaurantApplication:
+      type: object
+      properties:
+        id:
+          type: integer
+        restaurantName:
+          type: string
+        address:
+          type: string
+        status:
+          type: string
+    FoodItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+    RestaurantDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        address:
+          type: string
+        menu:
+          type: array
+          items:
+            $ref: '#/components/schemas/FoodItemDto'
+    FoodItemDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+    OrderDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        restaurantName:
+          type: string
+        totalPrice:
+          type: number
+        status:
+          type: string
+        orderTime:
+          type: string
+          format: date-time
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItemDto'
+    OrderItemDto:
+      type: object
+      properties:
+        itemName:
+          type: string
+        quantity:
+          type: integer
+        price:
+          type: number

@@ -1,0 +1,50 @@
+<main class="container mx-auto mt-24 px-6">
+  <div class="mb-8">
+    <a routerLink="/customer/dashboard" class="text-primary hover:underline">&larr; Continue Shopping</a>
+    <h1 class="text-5xl font-extrabold mt-4">My Cart</h1>
+  </div>
+  <div class="bg-surface rounded-lg p-8">
+    @if (cart()) {
+      @if (cart()!.items && cart()!.items.length > 0) {
+        <div id="cart-items">
+          @for (item of cart()!.items; track item.id) {
+            <div class="flex justify-between items-center py-4 border-b border-border">
+              <div class="flex items-center gap-4">
+                <img [src]="item.foodItem.imageUrl || 'https://placehold.co/48x48'" [alt]="item.foodItem.name" class="w-12 h-12 rounded-full object-cover">
+                <div>
+                  <p class="font-bold">{{ item.foodItem.name }}</p>
+                  <p class="text-sm text-text-muted">₹{{ item.foodItem.price.toFixed(2) }} each</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2">
+                  <button class="font-bold text-lg" (click)="updateQuantity(item, -1)">-</button>
+                  <span class="font-semibold w-8 text-center">{{ item.quantity }}</span>
+                  <button class="font-bold text-lg" (click)="updateQuantity(item, 1)">+</button>
+                </div>
+                <p class="font-semibold w-24 text-right">₹{{ (item.foodItem.price * item.quantity).toFixed(2) }}</p>
+                <button class="text-red-500 hover:text-red-400 text-2xl font-bold" (click)="removeItem(item.id)">&times;</button>
+              </div>
+            </div>
+          }
+        </div>
+        <div class="mt-6 flex justify-between items-center">
+          <p class="text-xl font-bold">Total:</p>
+          <p class="text-2xl font-extrabold text-primary">₹{{ cart()!.totalPrice.toFixed(2) }}</p>
+        </div>
+        <div class="mt-8">
+          <a routerLink="/customer/payment" class="btn-primary block w-full py-3 rounded-lg font-semibold text-lg text-center">
+            Proceed to Payment
+          </a>
+        </div>
+      } @else {
+        <div class="text-center">
+          <h2 class="text-2xl font-bold">Your Cart is Empty</h2>
+          <p class="text-text-muted mt-2">Looks like you haven't added any items yet.</p>
+        </div>
+      }
+    } @else {
+      <p class="text-text-muted">Loading your cart...</p>
+    }
+  </div>
+</main>

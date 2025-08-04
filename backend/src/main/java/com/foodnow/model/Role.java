@@ -2,6 +2,7 @@ package com.foodnow.model;
 
 public enum Role {
     CUSTOMER,
-    ADMIN,
-    DELIVERY_AGENT
+    RESTAURANT_OWNER, // Added for clarity for future modules
+    DELIVERY_PERSONNEL,
+    ADMIN
 }

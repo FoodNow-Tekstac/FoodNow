@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - FoodNow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        .nav-link {
+            display: block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            color: var(--color-text-muted);
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .nav-link:hover {
+            background-color: var(--color-border);
+            color: var(--color-text);
+        }
+        .nav-link.active {
+            background-color: var(--color-primary);
+            color: #111827;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-bg">
+
+    <div id="toast-container"></div>
+
+    <div class="flex h-screen">
+        <!-- Sidebar Navigation -->
+        <aside class="w-64 bg-surface border-r border-border flex flex-col">
+            <div class="px-6 py-4 border-b border-border">
+                <h1 class="text-2xl font-bold text-white">Food<span class="text-primary">Now</span></h1>
+                <span class="text-sm font-normal text-text-muted">Admin Panel</span>
+            </div>
+            <nav class="flex-1 px-4 py-4 space-y-2">
+                <a href="#" data-section="applications" class="nav-link active">Pending Applications</a>
+                <a href="#" data-section="restaurants" class="nav-link">All Restaurants</a>
+                <a href="#" data-section="users" class="nav-link">All Users</a>
+                <a href="#" data-section="orders" class="nav-link">All Orders</a>
+                <a href="#" data-section="delivery" class="nav-link">Delivery Agents</a>
+                <a href="#" data-section="analytics" class="nav-link">Analytics</a>
+            </nav>
+            <div class="px-4 py-4 border-t border-border">
+                 <button id="logout-btn" class="w-full btn-secondary px-4 py-2 rounded-lg font-semibold">Logout</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-10 overflow-y-auto">
+            <h2 id="main-title" class="text-4xl font-bold mb-8">Pending Restaurant Applications</h2>
+            <div id="main-content" class="opacity-0">
+                <!-- Content will be injected by JavaScript -->
+            </div>
+        </main>
+    </div>
+
+    <script src="../assets/js/main.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>

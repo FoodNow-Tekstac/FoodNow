@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: foodnow_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: abcd7128
+      MYSQL_DATABASE: foodnow_new
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./mysql-dump:/docker-entrypoint-initdb.d
+    networks:
+      - appnet
+
+  app:
+    image: tenzennakamura/foodnow-app:latest  # ⬅️ Use the pushed image
+    container_name: foodnow_app
+    depends_on:
+      - mysql
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/foodnow_new
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: abcd7128
+    networks:
+      - appnet
+
+networks:
+  appnet:

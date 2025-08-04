@@ -1,0 +1,30 @@
+<main class="container mx-auto mt-24 px-6">
+  @if (order(); as currentOrder) {
+    <div class="mb-8">
+      <a routerLink="/customer/orders" class="text-primary hover:underline">&larr; Back to My Orders</a>
+      <h1 class="text-5xl font-extrabold mt-4">Tracking Order #{{ currentOrder.id }}</h1>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="md:col-span-2 rounded-lg">
+        @if (currentOrder.restaurantLocationPin) {
+          <div id="map" style="height: 400px; border-radius: 0.5rem;"></div>
+          {{ initMap() }}
+        } @else {
+          <div class="p-4 bg-surface rounded-lg text-text-muted">
+            Location tracking not available for this restaurant.
+          </div>
+        }
+      </div>
+      <div class="bg-surface p-6 rounded-lg">
+        <h3 class="text-2xl font-bold">{{ currentOrder.restaurantName }}</h3>
+        <p class="text-lg font-semibold text-primary mt-2">Status: {{ currentOrder.status.replace('_', ' ') }}</p>
+        <div class="mt-4 pt-4 border-t border-border">
+          <p class="font-semibold">Delivery Address:</p>
+          <p class="text-text-muted">{{ currentOrder.deliveryAddress }}</p>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <p class="text-text-muted">Loading order details...</p>
+  }
+</main>

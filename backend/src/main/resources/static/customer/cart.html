@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Cart - FoodNow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="bg-bg">
+    <div id="toast-container"></div>
+    <header class="fixed top-0 left-0 right-0 bg-surface shadow-md z-50 border-b border-border">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+             <a href="dashboard.html" class="text-2xl font-bold text-white">Food<span class="text-primary">Now</span></a>
+             <div class="flex items-center gap-6">
+                <a href="orders.html" class="font-semibold text-text-muted hover:text-primary transition">My Orders</a>
+                <button id="logout-btn" class="btn-secondary px-4 py-2 rounded-lg font-semibold">Logout</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto mt-24 px-6">
+        <div class="mb-8">
+            <a href="dashboard.html" class="text-primary hover:underline">&larr; Continue Shopping</a>
+            <h1 class="text-5xl font-extrabold mt-4">My Cart</h1>
+        </div>
+        <div id="cart-content" class="bg-surface rounded-lg p-8">
+            <!-- Cart details will be injected here -->
+        </div>
+    </main>
+
+    <script src="../assets/js/main.js"></script>
+    <script src="cart.js"></script>
+</body>
+</html>

@@ -31,3 +31,17 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+# Java
+*.class
+target/
+
+# Logs
+*.log
+
+# Environment variables
+.env
+
+# Node.js
+node_modules/

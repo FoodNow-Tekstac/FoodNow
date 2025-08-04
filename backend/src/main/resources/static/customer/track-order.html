@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Track Order - FoodNow</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <style>
+    #map {
+      height: 400px;
+      border-radius: 0.5rem;
+      background-color: var(--color-surface);
+    }
+    .scooter-icon {
+      font-size: 2rem;
+      transition: all 2s linear;
+    }
+  </style>
+</head>
+
+<body class="bg-bg">
+  <div id="toast-container"></div>
+
+  <header class="fixed top-0 left-0 right-0 bg-surface shadow-md z-50 border-b border-border">
+    <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+      <a href="dashboard.html" class="text-2xl font-bold text-white">Food<span class="text-primary">Now</span></a>
+      <button id="logout-btn" class="btn-secondary px-4 py-2 rounded-lg font-semibold">Logout</button>
+    </nav>
+  </header>
+
+  <main class="container mx-auto mt-24 px-6">
+    <div class="mb-8">
+      <a href="orders.html" class="text-primary hover:underline">&larr; Back to My Orders</a>
+      <h1 id="order-title" class="text-5xl font-extrabold mt-4">Tracking Order #...</h1>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="md:col-span-2 rounded-lg" id="map"></div>
+      <div id="order-details" class="bg-surface p-6 rounded-lg">
+        <p class="text-text-muted">Loading details...</p>
+      </div>
+    </div>
+  </main>
+
+  <script src="../assets/js/main.js"></script>
+  <script src="track-order.js"></script>
+</body>
+</html>

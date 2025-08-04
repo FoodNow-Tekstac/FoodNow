@@ -1,0 +1,92 @@
+<!-- FILE: customer/dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - FoodNow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="bg-bg">
+    <div id="toast-container"></div>
+
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 bg-surface shadow-md z-50 border-b border-border">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <a href="dashboard.html" class="text-2xl font-bold text-white">Food<span class="text-primary">Now</span></a>
+            <div class="flex items-center gap-6">
+                                <a href="profile.html" class="font-semibold text-text-muted hover:text-primary transition">My Profile</a>
+
+                <a href="orders.html" class="font-semibold text-text-muted hover:text-primary transition">My Orders</a>
+                <a href="cart.html" class="font-semibold text-text-muted hover:text-primary transition">My Cart</a>
+                <a href="#" id="apply-restaurant-link" class="font-semibold text-text-muted hover:text-primary transition">Become a Partner</a>
+                <button id="logout-btn" class="btn-secondary px-4 py-2 rounded-lg font-semibold">Logout</button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main -->
+    <main class="container mx-auto mt-24 px-6">
+        <!-- Carousel Section -->
+        <div class="mb-12 rounded-lg overflow-hidden h-64 relative bg-gray-800">
+            <div id="carousel-content" class="absolute inset-0 flex items-center justify-center text-center p-8">
+                <div>
+                    <h2 class="text-4xl font-extrabold text-white">Special Offers Today!</h2>
+                    <p class="mt-2 text-lg text-text-muted">Get up to 50% off on your first order from select restaurants.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="mb-8 grid grid-cols-1 md:grid-cols-4 gap-4">
+            <input type="text" id="search-bar" class="form-input md:col-span-2" placeholder="Search for restaurants or food items...">
+            <select id="dietary-filter" class="form-input">
+                <option value="ALL">All Dietary Types</option>
+                <option value="VEG">Veg</option>
+                <option value="NON_VEG">Non-Veg</option>
+                <option value="VEGAN">Vegan</option>
+            </select>
+            <select id="category-filter" class="form-input">
+                <option value="ALL">All Categories</option>
+                <option value="STARTER">Starters</option>
+                <option value="MAIN_COURSE">Main Course</option>
+                <option value="DESSERT">Desserts</option>
+                <option value="DRINK">Drinks</option>
+                <option value="SIDE">Sides</option>
+            </select>
+        </div>
+
+        <!-- Restaurant Grid -->
+        <div id="restaurants-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+    </main>
+
+    <!-- Application Modal -->
+    <div id="modal-backdrop" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center p-4 z-50">
+        <div id="modal-content" class="bg-surface w-full max-w-lg p-8 rounded-2xl shadow-2xl border border-border">
+            <h3 class="text-2xl font-bold mb-6 text-center">Restaurant Application</h3>
+            <form id="application-form">
+                <div class="space-y-4">
+                    <input type="text" name="restaurantName" class="form-input w-full" placeholder="Restaurant Name" required>
+                    <input type="text" name="restaurantAddress" class="form-input w-full" placeholder="Full Restaurant Address" required>
+                    <input type="tel" name="restaurantPhone" class="form-input w-full" placeholder="Restaurant Phone Number" required>
+                    <input type="text" name="locationPin" class="form-input w-full" placeholder="Location Pin (e.g., 17.3850,78.4867)" required>
+                    <div>
+                        <label for="restaurant-image" class="block text-sm font-medium text-text-muted mb-2">Restaurant Image/Logo</label>
+                        <input type="file" id="restaurant-image" name="image" class="form-input file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-black hover:file:bg-primary-light">
+                        <input type="hidden" id="restaurant-imageUrl" name="imageUrl">
+                    </div>
+                </div>
+                <div class="mt-8 flex justify-end gap-4">
+                    <button type="button" id="close-modal-btn" class="btn-secondary px-6 py-2 rounded-lg font-semibold">Cancel</button>
+                    <button type="submit" class="btn-primary px-6 py-2 rounded-lg font-semibold">Submit Application</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../assets/js/main.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>

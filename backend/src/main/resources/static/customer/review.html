@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave a Review - FoodNow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        .star-rating {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+        .star-rating input { display: none; }
+        .star-rating label {
+            color: #4B5563; /* gray-600 */
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .star-rating input:checked ~ label,
+        .star-rating label:hover,
+        .star-rating label:hover ~ label {
+            color: var(--color-primary);
+        }
+    </style>
+</head>
+<body class="bg-bg">
+    <div id="toast-container"></div>
+    <header class="fixed top-0 left-0 right-0 bg-surface shadow-md z-50 border-b border-border">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+             <a href="dashboard.html" class="text-2xl font-bold text-white">Food<span class="text-primary">Now</span></a>
+             <button id="logout-btn" class="btn-secondary px-4 py-2 rounded-lg font-semibold">Logout</button>
+        </nav>
+    </header>
+
+    <main class="container mx-auto mt-24 px-6">
+        <div class="max-w-2xl mx-auto">
+            <div class="mb-8">
+                <a href="orders.html" class="text-primary hover:underline">&larr; Back to My Orders</a>
+                <h1 id="review-title" class="text-5xl font-extrabold mt-4">Leave a Review</h1>
+            </div>
+            <div class="bg-surface rounded-lg p-8">
+                <form id="review-form">
+                    <div class="text-center mb-6">
+                        <p class="text-lg font-semibold mb-2">How was your experience?</p>
+                        <div class="star-rating">
+                            <input type="radio" id="star5" name="rating" value="5" /><label for="star5" title="5 stars">&#9733;</label>
+                            <input type="radio" id="star4" name="rating" value="4" /><label for="star4" title="4 stars">&#9733;</label>
+                            <input type="radio" id="star3" name="rating" value="3" /><label for="star3" title="3 stars">&#9733;</label>
+                            <input type="radio" id="star2" name="rating" value="2" /><label for="star2" title="2 stars">&#9733;</label>
+                            <input type="radio" id="star1" name="rating" value="1" /><label for="star1" title="1 star">&#9733;</label>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="comment" class="block text-sm font-medium text-text-muted mb-2">Your Comments</label>
+                        <textarea id="comment" name="comment" rows="4" class="form-input w-full"></textarea>
+                    </div>
+                    <div class="mt-8">
+                        <button type="submit" class="btn-primary w-full py-3 rounded-lg font-semibold text-lg">Submit Review</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/main.js"></script>
+    <script src="review.js"></script>
+</body>
+</html>

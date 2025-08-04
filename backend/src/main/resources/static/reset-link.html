@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reset Link - FoodNow</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4 bg-gray-900 text-white">
+  <div class="w-full max-w-lg bg-gray-800 p-8 rounded-xl shadow-2xl">
+    <h2 class="text-2xl font-bold text-center mb-4">Reset Link Generated</h2>
+    <p class="text-gray-400 text-center mb-6">Use the link below to reset your password:</p>
+    <div class="bg-gray-700 p-4 rounded-lg overflow-x-auto">
+      <code id="reset-link" class="break-words text-sm text-green-400"></code>
+    </div>
+    <button id="copy-btn" class="mt-4 w-full py-2 bg-green-600 hover:bg-green-700 rounded-lg font-semibold text-white">Copy Link</button>
+    <p class="text-sm text-center mt-6 text-gray-400">
+      You can now <a href="reset-password.html" class="underline">open the link</a> or share it.
+    </p>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const link = params.get('link');
+    const linkEl = document.getElementById('reset-link');
+    const copyBtn = document.getElementById('copy-btn');
+
+    if (link) {
+      linkEl.textContent = link;
+      copyBtn.onclick = () => {
+        navigator.clipboard.writeText(link).then(() => {
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => copyBtn.textContent = 'Copy Link', 2000);
+        });
+      };
+    } else {
+      linkEl.textContent = "No reset link found.";
+      copyBtn.disabled = true;
+    }
+  </script>
+</body>
+</html>

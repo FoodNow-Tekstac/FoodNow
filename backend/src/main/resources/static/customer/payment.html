@@ -1,0 +1,459 @@
+<!--
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - FoodNow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="bg-bg">
+    <div id="toast-container"></div>
+    <header class="fixed top-0 left-0 right-0 bg-surface shadow-md z-50 border-b border-border">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+             <a href="dashboard.html" class="text-2xl font-bold text-white">Food<span class="text-primary">Now</span></a>
+             <div class="flex items-center gap-6">
+                <a href="orders.html" class="font-semibold text-text-muted hover:text-primary transition">My Orders</a>
+                <button id="logout-btn" class="btn-secondary px-4 py-2 rounded-lg font-semibold">Logout</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto mt-24 px-6">
+        <div class="max-w-2xl mx-auto">
+            <div class="mb-8">
+                <a href="cart.html" class="text-primary hover:underline">&larr; Back to Cart</a>
+                <h1 class="text-5xl font-extrabold mt-4">Confirm Your Order</h1>
+            </div>
+            <div class="bg-surface rounded-lg p-8">
+                <div id="order-summary">
+                    <p class="text-text-muted">Loading order summary...</p>
+                </div>
+                <div class="mt-8">
+                    <h3 class="text-xl font-bold mb-4">Simulated Payment</h3>
+                    <p class="text-text-muted mb-4">This is a simulated payment page. No real payment will be processed.</p>
+                    <button id="confirm-payment-btn" class="btn-primary w-full py-3 rounded-lg font-semibold text-lg">Confirm Payment & Place Order</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/main.js"></script>
+    <script src="payment.js"></script>
+</body>
+</html>
+-->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - FoodNow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        .payment-method {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .payment-method:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        .payment-method.selected {
+            border-color: #10b981;
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+        }
+        .qr-code-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
+</head>
+<body class="bg-bg">
+    <div id="toast-container"></div>
+    <header class="fixed top-0 left-0 right-0 bg-surface shadow-md z-50 border-b border-border">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+             <a href="dashboard.html" class="text-2xl font-bold text-white">Food<span class="text-primary">Now</span></a>
+             <div class="flex items-center gap-6">
+                <a href="orders.html" class="font-semibold text-text-muted hover:text-primary transition">My Orders</a>
+                <button id="logout-btn" class="btn-secondary px-4 py-2 rounded-lg font-semibold">Logout</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto mt-24 px-6 pb-12">
+        <div class="max-w-4xl mx-auto">
+            <div class="mb-8">
+                <a href="cart.html" class="text-primary hover:underline">&larr; Back to Cart</a>
+                <h1 class="text-5xl font-extrabold mt-4">Confirm Your Order</h1>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Order Summary -->
+                <div class="bg-surface rounded-lg p-8">
+                    <div id="order-summary">
+                        <p class="text-text-muted">Loading order summary...</p>
+                    </div>
+                </div>
+
+                <!-- Payment Section -->
+                <div class="space-y-6">
+                    <!-- Billing Address -->
+                    <div class="bg-surface rounded-lg p-6">
+                        <h3 class="text-xl font-bold mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            Delivery Address
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <input type="text" id="firstName" placeholder="First Name" class="bg-bg border border-border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary" value="John">
+                                <input type="text" id="lastName" placeholder="Last Name" class="bg-bg border border-border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary" value="Doe">
+                            </div>
+                            <input type="text" id="address" placeholder="Street Address" class="w-full bg-bg border border-border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary" value="123 Food Street">
+                            <div class="grid grid-cols-2 gap-4">
+                                <input type="text" id="city" placeholder="City" class="bg-bg border border-border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary" value="Hyderabad">
+                                <input type="text" id="zipcode" placeholder="Pincode" class="bg-bg border border-border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary" value="500001">
+                            </div>
+                            <input type="tel" id="phone" placeholder="Phone Number" class="w-full bg-bg border border-border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary" value="+91 98765 43210">
+                        </div>
+                    </div>
+
+                    <!-- Payment Methods -->
+                    <div class="bg-surface rounded-lg p-6">
+                        <h3 class="text-xl font-bold mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                            </svg>
+                            Payment Method
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="payment-method bg-bg border-2 border-border rounded-lg p-4 flex items-center" data-method="card">
+                                <input type="radio" name="payment" value="card" class="mr-4 text-primary" checked>
+                                <div class="flex items-center">
+                                    <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-2 mr-3">
+                                        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-white">Credit/Debit Card</p>
+                                        <p class="text-sm text-text-muted">Visa, Mastercard, RuPay</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="payment-method bg-bg border-2 border-border rounded-lg p-4 flex items-center" data-method="upi">
+                                <input type="radio" name="payment" value="upi" class="mr-4 text-primary">
+                                <div class="flex items-center">
+                                    <div class="bg-gradient-to-r from-orange-500 to-red-500 rounded-lg p-2 mr-3">
+                                        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                                            <path d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-white">UPI Payment</p>
+                                        <p class="text-sm text-text-muted">PhonePe, Google Pay, Paytm</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="payment-method bg-bg border-2 border-border rounded-lg p-4 flex items-center" data-method="wallet">
+                                <input type="radio" name="payment" value="wallet" class="mr-4 text-primary">
+                                <div class="flex items-center">
+                                    <div class="bg-gradient-to-r from-green-500 to-blue-500 rounded-lg p-2 mr-3">
+                                        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-white">Digital Wallet</p>
+                                        <p class="text-sm text-text-muted">Paytm, FreeCharge, MobiKwik</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="payment-method bg-bg border-2 border-border rounded-lg p-4 flex items-center" data-method="cod">
+                                <input type="radio" name="payment" value="cod" class="mr-4 text-primary">
+                                <div class="flex items-center">
+                                    <div class="bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg p-2 mr-3">
+                                        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-white">Cash on Delivery</p>
+                                        <p class="text-sm text-text-muted">Pay when you receive</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- QR Code Section -->
+                    <div id="qr-section" class="bg-surface rounded-lg p-6 hidden">
+                        <h3 class="text-xl font-bold mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V4a1 1 0 00-1-1H5a1 1 0 00-1 1v3a1 1 0 001 1zm12 0h2a1 1 0 001-1V4a1 1 0 00-1-1h-2a1 1 0 00-1 1v3a1 1 0 001 1zM5 20h2a1 1 0 001-1v-3a1 1 0 00-1-1H5a1 1 0 00-1 1v3a1 1 0 001 1z"/>
+                            </svg>
+                            Scan QR Code to Pay
+                        </h3>
+                        <div class="text-center">
+                            <div id="qrcode" class="qr-code-container inline-block p-6 rounded-2xl mb-4"></div>
+                            <p class="text-text-muted mb-2">Scan with any UPI app</p>
+                            <p class="text-sm text-text-muted">PhonePe • Google Pay • Paytm • BHIM</p>
+                        </div>
+                    </div>
+
+                    <!-- Payment Button -->
+                    <div class="bg-surface rounded-lg p-6">
+                        <div class="mb-4">
+                            <div class="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 mb-4">
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 text-yellow-400 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 16h2v2h-2v-2zm0-6h2v4h-2v-4z"/>
+                                    </svg>
+                                    <p class="text-yellow-400 font-medium">Simulated Payment</p>
+                                </div>
+                                <p class="text-yellow-200 text-sm mt-1">This is a demo. No real payment will be processed.</p>
+                            </div>
+                        </div>
+                        <button id="confirm-payment-btn" class="w-full bg-gradient-to-r from-primary to-green-600 hover:from-green-600 hover:to-primary text-white py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl">
+                            <div class="flex items-center justify-center">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                </svg>
+                                Confirm Payment & Place Order
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/main.js"></script>
+    <script>
+        // Your existing JavaScript logic (unchanged)
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('foodnow_token');
+            if (!token) {
+                window.location.href = '../index.html';
+                return;
+            }
+
+            const orderSummary = document.getElementById('order-summary');
+            const confirmBtn = document.getElementById('confirm-payment-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+
+            logoutBtn.addEventListener('click', () => {
+                localStorage.removeItem('foodnow_token');
+                window.location.href = '../index.html';
+            });
+
+            const fetchCartSummary = async () => {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/cart`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (!response.ok) throw new Error('Could not fetch cart for summary.');
+                    const cart = await response.json();
+                    renderSummary(cart);
+                } catch (error) {
+                    showToast(error.message, 'error');
+                }
+            };
+
+            const renderSummary = (cart) => {
+                if (!cart || !cart.items || cart.items.length === 0) {
+                     orderSummary.innerHTML = `<p class="text-red-400">Your cart is empty. Cannot proceed.</p>`;
+                     confirmBtn.disabled = true;
+                     confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                     return;
+                }
+                const itemsHtml = cart.items.map(item => `
+                    <div class="flex justify-between items-center py-3 border-b border-border last:border-b-0">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mr-3">
+                                <svg class="w-6 h-6 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M18.06 22.99h1.66c.84 0 1.53-.64 1.63-1.46L23 5.05h-5V1h-1.97v4.05h-4.97l.3 2.34c1.71.47 3.31 1.32 4.27 2.26 1.44 1.42 2.43 2.89 2.43 5.29v8.05zM1 22.99c0 .54.45.99 1 .99h15c.55 0 1-.45 1-.99v-8.05c0-2.4-.99-3.87-2.43-5.29C14.52 8.63 13.22 8 11.97 8s-2.55.63-3.6 1.65C6.93 11.07 5.94 12.54 5.94 14.94v8.05z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-white">${item.foodItem.name}</p>
+                                <p class="text-sm text-text-muted">Quantity: ${item.quantity}</p>
+                            </div>
+                        </div>
+                        <span class="font-bold text-primary">₹${(item.foodItem.price * item.quantity).toFixed(2)}</span>
+                    </div>
+                `).join('');
+                
+                orderSummary.innerHTML = `
+                    <div class="mb-6">
+                        <h3 class="text-2xl font-bold mb-6 flex items-center">
+                            <svg class="w-6 h-6 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                            </svg>
+                            Order Summary
+                        </h3>
+                        <div class="space-y-2">${itemsHtml}</div>
+                        
+                        <!-- Order Details -->
+                        <div class="mt-6 space-y-3 text-sm">
+                            <div class="flex justify-between py-2">
+                                <span class="text-text-muted">Subtotal</span>
+                                <span>₹${cart.totalPrice.toFixed(2)}</span>
+                            </div>
+                            <div class="flex justify-between py-2">
+                                <span class="text-text-muted">Delivery Fee</span>
+                                <span class="text-green-400">FREE</span>
+                            </div>
+                            <div class="flex justify-between py-2">
+                                <span class="text-text-muted">Taxes & Fees</span>
+                                <span>₹${(cart.totalPrice * 0.05).toFixed(2)}</span>
+                            </div>
+                            <div class="border-t border-border pt-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xl font-bold">Total</span>
+                                    <span class="text-2xl font-bold text-primary">₹${(cart.totalPrice * 1.05).toFixed(2)}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Estimated Delivery -->
+                        <div class="mt-6 bg-primary/10 border border-primary/20 rounded-lg p-4">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <span class="font-medium text-primary">Estimated Delivery: 25-35 mins</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            };
+
+            const placeOrder = async () => {
+                showToast('Placing your order...', 'loading');
+                confirmBtn.disabled = true;
+                confirmBtn.innerHTML = `
+                    <div class="flex items-center justify-center">
+                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Processing Payment...
+                    </div>
+                `;
+                
+                try {
+                    const response = await fetch(`${API_BASE_URL}/orders`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (!response.ok) throw new Error('Could not place order.');
+                    
+                    showToast('Order placed successfully!', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'orders.html';
+                    }, 1500);
+
+                } catch (error) {
+                    showToast(error.message, 'error');
+                    confirmBtn.disabled = false;
+                    confirmBtn.innerHTML = `
+                        <div class="flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                            Confirm Payment & Place Order
+                        </div>
+                    `;
+                }
+            };
+
+            confirmBtn.addEventListener('click', placeOrder);
+            fetchCartSummary();
+
+            // New enhanced functionality
+            
+            // Payment method selection
+            const paymentMethods = document.querySelectorAll('.payment-method');
+            const qrSection = document.getElementById('qr-section');
+            
+            paymentMethods.forEach(method => {
+                method.addEventListener('click', () => {
+                    // Remove selected class from all methods
+                    paymentMethods.forEach(m => m.classList.remove('selected'));
+                    
+                    // Add selected class to clicked method
+                    method.classList.add('selected');
+                    
+                    // Check the radio button
+                    const radio = method.querySelector('input[type="radio"]');
+                    radio.checked = true;
+                    
+                    // Show/hide QR code based on UPI selection
+                    if (radio.value === 'upi') {
+                        generateQRCode();
+                        qrSection.classList.remove('hidden');
+                    } else {
+                        qrSection.classList.add('hidden');
+                    }
+                });
+            });
+
+            // Generate QR Code for UPI payments
+            function generateQRCode() {
+                const qrContainer = document.getElementById('qrcode');
+                qrContainer.innerHTML = ''; // Clear existing QR code
+                
+                // Generate UPI payment string (this is a mock format)
+                const upiString = `upi://pay?pa=foodnow@paytm&pn=FoodNow&am=${Math.random() * 1000}&cu=INR&tn=Food Order Payment`;
+                
+                const qr = qrcode(0, 'M');
+                qr.addData(upiString);
+                qr.make();
+                
+                const qrImage = qr.createImgTag(4);
+                qrContainer.innerHTML = qrImage;
+                
+                // Style the QR code image
+                const img = qrContainer.querySelector('img');
+                if (img) {
+                    img.style.border = 'none';
+                    img.style.borderRadius = '12px';
+                    img.style.backgroundColor = 'white';
+                    img.style.padding = '16px';
+                }
+            }
+
+            // Form validation and auto-fill
+            const addressInputs = document.querySelectorAll('#firstName, #lastName, #address, #city, #zipcode, #phone');
+            addressInputs.forEach(input => {
+                input.addEventListener('focus', () => {
+                    input.style.borderColor = '#10b981';
+                });
+                input.addEventListener('blur', () => {
+                    input.style.borderColor = '';
+                });
+            });
+
+            // Simulate address validation
+            document.getElementById('zipcode').addEventListener('input', (e) => {
+                const pincode = e.target.value;
+                if (pincode.length === 6 && /^\d{6}$/.test(pincode)) {
+                    showToast('✓ Delivery available in this area', 'success');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

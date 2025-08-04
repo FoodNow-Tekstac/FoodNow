@@ -1,0 +1,7 @@
+<div id="toast-container">
+  @for (toast of notificationService.toasts(); track toast.id) {
+    <div class="toast show" [ngClass]="'toast-' + toast.type">
+      {{ toast.message }}
+    </div>
+  }
+</div>
