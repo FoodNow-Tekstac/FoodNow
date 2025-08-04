@@ -1,3 +1,4 @@
+<!-- FILE: index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,6 +20,7 @@
 
         <div id="auth-container" class="relative overflow-hidden bg-surface rounded-2xl shadow-2xl p-8 border border-border" style="min-height: 480px;">
             
+            <!-- Login Form -->
             <div id="login-form" class="absolute w-full p-8 top-0 left-0">
                 <h2 class="text-2xl font-bold text-center mb-1 text-white">Welcome Back!</h2>
                 <p class="text-center text-text-muted mb-6">Sign in to continue</p>
@@ -40,11 +42,32 @@
                 </div>
             </div>
 
+            <!-- Registration Form -->
             <div id="register-form" class="absolute w-full p-8 top-0 left-0" style="transform: translateX(100%); opacity: 0;">
                 <h2 class="text-2xl font-bold text-center mb-1 text-white">Create Account</h2>
                 <p class="text-center text-text-muted mb-6">Get started with FoodNow!</p>
                 <form id="register-form-element">
-                    </form>
+                    <!-- THIS IS THE FIX: Added the missing form fields -->
+                    <div class="space-y-4">
+                        <div class="relative">
+                            <input type="text" id="register-name" name="name" class="form-input" placeholder=" " required>
+                            <label for="register-name" class="form-label">Full Name</label>
+                        </div>
+                        <div class="relative">
+                            <input type="email" id="register-email" name="email" class="form-input" placeholder=" " required>
+                            <label for="register-email" class="form-label">Email Address</label>
+                        </div>
+                         <div class="relative">
+                            <input type="tel" id="register-phone" name="phoneNumber" class="form-input" placeholder=" " required>
+                            <label for="register-phone" class="form-label">Phone Number</label>
+                        </div>
+                        <div class="relative">
+                            <input type="password" id="register-password" name="password" class="form-input" placeholder=" " required>
+                            <label for="register-password" class="form-label">Password</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary w-full py-3 mt-6 rounded-lg font-semibold text-lg">Create Account</button>
+                </form>
                 <p class="text-center text-sm text-text-muted mt-6">
                     Already have an account? 
                     <a href="#" id="show-login" class="font-semibold text-primary">Sign in</a>

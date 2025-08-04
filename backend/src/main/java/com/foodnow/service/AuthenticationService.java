@@ -59,7 +59,7 @@ public String generatePasswordResetToken(String email) {
 
     tokenRepository.save(resetToken);
 
-    return "http://localhost:8080/reset-password.html?token=" + token;
+return "http://localhost:4200/reset-password?token=" + token;
 }
 
     /**

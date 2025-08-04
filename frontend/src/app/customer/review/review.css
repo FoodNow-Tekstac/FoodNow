@@ -1,0 +1,21 @@
+/* src/app/customer/review/review.css */
+.star-rating {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: center;
+  font-size: 2.5rem;
+  gap: 0.25rem;
+}
+.star-rating input {
+  display: none;
+}
+.star-rating label {
+  color: #4b5563; /* gray-600 */
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.star-rating input:checked ~ label,
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+  color: var(--color-primary);
+}

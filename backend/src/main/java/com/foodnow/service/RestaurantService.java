@@ -88,7 +88,7 @@ public class RestaurantService {
     private void scheduleAutoDelivery(int orderId, int agentId) {
         taskScheduler.schedule(() -> {
             updateOrderAndAgentStatus(orderId, agentId);
-        }, Instant.now().plusSeconds(10));
+        }, Instant.now().plusSeconds(20));
     }
 
     @Transactional

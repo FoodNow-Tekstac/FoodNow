@@ -15,6 +15,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -37,49 +42,45 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            .cors(cors -> cors.configurationSource(corsConfigurationSource())) // ✅ Enable CORS
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // Permit all frontend pages and assets.
                 .requestMatchers(
-                    "/",
-                    "/index.html",
-                    "/forgot-password.html",
-                    "/reset-password.html",
-                    "/assets/**",
-                    "/uploads/**", // Allow public access to view uploaded files
-                    "/customer/**",
-                    "/admin/**",
-                    "/forgot-password-confirmation.html",
-                    "/restaurant/**",
-                    "/delivery/**"
+                    "/", "/index.html", "/forgot-password.html", "/reset-password.html",
+                    "/assets/**", "/uploads/**", "/forgot-password-confirmation.html",
+                    "/customer/**", "/admin/**", "/restaurant/**", "/delivery/**"
                 ).permitAll()
-
-                // Permit public API endpoints
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/public/**").permitAll()
-
-                // Secure API endpoints by role
+                .requestMatchers("/api/auth/**", "/api/public/**").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/profile/**").authenticated()
                 .requestMatchers("/api/restaurant/apply").hasRole("CUSTOMER")
-
-                // ✅ FIX: Add this rule to allow restaurant owners to upload files.
-                .requestMatchers(HttpMethod.POST, "/api/files/upload").hasRole("RESTAURANT_OWNER")
-
+.requestMatchers(HttpMethod.POST, "/api/files/upload")
+    .hasAnyRole("CUSTOMER", "RESTAURANT_OWNER")
                 .requestMatchers("/api/restaurant/**").hasRole("RESTAURANT_OWNER")
                 .requestMatchers("/api/cart/**").hasRole("CUSTOMER")
                 .requestMatchers(HttpMethod.POST, "/api/orders/{orderId}/review").hasRole("CUSTOMER")
                 .requestMatchers("/api/orders/**").hasRole("CUSTOMER")
                 .requestMatchers("/api/delivery/**").hasRole("DELIVERY_PERSONNEL")
                 .requestMatchers("/api/manage/orders/**").hasAnyRole("ADMIN", "RESTAURANT_OWNER", "DELIVERY_PERSONNEL")
-
-                // All other requests must be authenticated
                 .anyRequest().authenticated()
             );
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200")); // Angular dev origin
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        configuration.setAllowCredentials(true); // Needed for cookies or auth headers
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }

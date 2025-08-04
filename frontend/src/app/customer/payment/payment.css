@@ -1,0 +1,14 @@
+/* src/app/customer/payment/payment.css */
+.payment-method {
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 2px solid var(--color-border);
+}
+.payment-method:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+.payment-method.selected {
+  border-color: #10b981; /* A green color for selection */
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}

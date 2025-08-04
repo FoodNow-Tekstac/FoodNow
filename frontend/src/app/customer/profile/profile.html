@@ -1,0 +1,39 @@
+<main class="container mx-auto mt-24 px-6">
+  <div class="max-w-2xl mx-auto">
+    <h1 class="text-5xl font-extrabold mb-8">My Profile</h1>
+    <div class="bg-surface rounded-lg p-8">
+      @if (profile(); as p) {
+        <form (ngSubmit)="onSubmit()">
+          <div class="flex items-center gap-6 mb-8">
+            <img [src]="getProfileImageUrl()" class="w-24 h-24 rounded-full object-cover border-2 border-border">
+            <div>
+              <label for="profile-image-upload" class="btn-secondary cursor-pointer px-4 py-2 rounded-lg font-semibold">
+                Upload New Picture
+              </label>
+              <input type="file" id="profile-image-upload" class="hidden" (change)="onFileSelected($event)" accept="image/*">
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <label for="profile-name" class="block text-sm font-medium text-text-muted mb-1">Full Name</label>
+              <input type="text" id="profile-name" name="name" class="form-input w-full" required [(ngModel)]="p.name">
+            </div>
+            <div>
+              <label for="profile-email" class="block text-sm font-medium text-text-muted mb-1">Email Address</label>
+              <input type="email" id="profile-email" name="email" class="form-input w-full" [value]="p.email" disabled>
+            </div>
+            <div>
+              <label for="profile-phone" class="block text-sm font-medium text-text-muted mb-1">Phone Number</label>
+              <input type="tel" id="profile-phone" name="phoneNumber" class="form-input w-full" required [(ngModel)]="p.phoneNumber">
+            </div>
+          </div>
+          <div class="mt-8">
+            <button type="submit" class="btn-primary w-full py-3 rounded-lg font-semibold text-lg">Save Changes</button>
+          </div>
+        </form>
+      } @else {
+        <p class="text-text-muted">Loading your profile...</p>
+      }
+    </div>
+  </div>
+</main>
