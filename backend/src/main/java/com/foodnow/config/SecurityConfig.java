@@ -40,36 +40,40 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // THIS IS THE FIX: Explicitly permit all frontend pages and assets.
+                // Permit all frontend pages and assets.
                 .requestMatchers(
-                    "/", 
-                    "/index.html", 
-                    "/forgot-password.html", 
-                    "/reset-password.html", 
-                    "/assets/**", 
-                    "/uploads/**",
-                    "/customer/**", 
-                    "/admin/**", 
+                    "/",
+                    "/index.html",
+                    "/forgot-password.html",
+                    "/reset-password.html",
+                    "/assets/**",
+                    "/uploads/**", // Allow public access to view uploaded files
+                    "/customer/**",
+                    "/admin/**",
                     "/forgot-password-confirmation.html",
-                    "/restaurant/**", 
+                    "/restaurant/**",
                     "/delivery/**"
                 ).permitAll()
-                
+
                 // Permit public API endpoints
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/public/**").permitAll() 
-                
+                .requestMatchers("/api/public/**").permitAll()
+
                 // Secure API endpoints by role
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/profile/**").authenticated()
                 .requestMatchers("/api/restaurant/apply").hasRole("CUSTOMER")
+
+                // ✅ FIX: Add this rule to allow restaurant owners to upload files.
+                .requestMatchers(HttpMethod.POST, "/api/files/upload").hasRole("RESTAURANT_OWNER")
+
                 .requestMatchers("/api/restaurant/**").hasRole("RESTAURANT_OWNER")
                 .requestMatchers("/api/cart/**").hasRole("CUSTOMER")
                 .requestMatchers(HttpMethod.POST, "/api/orders/{orderId}/review").hasRole("CUSTOMER")
                 .requestMatchers("/api/orders/**").hasRole("CUSTOMER")
                 .requestMatchers("/api/delivery/**").hasRole("DELIVERY_PERSONNEL")
                 .requestMatchers("/api/manage/orders/**").hasAnyRole("ADMIN", "RESTAURANT_OWNER", "DELIVERY_PERSONNEL")
-                
+
                 // All other requests must be authenticated
                 .anyRequest().authenticated()
             );
