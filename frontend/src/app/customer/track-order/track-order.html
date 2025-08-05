@@ -8,7 +8,6 @@
       <div class="md:col-span-2 rounded-lg">
         @if (currentOrder.restaurantLocationPin) {
           <div id="map" style="height: 400px; border-radius: 0.5rem;"></div>
-          {{ initMap() }}
         } @else {
           <div class="p-4 bg-surface rounded-lg text-text-muted">
             Location tracking not available for this restaurant.

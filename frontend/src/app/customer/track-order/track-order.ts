@@ -1,10 +1,10 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, signal, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, inject, effect } from '@angular/core'; // Add 'effect'
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { switchMap } from 'rxjs';
 import { Order, OrderService } from '../../order/order';
 import { NotificationService } from '../../shared/notification';
-import * as L from 'leaflet'; // Import Leaflet
+import * as L from 'leaflet';
 
 @Component({
   selector: 'app-track-order',
@@ -12,14 +12,25 @@ import * as L from 'leaflet'; // Import Leaflet
   imports: [CommonModule, RouterLink],
   templateUrl: './track-order.html'
 })
-export class TrackOrderComponent implements OnInit, AfterViewInit, OnDestroy {
+export class TrackOrderComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private orderService = inject(OrderService);
   private notificationService = inject(NotificationService);
 
   order = signal<Order | null>(null);
   orderId = '';
-  private map!: L.Map; // To hold the map instance
+  private map!: L.Map;
+
+  constructor() {
+    // This effect runs automatically when the order() signal gets data.
+    // This is the correct way to initialize the map.
+    effect(() => {
+      const currentOrder = this.order();
+      if (currentOrder && !this.map) {
+        this.initializeMap(currentOrder);
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.route.paramMap.pipe(
@@ -32,19 +43,11 @@ export class TrackOrderComponent implements OnInit, AfterViewInit, OnDestroy {
       error: () => this.notificationService.error('Could not load order details.')
     });
   }
-
-  ngAfterViewInit(): void {
-    // We wait for the view to be initialized so the 'map' div exists.
-    // But the map logic depends on the order data, which is async.
-    // We'll initialize the map once the order data is available.
-    // Let's create an effect for this.
-  }
-
-  // We will move the map initialization here to be triggered by the template
-  initMap(): void {
-    const order = this.order();
-    if (!order || !order.restaurantLocationPin || this.map) return; // Only init once
-    if (order.status === 'DELIVERED') return;
+  
+  initializeMap(order: Order): void {
+    if (!order.restaurantLocationPin || order.status === 'DELIVERED') {
+        return;
+    }
 
     const restaurantCoords = order.restaurantLocationPin.split(',').map(Number) as L.LatLngTuple;
     const customerCoords = [restaurantCoords[0] + 0.05, restaurantCoords[1] + 0.05] as L.LatLngTuple;
@@ -60,43 +63,42 @@ export class TrackOrderComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
- simulateDelivery(start: L.LatLngTuple, end: L.LatLngTuple): void {
-  const scooterIcon = L.divIcon({ className: 'scooter-icon', html: '🛵' });
-  const scooterMarker = L.marker(start, { icon: scooterIcon }).addTo(this.map);
+  simulateDelivery(start: L.LatLngTuple, end: L.LatLngTuple): void {
+    const scooterIcon = L.divIcon({ className: 'scooter-icon', html: '🛵' });
+    const scooterMarker = L.marker(start, { icon: scooterIcon }).addTo(this.map);
 
-  // Simulate movement in stages over 30 seconds
-  setTimeout(() => scooterMarker.setLatLng([
-    start[0] + (end[0] - start[0]) * 0.25,
-    start[1] + (end[1] - start[1]) * 0.25
-  ]), 7500); // 7.5s
+    // Let's match the backend's auto-delivery time of 20 seconds for a more realistic simulation
+    setTimeout(() => scooterMarker.setLatLng([start[0] + (end[0] - start[0]) * 0.5, start[1] + (end[1] - start[1]) * 0.5]), 10000); // 10s
 
-  setTimeout(() => scooterMarker.setLatLng([
-    start[0] + (end[0] - start[0]) * 0.5,
-    start[1] + (end[1] - start[1]) * 0.5
-  ]), 15000); // 15s
-
-  setTimeout(() => scooterMarker.setLatLng([
-    start[0] + (end[0] - start[0]) * 0.75,
-    start[1] + (end[1] - start[1]) * 0.75
-  ]), 22500); // 22.5s
-
-  setTimeout(() => {
-    scooterMarker.setLatLng(end);
-    this.notificationService.success('Your order has arrived!');
-    this.markOrderAsDelivered(); // Will only succeed if backend hasn't already auto-marked it
-  }, 30000); // 30s
-}
-
-
-  markOrderAsDelivered(): void {
-    this.orderService.updateOrderStatus(this.orderId, 'DELIVERED').subscribe({
-      next: () => console.log('Order status updated to DELIVERED.'),
-      error: () => this.notificationService.error('Failed to update order status.')
-    });
+    setTimeout(() => {
+      scooterMarker.setLatLng(end);
+      this.notificationService.success('Your order has arrived!');
+      this.markOrderAsDelivered();
+    }, 20000); // 20s
   }
 
+  markOrderAsDelivered(): void {
+    // --- THIS IS THE FIX FOR THE RACE CONDITION ---
+    // First, check if the order is already marked as delivered.
+    if (this.order()?.status === 'DELIVERED') {
+      console.log('Order status is already DELIVERED. No frontend update needed.');
+      return; // Do nothing
+    }
+
+    this.orderService.updateOrderStatus(this.orderId, 'DELIVERED').subscribe({
+      next: () => {
+        console.log('Frontend successfully updated order status to DELIVERED.');
+        // Update our local state to match
+        const currentOrder = this.order();
+        if (currentOrder) {
+          this.order.set({ ...currentOrder, status: 'DELIVERED' });
+        }
+      },
+      error: () => { /* The error case is now less likely to happen */ }
+    });
+  }
+  
   ngOnDestroy(): void {
-    // Important: destroy the map instance to prevent memory leaks
     if (this.map) {
       this.map.remove();
     }

@@ -1,0 +1,22 @@
+<header class="fixed top-0 left-0 right-0 bg-surface shadow-md z-50 border-b border-border">
+  <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+    @if (restaurantData(); as data) {
+      <h1 class="text-2xl font-bold text-white">{{ data.restaurantProfile.name }}</h1>
+    }
+    <button (click)="logout()" class="btn-secondary px-4 py-2 rounded-lg font-semibold">Logout</button>
+  </nav>
+</header>
+
+<main class="container mx-auto mt-24 px-6">
+  <div class="border-b border-border mb-8">
+    <nav class="flex -mb-px space-x-6">
+      <a routerLink="overview" routerLinkActive="active" class="nav-link">Overview</a>
+      <a routerLink="orders" routerLinkActive="active" class="nav-link">Order Management</a>
+      <a routerLink="menu" routerLinkActive="active" class="nav-link">Menu Management</a>
+      <a routerLink="reviews" routerLinkActive="active" class="nav-link">Customer Reviews</a>
+    </nav>
+  </div>
+  <div>
+    <router-outlet></router-outlet>
+  </div>
+</main>

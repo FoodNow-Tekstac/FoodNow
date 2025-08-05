@@ -1,5 +1,5 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Order, OrderService } from '../../order/order';
 import { NotificationService } from '../../shared/notification';
@@ -7,7 +7,7 @@ import { NotificationService } from '../../shared/notification';
 @Component({
   selector: 'app-orders',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, DatePipe], // Make sure DatePipe is imported
   templateUrl: './orders.html',
 })
 export class OrdersComponent implements OnInit {
@@ -17,8 +17,12 @@ export class OrdersComponent implements OnInit {
   orders = signal<Order[]>([]);
 
   ngOnInit() {
+    // This is the correct, simple API call for the customer's order history.
     this.orderService.getMyOrders().subscribe({
-      next: (data) => this.orders.set(data.sort((a, b) => new Date(b.orderTime).getTime() - new Date(a.orderTime).getTime())),
+      next: (data: Order[]) => {
+        const sortedData = data.sort((a, b) => new Date(b.orderTime).getTime() - new Date(a.orderTime).getTime());
+        this.orders.set(sortedData);
+      },
       error: () => this.notificationService.error('Could not load your order history.')
     });
   }
