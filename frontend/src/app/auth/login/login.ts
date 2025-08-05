@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { trigger, transition, style, animate } from '@angular/animations';
 import { AuthService } from '../auth';
 import { NotificationService } from '../../shared/notification';
 
@@ -10,11 +11,20 @@ import { NotificationService } from '../../shared/notification';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login.html',
-  styleUrl: './login.css'
+  styleUrl: './login.css',
+  animations: [
+    trigger('fadeIn', [
+      transition(':enter', [ // ':enter' is an alias for 'void => *'
+        style({ opacity: 0 }),
+        animate('500ms ease-out', style({ opacity: 1 }))
+      ])
+    ])
+  ]
 })
 export class LoginComponent implements OnInit {
   isLoading = signal(false);
-  isRegisterMode = signal(true); // Default to register mode to match screenshot
+  isRegisterMode = signal(true);
+  hidePassword = signal(true);
 
   loginForm!: FormGroup;
   registerForm!: FormGroup;

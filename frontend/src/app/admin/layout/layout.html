@@ -1,0 +1,24 @@
+<div class="flex h-screen">
+  <aside class="w-64 bg-surface border-r border-border flex flex-col">
+    <div class="px-6 py-4 border-b border-border">
+      <h1 class="text-2xl font-bold text-white">Food<span class="text-primary">Now</span></h1>
+      <span class="text-sm font-normal text-text-muted">Admin Panel</span>
+    </div>
+
+    <nav class="flex-1 px-4 py-4 space-y-2">
+      <a routerLink="applications" routerLinkActive="active" class="nav-link">Pending Applications</a>
+      <a routerLink="restaurants" routerLinkActive="active" class="nav-link">All Restaurants</a>
+      <a routerLink="users" routerLinkActive="active" class="nav-link">All Users</a>
+      <a routerLink="orders" routerLinkActive="active" class="nav-link">All Orders</a>
+      <a routerLink="delivery" routerLinkActive="active" class="nav-link">Delivery Agents</a>
+    </nav>
+
+    <div class="px-4 py-4 border-t border-border">
+      <button (click)="logout()" class="w-full btn-secondary px-4 py-2 rounded-lg font-semibold">Logout</button>
+    </div>
+  </aside>
+
+  <main class="flex-1 p-10 overflow-y-auto">
+    <router-outlet></router-outlet>
+  </main>
+</div>

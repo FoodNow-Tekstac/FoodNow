@@ -1,0 +1,152 @@
+/* Styles for the Restaurant Detail Page */
+:host {
+  display: block;
+}
+
+/* Header Section */
+.detail-header {
+  position: relative;
+  height: 350px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  color: white;
+  margin: -2rem -2rem 2rem -2rem; /* Stretch to edges, counteracting host padding */
+}
+
+.header-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+.header-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, var(--bg-dark) 5%, transparent 50%), 
+              radial-gradient(ellipse at center, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.8) 100%);
+}
+
+.header-content {
+  position: relative;
+  z-index: 10;
+}
+
+/* Menu Section */
+.menu-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem 2rem 2rem;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* Single column on mobile */
+  gap: 1rem;
+}
+
+/* Single Menu Item Card */
+.menu-item-card {
+  background-color: var(--bg-light);
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: border-color 0.2s ease;
+}
+
+.menu-item-card:hover {
+  border-color: var(--primary);
+}
+
+.item-details {
+  margin-bottom: 1rem;
+}
+
+.item-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-light);
+  margin-right: 1rem;
+}
+
+.item-price {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--primary);
+  white-space: nowrap;
+}
+
+.item-description {
+  color: var(--text-dark);
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.item-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.quantity-input {
+  width: 80px;
+  text-align: center;
+  padding: 0.5rem;
+  background-color: var(--bg-dark);
+  border: 1px solid var(--border-color);
+  color: var(--text-light);
+  border-radius: 0.5rem;
+}
+
+.add-to-cart-btn {
+  flex-grow: 1;
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: var(--primary);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.add-to-cart-btn:hover {
+  background-color: var(--primary-hover);
+}
+
+/* Dietary Tags (re-using from dashboard) */
+.tag {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  border: 1px solid;
+}
+.veg-tag { color: #4ade80; border-color: #4ade80; background-color: rgba(74, 222, 128, 0.1); }
+.non-veg-tag { color: #f472b6; border-color: #f472b6; background-color: rgba(244, 114, 182, 0.1); }
+.vegan-tag { color: #2dd4bf; border-color: #2dd4bf; background-color: rgba(45, 212, 191, 0.1); }
+
+/* Responsive Grid for larger screens */
+@media (min-width: 768px) {
+  .menu-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .menu-item-card {
+    flex-direction: row;
+    align-items: center;
+  }
+  .item-details {
+    margin-bottom: 0;
+    flex-grow: 1;
+  }
+  .item-actions {
+    flex-shrink: 0;
+    width: 200px;
+  }
+}

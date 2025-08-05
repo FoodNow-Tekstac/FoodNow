@@ -1,0 +1,181 @@
+:host {
+  display: block;
+}
+
+.page-container {
+  max-width: 1024px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.back-link {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+  color: var(--primary-hover);
+}
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-top: 0.5rem;
+  color: var(--text-light);
+}
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.order-card {
+  background-color: var(--bg-light);
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+.order-header {
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.restaurant-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-light);
+}
+
+.order-meta {
+  font-size: 0.875rem;
+  color: var(--text-dark);
+  margin-top: 0.25rem;
+}
+
+.meta-dot {
+  margin: 0 0.5rem;
+}
+
+.header-status {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.order-total {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.status-badge {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status-delivered { background-color: rgba(74, 222, 128, 0.2); color: #4ade80; }
+.status-out-for-delivery { background-color: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+.status-preparing { background-color: rgba(245, 158, 11, 0.2); color: #facc15; }
+.status-pending { background-color: rgba(156, 163, 175, 0.2); color: #9ca3af; }
+.status-cancelled { background-color: rgba(239, 68, 68, 0.2); color: #f87171; }
+
+
+.order-body {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.items-title {
+  font-weight: 600;
+  color: var(--text-dark);
+  font-size: 0.875rem;
+  margin-bottom: 0.75rem;
+}
+
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.order-item {
+  display: flex;
+  color: var(--text-dark);
+  font-size: 0.875rem;
+}
+
+.item-quantity {
+  width: 40px;
+  flex-shrink: 0;
+}
+
+.order-actions {
+  background-color: var(--bg-dark);
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border-color);
+  text-align: right;
+}
+
+.review-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  text-decoration: none;
+}
+
+.track-order-link {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+.track-order-link:hover {
+  text-decoration: underline;
+}
+
+.review-submitted {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #4ade80;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.review-submitted svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.empty-state-container {
+  background-color: var(--bg-light);
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.empty-state-icon {
+  width: 4rem;
+  height: 4rem;
+  color: var(--border-color);
+}

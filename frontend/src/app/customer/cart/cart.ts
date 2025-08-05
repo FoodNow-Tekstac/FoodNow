@@ -3,12 +3,15 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Cart, CartItem, CartService } from '../../cart/cart';
 import { NotificationService } from '../../shared/notification';
+import { FullUrlPipe } from "../../shared/pipes/full-url";
 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [CommonModule, RouterLink],
-  templateUrl: './cart.html'
+  imports: [CommonModule, RouterLink, FullUrlPipe],
+  templateUrl: './cart.html',
+    styleUrls: ['./cart.css'] // <-- ADD THIS LINE
+
 })
 export class CartComponent implements OnInit {
   private cartService = inject(CartService);

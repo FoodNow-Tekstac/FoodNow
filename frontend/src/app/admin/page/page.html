@@ -1,0 +1,173 @@
+<h2 class="text-4xl font-bold mb-8">{{ pageTitle() }}</h2>
+
+@if (state.activeSection() === 'applications') {
+  <div class="bg-surface rounded-2xl shadow-xl border border-border overflow-hidden">
+    <table class="min-w-full text-left">
+      <thead class="border-b border-border">
+        <tr>
+          <th class="px-6 py-4 text-sm font-semibold text-text-muted">Restaurant Name</th>
+          <th class="px-6 py-4 text-sm font-semibold text-text-muted">Applicant</th>
+          <th class="px-6 py-4 text-sm font-semibold text-text-muted">Contact</th>
+          <th class="px-6 py-4 text-sm font-semibold text-text-muted text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for(app of tableData(); track app.id) {
+          <tr class="border-b border-border last:border-b-0">
+            <td class="px-6 py-4 font-medium">{{ app.restaurantName }}</td>
+            <td class="px-6 py-4 text-text-muted">{{ app.applicant?.name }} ({{ app.applicant?.email }})</td>
+            <td class="px-6 py-4 text-text-muted">{{ app.phoneNumber }}</td>
+            <td class="px-6 py-4 text-right">
+              <button (click)="approve(app)" class="btn-success text-sm font-semibold py-1 px-3 rounded-md mr-2">Approve</button>
+              <button (click)="reject(app)" class="btn-danger text-sm font-semibold py-1 px-3 rounded-md">Reject</button>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="4" class="text-center text-text-muted p-6">There are no pending applications.</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+@if (state.activeSection() === 'restaurants') {
+  <div class="bg-surface rounded-2xl shadow-xl border border-border overflow-hidden">
+    <table class="min-w-full text-left">
+      <thead class="border-b border-border">
+        <tr>
+          <th class="px-6 py-4">ID</th>
+          <th class="px-6 py-4">Name</th>
+          <th class="px-6 py-4">Address</th>
+          <th class="px-6 py-4">Owner</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for(item of tableData(); track item.id) {
+          <tr class="border-b border-border last:border-b-0">
+            <td class="px-6 py-4 font-medium">{{ item.id }}</td>
+            <td class="px-6 py-4">{{ item.name }}</td>
+            <td class="px-6 py-4 text-text-muted">{{ item.address }}</td>
+            <td class="px-6 py-4 text-text-muted">{{ item.ownerName }}</td>
+          </tr>
+        } @empty {
+          <tr><td colspan="4" class="text-center text-text-muted p-6">No restaurants found.</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+@if (state.activeSection() === 'users') {
+  <div class="bg-surface rounded-2xl shadow-xl border border-border overflow-hidden">
+    <table class="min-w-full text-left">
+      <thead class="border-b border-border">
+        <tr>
+          <th class="px-6 py-4">ID</th>
+          <th class="px-6 py-4">Name</th>
+          <th class="px-6 py-4">Email</th>
+          <th class="px-6 py-4">Phone</th>
+          <th class="px-6 py-4">Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for(user of tableData(); track user.id) {
+          <tr class="border-b border-border last:border-b-0">
+            <td class="px-6 py-4 font-medium">{{ user.id }}</td>
+            <td class="px-6 py-4">{{ user.name }}</td>
+            <td class="px-6 py-4 text-text-muted">{{ user.email }}</td>
+            <td class="px-6 py-4 text-text-muted">{{ user.phoneNumber }}</td>
+            <td class="px-6 py-4 text-text-muted">{{ user.role }}</td>
+          </tr>
+        } @empty {
+          <tr><td colspan="5" class="text-center text-text-muted p-6">No users found.</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+@if (state.activeSection() === 'orders') {
+  <div class="bg-surface rounded-2xl shadow-xl border border-border overflow-hidden">
+    <table class="min-w-full text-left">
+      <thead class="border-b border-border">
+        <tr>
+          <th class="px-6 py-4">Order ID</th>
+          <th class="px-6 py-4">Customer</th>
+          <th class="px-6 py-4">Restaurant</th>
+          <th class="px-6 py-4">Total</th>
+          <th class="px-6 py-4">Status</th>
+          <th class="px-6 py-4">Rating</th>
+          <th class="px-6 py-4">Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for(order of tableData(); track order.id) {
+          <tr class="border-b border-border last:border-b-0">
+            <td class="px-6 py-4 font-medium">#{{ order.id }}</td>
+            <td class="px-6 py-4">{{ order.customerName }}</td>
+            <td class="px-6 py-4 text-text-muted">{{ order.restaurantName }}</td>
+            <td class="px-6 py-4 text-text-muted">₹{{ order.totalPrice.toFixed(2) }}</td>
+            <td class="px-6 py-4 text-text-muted">{{ order.status }}</td>
+            <td class="px-6 py-4 text-yellow-400 font-semibold">
+              @if(order.reviewRating) {
+                <span>{{ '&#9733;'.repeat(order.reviewRating) }}</span>
+              } @else {
+                <span class="text-text-muted">N/A</span>
+              }
+            </td>
+            <td class="px-6 py-4 text-text-muted">{{ order.orderTime | date:'short' }}</td>
+          </tr>
+        } @empty {
+          <tr><td colspan="7" class="text-center text-text-muted p-6">No orders found.</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+@if (state.activeSection() === 'delivery') {
+  <div class="flex justify-between items-center mb-6">
+    <h3 class="text-2xl font-bold">Manage Delivery Agents</h3>
+    <button (click)="openAgentModal()" class="btn-primary px-4 py-2 rounded-lg font-semibold">+ Add Delivery Agent</button>
+  </div>
+  <div class="bg-surface rounded-2xl shadow-xl border border-border overflow-hidden">
+    <table class="min-w-full text-left">
+      <thead class="border-b border-border">
+        <tr>
+          <th class="px-6 py-4">ID</th>
+          <th class="px-6 py-4">Name</th>
+          <th class="px-6 py-4">Email</th>
+          <th class="px-6 py-4">Phone</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for(agent of tableData(); track agent.id) {
+          <tr class="border-b border-border last:border-b-0">
+            <td class="px-6 py-4 font-medium">{{ agent.id }}</td>
+            <td class="px-6 py-4">{{ agent.name }}</td>
+            <td class="px-6 py-4 text-text-muted">{{ agent.email }}</td>
+            <td class="px-6 py-4 text-text-muted">{{ agent.phoneNumber }}</td>
+          </tr>
+        } @empty {
+          <tr><td colspan="4" class="text-center text-text-muted p-6">No delivery agents found.</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  @if(isAgentModalOpen()){
+    <div class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50" (click)="closeAgentModal()">
+      <div class="bg-surface p-6 rounded-xl shadow-lg w-full max-w-lg relative" (click)="$event.stopPropagation()">
+        <button (click)="closeAgentModal()" class="absolute top-3 right-3 text-white text-xl font-bold">&times;</button>
+        <h3 class="text-xl font-bold mb-4">Add New Delivery Agent</h3>
+        <form (ngSubmit)="onAddAgentSubmit()" class="grid grid-cols-1 gap-4">
+          <input type="text" name="name" placeholder="Name" required class="form-input" [(ngModel)]="newAgentForm.name" />
+          <input type="email" name="email" placeholder="Email" required class="form-input" [(ngModel)]="newAgentForm.email" />
+          <input type="text" name="phoneNumber" placeholder="Phone Number" required class="form-input" [(ngModel)]="newAgentForm.phoneNumber" />
+          <input type="password" name="password" placeholder="Password" required class="form-input" [(ngModel)]="newAgentForm.password" />
+          <button type="submit" class="btn-primary px-4 py-2 rounded-lg font-semibold">Create Agent</button>
+        </form>
+      </div>
+    </div>
+  }
+}

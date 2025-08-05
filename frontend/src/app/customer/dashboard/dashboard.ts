@@ -6,42 +6,46 @@ import { Restaurant, RestaurantService, MenuItem } from '../../restaurant/restau
 import { NotificationService } from '../../shared/notification';
 import { FullUrlPipe } from '../../shared/pipes/full-url';
 
+// An enhanced interface for display purposes, holding the pre-calculated counts
+interface DisplayRestaurant extends Restaurant {
+  dietaryCounts?: {
+    VEG: number;
+    NON_VEG: number;
+    VEGAN: number;
+  };
+}
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink, FullUrlPipe],
-  templateUrl: './dashboard.html'
+  templateUrl: './dashboard.html',
+  styleUrls: ['./dashboard.css'] // Add a new CSS file for this component's styles
 })
 export class CustomerDashboardComponent implements OnInit {
   private restaurantService = inject(RestaurantService);
   private notificationService = inject(NotificationService);
 
-  private allRestaurants = signal<Restaurant[]>([]);
+  private allRestaurants = signal<DisplayRestaurant[]>([]);
   
   searchTerm: WritableSignal<string> = signal('');
   dietaryFilter: WritableSignal<string> = signal('ALL');
   categoryFilter: WritableSignal<string> = signal('ALL');
 
-  /**
-   * This computed signal now includes the logic to find and attach 'matchingItems'.
-   */
   filteredRestaurants = computed(() => {
     const term = this.searchTerm().toLowerCase();
     const diet = this.dietaryFilter();
     const category = this.categoryFilter();
     const restaurants = this.allRestaurants();
 
-    // If no filters are active, return all restaurants without any matching items highlighted.
     if (!term && diet === 'ALL' && category === 'ALL') {
       return restaurants.map(r => ({ ...r, matchingItems: undefined }));
     }
 
-    // This logic now mirrors your original, working JavaScript file.
     return restaurants
       .map(restaurant => {
-        const restaurantCopy: Restaurant = { ...restaurant, matchingItems: undefined };
+        const restaurantCopy: DisplayRestaurant = { ...restaurant, matchingItems: undefined };
 
-        // 1. First, filter the menu based on the dropdowns (diet & category).
         let menuFilteredByDropdowns = restaurant.menu || [];
         if (diet !== 'ALL') {
           menuFilteredByDropdowns = menuFilteredByDropdowns.filter(item => item.dietaryType === diet);
@@ -50,36 +54,42 @@ export class CustomerDashboardComponent implements OnInit {
           menuFilteredByDropdowns = menuFilteredByDropdowns.filter(item => item.category === category);
         }
         
-        // If the restaurant has any items that pass the dropdown filters, then check the search term.
         if (menuFilteredByDropdowns.length > 0) {
           const restaurantNameMatch = term && restaurant.name.toLowerCase().includes(term);
           const itemMatchesInMenu = term ? menuFilteredByDropdowns.filter(item => item.name.toLowerCase().includes(term)) : [];
 
           if (restaurantNameMatch) {
-            // If the restaurant's name matches, show all items that passed the dropdown filters.
             restaurantCopy.matchingItems = menuFilteredByDropdowns;
             return restaurantCopy;
           } else if (itemMatchesInMenu.length > 0) {
-            // If only specific items match the search, highlight just those items.
             restaurantCopy.matchingItems = itemMatchesInMenu;
             return restaurantCopy;
           } else if (!term) {
-            // If there's no search term but the dropdowns matched, include the restaurant.
-            // We don't highlight any specific items in this case.
             return restaurantCopy;
           }
         }
         
-        // If no conditions were met, the restaurant doesn't match the filters.
         return null;
       })
-      .filter((r): r is Restaurant => r !== null); // Remove all non-matching (null) restaurants from the final list.
+      .filter((r): r is DisplayRestaurant => r !== null);
   });
 
   ngOnInit() {
     this.restaurantService.getRestaurants().subscribe({
-      next: data => {
-        this.allRestaurants.set(data);
+      next: (data: Restaurant[]) => {
+        // Pre-process data to add dietary counts for the UI
+        const displayData: DisplayRestaurant[] = data.map(restaurant => {
+          const counts = { VEG: 0, NON_VEG: 0, VEGAN: 0 };
+          if (restaurant.menu) {
+            for (const item of restaurant.menu) {
+              if (item.dietaryType === 'VEG') counts.VEG++;
+              else if (item.dietaryType === 'NON_VEG') counts.NON_VEG++;
+              else if (item.dietaryType === 'VEGAN') counts.VEGAN++;
+            }
+          }
+          return { ...restaurant, dietaryCounts: counts };
+        });
+        this.allRestaurants.set(displayData);
       },
       error: (err) => {
         this.notificationService.error('Failed to fetch restaurants');

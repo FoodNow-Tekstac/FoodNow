@@ -10,7 +10,9 @@ import * as L from 'leaflet';
   selector: 'app-track-order',
   standalone: true,
   imports: [CommonModule, RouterLink],
-  templateUrl: './track-order.html'
+  templateUrl: './track-order.html',
+    styleUrls: ['./track-order.css'] // <-- ADD THIS LINE
+
 })
 export class TrackOrderComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);

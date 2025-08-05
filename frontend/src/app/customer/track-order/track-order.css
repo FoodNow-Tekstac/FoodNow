@@ -1,0 +1,152 @@
+:host {
+  display: block;
+}
+
+.page-container {
+  max-width: 1400px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.back-link {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+  color: var(--primary-hover);
+}
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-top: 0.5rem;
+  color: var(--text-light);
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+/* Map Styling */
+.map-container {
+  background-color: var(--bg-light);
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  min-height: 450px;
+}
+.map-element {
+  height: 450px;
+  border-radius: 0.75rem;
+}
+.map-unavailable {
+  height: 450px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dark);
+}
+
+/* Order Details Card Styling */
+.details-card {
+  background-color: var(--bg-light);
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  align-self: flex-start; /* Prevents stretching on grid */
+}
+
+.restaurant-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-light);
+}
+
+.status-text {
+  margin-top: 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--text-dark);
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status-delivered { background-color: rgba(74, 222, 128, 0.2); color: #4ade80; }
+.status-out_for_delivery { background-color: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+.status-preparing, .status-confirmed { background-color: rgba(245, 158, 11, 0.2); color: #facc15; }
+.status-pending { background-color: rgba(156, 163, 175, 0.2); color: #9ca3af; }
+.status-cancelled { background-color: rgba(239, 68, 68, 0.2); color: #f87171; }
+
+.address-section, .items-section {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.items-list {
+  list-style-type: none;
+  padding: 0;
+  margin-top: 0.5rem;
+  color: var(--text-dark);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* --- LEAFLET MAP OVERRIDE STYLES --- */
+
+/* This targets the map tiles to apply a dark mode filter */
+:host ::ng-deep .leaflet-tile-pane {
+  filter: brightness(0.8) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
+}
+
+/* Style for map popups */
+:host ::ng-deep .leaflet-popup-content-wrapper,
+:host ::ng-deep .leaflet-popup-tip {
+  background: var(--bg-light);
+  color: var(--text-light);
+  box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+}
+
+/* Style for map controls (zoom buttons) */
+:host ::ng-deep .leaflet-control-zoom-in,
+:host ::ng-deep .leaflet-control-zoom-out {
+  background: var(--bg-light);
+  color: var(--text-light);
+  border: 1px solid var(--border-color);
+}
+:host ::ng-deep .leaflet-control-zoom-in:hover,
+:host ::ng-deep .leaflet-control-zoom-out:hover {
+  background: var(--bg-dark);
+  color: var(--text-light);
+}
+
+/* Delivery scooter icon */
+.scooter-icon {
+  font-size: 2.5rem; /* Make the emoji bigger */
+  text-shadow: 0 0 5px rgba(0,0,0,0.7);
+}
+
+
+/* Responsive Layout */
+@media (min-width: 768px) {
+  .content-grid {
+    grid-template-columns: 2fr 1fr;
+  }
+}

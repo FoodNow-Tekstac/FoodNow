@@ -1,0 +1,4 @@
+/* Styles specific to the navbar component */
+a.active {
+  color: var(--primary);
+}

@@ -1,29 +1,30 @@
-<main class="container mx-auto mt-24 px-6">
-  <div class="max-w-2xl mx-auto">
-    <div class="mb-8">
-      <a routerLink="/customer/orders" class="text-primary hover:underline">&larr; Back to My Orders</a>
-      <h1 class="text-5xl font-extrabold mt-4">Review for Order #{{ orderId }}</h1>
-    </div>
-    <div class="bg-surface rounded-lg p-8">
-      <form (ngSubmit)="onSubmit()">
-        <div class="text-center mb-6">
-          <p class="text-lg font-semibold mb-2">How was your experience?</p>
-          <div class="star-rating">
-            <input type="radio" id="star5" name="rating" [value]="5" [(ngModel)]="rating" /><label for="star5" title="5 stars">&#9733;</label>
-            <input type="radio" id="star4" name="rating" [value]="4" [(ngModel)]="rating" /><label for="star4" title="4 stars">&#9733;</label>
-            <input type="radio" id="star3" name="rating" [value]="3" [(ngModel)]="rating" /><label for="star3" title="3 stars">&#9733;</label>
-            <input type="radio" id="star2" name="rating" [value]="2" [(ngModel)]="rating" /><label for="star2" title="2 stars">&#9733;</label>
-            <input type="radio" id="star1" name="rating" [value]="1" [(ngModel)]="rating" /><label for="star1" title="1 star">&#9733;</label>
-          </div>
+<main class="page-container">
+  <div class="page-header">
+    <a routerLink="/customer/orders" class="back-link">&larr; Back to My Orders</a>
+    <h1 class="page-title">Review for Order #{{ orderId }}</h1>
+  </div>
+
+  <div class="review-card">
+    <form (ngSubmit)="onSubmit()">
+      <div class="rating-section">
+        <p class="section-title">How was your experience?</p>
+        <div class="star-rating">
+          <input type="radio" id="star5" name="rating" [value]="5" [(ngModel)]="rating" /><label for="star5" title="5 stars">&#9733;</label>
+          <input type="radio" id="star4" name="rating" [value]="4" [(ngModel)]="rating" /><label for="star4" title="4 stars">&#9733;</label>
+          <input type="radio" id="star3" name="rating" [value]="3" [(ngModel)]="rating" /><label for="star3" title="3 stars">&#9733;</label>
+          <input type="radio" id="star2" name="rating" [value]="2" [(ngModel)]="rating" /><label for="star2" title="2 stars">&#9733;</label>
+          <input type="radio" id="star1" name="rating" [value]="1" [(ngModel)]="rating" /><label for="star1" title="1 star">&#9733;</label>
         </div>
-        <div>
-          <label for="comment" class="block text-sm font-medium text-text-muted mb-2">Your Comments</label>
-          <textarea id="comment" name="comment" rows="4" class="form-input w-full" [(ngModel)]="comment"></textarea>
-        </div>
-        <div class="mt-8">
-          <button type="submit" class="btn-primary w-full py-3 rounded-lg font-semibold text-lg">Submit Review</button>
-        </div>
-      </form>
-    </div>
+      </div>
+
+      <div class="form-field">
+        <label for="comment">Your Comments (Optional)</label>
+        <textarea id="comment" name="comment" rows="5" class="form-input" placeholder="Tell us more about your order..." [(ngModel)]="comment"></textarea>
+      </div>
+      
+      <div class="mt-8">
+        <button type="submit" class="btn-submit w-full">Submit Review</button>
+      </div>
+    </form>
   </div>
 </main>
