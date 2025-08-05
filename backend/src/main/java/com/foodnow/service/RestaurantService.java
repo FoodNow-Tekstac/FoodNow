@@ -154,11 +154,19 @@ public class RestaurantService {
 
     @Transactional
     public void deleteFoodItem(int itemId) {
-        FoodItem item = getFoodItemById(itemId);
-        if (item.getRestaurant().getId() != getRestaurantByCurrentOwner().getId()) {
+        // Find the item we need to delete
+        FoodItem itemToDelete = foodItemRepository.findById(itemId)
+                .orElseThrow(() -> new ResourceNotFoundException("Food item not found with ID: " + itemId));
+
+        // Security check to ensure the owner is correct
+        if (itemToDelete.getRestaurant().getId() != getRestaurantByCurrentOwner().getId()) {
             throw new SecurityException("Unauthorized to delete this food item");
         }
-        foodItemRepository.delete(item);
+        
+        // Directly delete the item using its repository.
+        // We will no longer modify the parent Restaurant's menu list in this transaction
+        // to avoid the end-of-transaction conflict. The frontend will refresh the data anyway.
+        foodItemRepository.delete(itemToDelete);
     }
 
     @Transactional
