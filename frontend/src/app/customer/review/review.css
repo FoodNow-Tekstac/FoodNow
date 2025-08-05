@@ -1,21 +1,107 @@
-/* src/app/customer/review/review.css */
-.star-rating {
-  display: flex;
-  flex-direction: row-reverse;
-  justify-content: center;
+:host {
+  display: block;
+}
+
+.page-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.back-link {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+  color: var(--primary-hover);
+}
+
+.page-title {
   font-size: 2.5rem;
-  gap: 0.25rem;
+  font-weight: 800;
+  margin-top: 0.5rem;
+  color: var(--text-light);
 }
-.star-rating input {
-  display: none;
+
+.review-card {
+  background-color: var(--bg-light);
+  border-radius: 0.75rem;
+  padding: 2rem;
+  border: 1px solid var(--border-color);
 }
+
+.rating-section {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-light);
+  margin-bottom: 1rem;
+}
+
+/* Interactive Star Rating Styles */
+.star-rating {
+  display: inline-flex;
+  flex-direction: row-reverse; /* This is the key to the hover effect */
+  justify-content: center;
+}
+
+.star-rating input[type="radio"] {
+  display: none; /* Hide the actual radio buttons */
+}
+
 .star-rating label {
-  color: #4b5563; /* gray-600 */
+  font-size: 2.5rem;
+  color: var(--border-color);
   cursor: pointer;
-  transition: color 0.2s;
+  padding: 0 0.25rem;
+  transition: color 0.2s ease;
 }
-.star-rating input:checked ~ label,
-.star-rating label:hover,
+
+/* Hover effect: makes stars light up when you mouse over them */
+.star-rating:hover label {
+  color: var(--primary);
+}
+
+/* This makes sure stars to the "right" of the hovered star also light up */
 .star-rating label:hover ~ label {
-  color: var(--color-primary);
+  color: var(--primary);
+}
+
+/* Style for the selected stars (and those to the right) */
+.star-rating input[type="radio"]:checked ~ label {
+  color: var(--primary);
+}
+
+/* Form Field Styling */
+.form-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-field label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--text-dark);
+}
+
+.form-input {
+  resize: vertical;
+}
+
+.btn-submit {
+  font-size: 1rem;
+  padding: 0.8rem;
 }

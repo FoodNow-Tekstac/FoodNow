@@ -25,6 +25,9 @@ import { RestaurantOverviewComponent } from './restaurant/overview/overview';
 import { RestaurantOrdersComponent } from './restaurant/orders/orders';
 import { RestaurantReviewsComponent } from './restaurant/reviews/reviews';
 import { RestaurantMenuComponent } from './restaurant/menu/menu';
+import { adminGuard } from './auth/admin.guard';
+import { AdminLayoutComponent } from './admin/layout/layout';
+import { AdminPageComponent } from './admin/page/page';
 
 export const routes: Routes = [
   // ✅ PUBLIC ROUTES
@@ -64,6 +67,16 @@ export const routes: Routes = [
       { path: 'menu', component: RestaurantMenuComponent },
       { path: 'reviews', component: RestaurantReviewsComponent },
       { path: '', redirectTo: 'overview', pathMatch: 'full' }
+    ]
+  },
+
+  {
+    path: 'admin',
+    component: AdminLayoutComponent,
+    canActivate: [adminGuard], // Protect this whole section with the admin guard
+    children: [
+      { path: ':section', component: AdminPageComponent },
+      { path: '', redirectTo: 'applications', pathMatch: 'full' }
     ]
   },
 

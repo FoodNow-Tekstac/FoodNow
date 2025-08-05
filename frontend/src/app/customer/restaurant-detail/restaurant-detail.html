@@ -1,31 +1,49 @@
-<main class="container mx-auto mt-24 px-6">
-  @if (restaurant(); as res) {
-    <div class="mb-8">
-      <a routerLink="/customer/dashboard" class="text-primary hover:underline">&larr; Back to Restaurants</a>
-      <h1 class="text-5xl font-extrabold mt-4">{{ res.name }}</h1>
-      <p class="text-text-muted mt-2">{{ res.address }}</p>
+@if (restaurant(); as res) {
+  <!-- Restaurant Header Section -->
+  <div class="detail-header">
+    <div class="header-bg" [style.backgroundImage]="'url(' + ((res.imageUrl | fullUrl) || 'https://placehold.co/1200x400/131316/9ca3af?text=Restaurant') + ')'"></div>
+    <div class="header-overlay"></div>
+    <div class="header-content">
+      <h1 class="text-5xl font-extrabold text-white">{{ res.name }}</h1>
+      <p class="mt-2 text-lg text-text-light">{{ res.address }}</p>
     </div>
+  </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      @for (item of res.menu; track item.id) {
-        <div class="bg-surface rounded-lg shadow-lg overflow-hidden flex flex-col">
-<img [src]="(item.imageUrl | fullUrl) || 'https://placehold.co/600x400/1f2937/9ca3af?text=No+Img'" [alt]="item.name" class="w-full h-40 object-cover">          <div class="p-4 flex flex-col flex-grow">
-            <h4 class="text-lg font-bold">{{ item.name }}</h4>
-            @if(item.description) {
-              <p class="text-sm text-text-muted mt-1 flex-grow">{{ item.description }}</p>
-            }
-            <p class="text-lg font-semibold mt-2 text-primary">₹{{ item.price.toFixed(2) }}</p>
-            <div class="mt-4 flex items-center gap-2">
-              <input #quantityInput type="number" value="1" min="1" class="form-input w-20 text-center quantity-input">
-              <button (click)="addToCart(item, quantityInput)" class="btn-primary flex-grow py-2 px-4 rounded-lg font-semibold">Add to Cart</button>
+  <!-- Menu Section -->
+  <div class="menu-container">
+    <h2 class="text-3xl font-bold mb-6">Full Menu</h2>
+    @if (res.menu && res.menu.length > 0) {
+      <div class="menu-grid">
+        @for (item of res.menu; track item.id) {
+          <div class="menu-item-card">
+            <div class="item-details">
+              <div class="flex justify-between items-start">
+                <h3 class="item-name">{{ item.name }}</h3>
+                <span class="item-price">₹{{ item.price.toFixed(2) }}</span>
+              </div>
+              <p class="item-description">{{ item.description }}</p>
+              @if(item.dietaryType !== 'NONE') {
+                <span class="tag" [ngClass]="{
+                  'veg-tag': item.dietaryType === 'VEG',
+                  'non-veg-tag': item.dietaryType === 'NON_VEG',
+                  'vegan-tag': item.dietaryType === 'VEGAN'
+                }">{{ item.dietaryType | titlecase }}</span>
+              }
+            </div>
+            <div class="item-actions">
+              <input #quantityInput type="number" class="quantity-input" value="1" min="1">
+              <button class="add-to-cart-btn" (click)="addToCart(item, quantityInput)">Add to Cart</button>
             </div>
           </div>
-        </div>
-      } @empty {
-        <p class="text-text-muted col-span-full">This restaurant has no items on its menu yet.</p>
-      }
-    </div>
-  } @else {
-    <p class="text-text-muted">Loading menu...</p>
-  }
-</main>
+        }
+      </div>
+    } @else {
+      <p class="text-text-dark text-center py-8">This restaurant currently has no items on its menu.</p>
+    }
+  </div>
+} @else {
+  <!-- Loading State -->
+  <div class="text-center p-8">
+    <p class="text-text-muted">Loading restaurant details...</p>
+  </div>
+}

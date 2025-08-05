@@ -12,6 +12,8 @@ import { FullUrlPipe } from '../../shared/pipes/full-url';
   standalone: true,
   imports: [CommonModule, RouterLink, FullUrlPipe],
   templateUrl: './restaurant-detail.html',
+    styleUrls: ['./restaurant-detail.css'] // <-- ADD THIS LINE
+
 })
 export class RestaurantDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);

@@ -7,8 +7,9 @@ import { NotificationService } from '../../shared/notification';
 @Component({
   selector: 'app-orders',
   standalone: true,
-  imports: [CommonModule, RouterLink, DatePipe], // Make sure DatePipe is imported
+  imports: [CommonModule, RouterLink, DatePipe],
   templateUrl: './orders.html',
+  styleUrls: ['./orders.css'] // Add this line
 })
 export class OrdersComponent implements OnInit {
   private orderService = inject(OrderService);
@@ -17,7 +18,6 @@ export class OrdersComponent implements OnInit {
   orders = signal<Order[]>([]);
 
   ngOnInit() {
-    // This is the correct, simple API call for the customer's order history.
     this.orderService.getMyOrders().subscribe({
       next: (data: Order[]) => {
         const sortedData = data.sort((a, b) => new Date(b.orderTime).getTime() - new Date(a.orderTime).getTime());
@@ -27,15 +27,16 @@ export class OrdersComponent implements OnInit {
     });
   }
 
-  getStatusColor(status: Order['status']): string {
-    const colors = {
-      DELIVERED: 'bg-green-500 text-white',
-      OUT_FOR_DELIVERY: 'bg-blue-500 text-white',
-      PREPARING: 'bg-yellow-500 text-black',
-      CONFIRMED: 'bg-yellow-500 text-black',
-      PENDING: 'bg-gray-500 text-white',
-      CANCELLED: 'bg-red-500 text-white',
+  // UPDATED: This now returns semantic class names for better styling control
+  getStatusClass(status: Order['status']): string {
+    const statusMap = {
+      DELIVERED: 'status-delivered',
+      OUT_FOR_DELIVERY: 'status-out-for-delivery',
+      PREPARING: 'status-preparing',
+      CONFIRMED: 'status-preparing', // Using same style as preparing
+      PENDING: 'status-pending',
+      CANCELLED: 'status-cancelled',
     };
-    return colors[status] || 'bg-gray-600';
+    return statusMap[status] || 'status-pending';
   }
 }

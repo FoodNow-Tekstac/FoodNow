@@ -11,6 +11,8 @@ import { NotificationService } from '../../shared/notification';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './profile.html',
+    styleUrls: ['./profile.css'] // <-- ADD THIS LINE
+
 })
 export class ProfileComponent implements OnInit {
   private profileService = inject(ProfileService);

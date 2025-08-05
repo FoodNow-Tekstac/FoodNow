@@ -19,7 +19,6 @@ export class ForgotPasswordComponent {
   email: string = '';
 
   onSubmit(): void {
-    this.notificationService.show('Generating reset link...', 'loading');
     this.authService.forgotPassword(this.email).subscribe({
       next: (result) => {
         if (result.resetLink) {

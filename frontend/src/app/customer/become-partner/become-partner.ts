@@ -20,6 +20,8 @@ interface RestaurantApplication {
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './become-partner.html',
+    styleUrls: ['./become-partner.css'] // <-- ADD THIS LINE
+
 })
 export class BecomePartnerComponent {
   private router = inject(Router);
