@@ -1200,3 +1200,614 @@ Foodnow
    └─ fba05bf7-8b0b-43a7-baeb-71b184c12d21.jpg
 
 ```
+```
+Foodnow
+├─ API Specification.txt
+├─ backend
+│  ├─ .mvn
+│  │  └─ wrapper
+│  │     └─ maven-wrapper.properties
+│  ├─ HELP.md
+│  ├─ mvnw
+│  ├─ mvnw.cmd
+│  ├─ pom.xml
+│  ├─ project_structure.txt
+│  ├─ src
+│  │  ├─ main
+│  │  │  ├─ java
+│  │  │  │  └─ com
+│  │  │  │     └─ foodnow
+│  │  │  │        ├─ config
+│  │  │  │        │  ├─ SecurityConfig.java
+│  │  │  │        │  ├─ WebConfig.java
+│  │  │  │        │  └─ WebMvcConfig.java
+│  │  │  │        ├─ controller
+│  │  │  │        │  ├─ AdminController.java
+│  │  │  │        │  ├─ AuthController.java
+│  │  │  │        │  ├─ CartController.java
+│  │  │  │        │  ├─ DeliveryController.java
+│  │  │  │        │  ├─ FileUploadController.java
+│  │  │  │        │  ├─ OrderController.java
+│  │  │  │        │  ├─ OrderManagementController.java
+│  │  │  │        │  ├─ PaymentController.java
+│  │  │  │        │  ├─ ProfileController.java
+│  │  │  │        │  ├─ PublicController.java
+│  │  │  │        │  ├─ RestaurantApplicationController.java
+│  │  │  │        │  ├─ RestaurantController.java
+│  │  │  │        │  ├─ ReviewController.java
+│  │  │  │        │  └─ UserController.java
+│  │  │  │        ├─ DataSeeder.java
+│  │  │  │        ├─ dto
+│  │  │  │        │  ├─ AdminDtos.java
+│  │  │  │        │  ├─ AnalyticsDto.java
+│  │  │  │        │  ├─ ApiResponse.java
+│  │  │  │        │  ├─ CartDto.java
+│  │  │  │        │  ├─ CartItemDto.java
+│  │  │  │        │  ├─ DeliveryPersonnelSignUpRequest.java
+│  │  │  │        │  ├─ FoodItemDto.java
+│  │  │  │        │  ├─ ForgotPasswordRequest.java
+│  │  │  │        │  ├─ JwtAuthenticationResponse.java
+│  │  │  │        │  ├─ JwtAuthResponseDto.java
+│  │  │  │        │  ├─ LoginRequest.java
+│  │  │  │        │  ├─ OrderDto.java
+│  │  │  │        │  ├─ OrderItemDto.java
+│  │  │  │        │  ├─ OrderRequestDto.java
+│  │  │  │        │  ├─ OrderTrackingDto.java
+│  │  │  │        │  ├─ PaymentDto.java
+│  │  │  │        │  ├─ ProfileDto.java
+│  │  │  │        │  ├─ ResetPasswordRequest.java
+│  │  │  │        │  ├─ RestaurantApplicationRequest.java
+│  │  │  │        │  ├─ RestaurantDashboardDto.java
+│  │  │  │        │  ├─ RestaurantDto.java
+│  │  │  │        │  ├─ ReviewDto.java
+│  │  │  │        │  ├─ ReviewRequest.java
+│  │  │  │        │  ├─ SignUpRequest.java
+│  │  │  │        │  ├─ UpdateOrderStatusRequest.java
+│  │  │  │        │  ├─ UpdateProfileRequest.java
+│  │  │  │        │  └─ UserDto.java
+│  │  │  │        ├─ exception
+│  │  │  │        │  ├─ GlobalExceptionHandler.java
+│  │  │  │        │  └─ ResourceNotFoundException.java
+│  │  │  │        ├─ FoodNowApplication.java
+│  │  │  │        ├─ model
+│  │  │  │        │  ├─ Address.java
+│  │  │  │        │  ├─ ApplicationStatus.java
+│  │  │  │        │  ├─ Cart.java
+│  │  │  │        │  ├─ CartItem.java
+│  │  │  │        │  ├─ DeliveryAgentStatus.java
+│  │  │  │        │  ├─ DietaryType.java
+│  │  │  │        │  ├─ FoodCategory.java
+│  │  │  │        │  ├─ FoodItem.java
+│  │  │  │        │  ├─ MenuItem.java
+│  │  │  │        │  ├─ Order.java
+│  │  │  │        │  ├─ OrderItem.java
+│  │  │  │        │  ├─ OrderStatus.java
+│  │  │  │        │  ├─ PasswordResetToken.java
+│  │  │  │        │  ├─ Payment.java
+│  │  │  │        │  ├─ PaymentStatus.java
+│  │  │  │        │  ├─ Rating.java
+│  │  │  │        │  ├─ Restaurant.java
+│  │  │  │        │  ├─ RestaurantApplication.java
+│  │  │  │        │  ├─ Review.java
+│  │  │  │        │  ├─ Role.java
+│  │  │  │        │  └─ User.java
+│  │  │  │        ├─ repository
+│  │  │  │        │  ├─ AddressRepository.java
+│  │  │  │        │  ├─ CartItemRepository.java
+│  │  │  │        │  ├─ CartRepository.java
+│  │  │  │        │  ├─ DeliveryAgentRepository.java
+│  │  │  │        │  ├─ FoodItemRepository.java
+│  │  │  │        │  ├─ MenuItemRepository.java
+│  │  │  │        │  ├─ OrderItemRepository.java
+│  │  │  │        │  ├─ OrderRepository.java
+│  │  │  │        │  ├─ PasswordResetTokenRepository.java
+│  │  │  │        │  ├─ PaymentRepository.java
+│  │  │  │        │  ├─ RestaurantApplicationRepository.java
+│  │  │  │        │  ├─ RestaurantRepository.java
+│  │  │  │        │  ├─ ReviewRepository.java
+│  │  │  │        │  ├─ RoleRepository.java
+│  │  │  │        │  └─ UserRepository.java
+│  │  │  │        ├─ security
+│  │  │  │        │  ├─ JwtAuthenticationFilter.java
+│  │  │  │        │  ├─ JwtTokenProvider.java
+│  │  │  │        │  ├─ UserDetailsImpl.java
+│  │  │  │        │  └─ UserDetailsServiceImpl.java
+│  │  │  │        └─ service
+│  │  │  │           ├─ AdminService.java
+│  │  │  │           ├─ AuthenticationService.java
+│  │  │  │           ├─ CartService.java
+│  │  │  │           ├─ DeliveryService.java
+│  │  │  │           ├─ FileStorageService.java
+│  │  │  │           ├─ OrderManagementService.java
+│  │  │  │           ├─ OrderService.java
+│  │  │  │           ├─ PaymentService.java
+│  │  │  │           ├─ ProfileService.java
+│  │  │  │           ├─ PublicService.java
+│  │  │  │           ├─ RestaurantApplicationService.java
+│  │  │  │           ├─ RestaurantService.java
+│  │  │  │           ├─ ReviewService.java
+│  │  │  │           └─ UserService.java
+│  │  │  └─ resources
+│  │  │     ├─ application.properties
+│  │  │     └─ static
+│  │  │        ├─ admin
+│  │  │        │  ├─ dashboard.html
+│  │  │        │  └─ dashboard.js
+│  │  │        ├─ assets
+│  │  │        │  ├─ css
+│  │  │        │  │  └─ style.css
+│  │  │        │  └─ js
+│  │  │        │     ├─ forgot-password-confirmation.js
+│  │  │        │     ├─ forgot-password.js
+│  │  │        │     ├─ main.js
+│  │  │        │     └─ reset-password.js
+│  │  │        ├─ customer
+│  │  │        │  ├─ cart.html
+│  │  │        │  ├─ cart.js
+│  │  │        │  ├─ dashboard.html
+│  │  │        │  ├─ dashboard.js
+│  │  │        │  ├─ orders.html
+│  │  │        │  ├─ orders.js
+│  │  │        │  ├─ payment.html
+│  │  │        │  ├─ payment.js
+│  │  │        │  ├─ profile.html
+│  │  │        │  ├─ profile.js
+│  │  │        │  ├─ restaurant.html
+│  │  │        │  ├─ restaurant.js
+│  │  │        │  ├─ review.html
+│  │  │        │  ├─ review.js
+│  │  │        │  ├─ track-order.html
+│  │  │        │  └─ track-order.js
+│  │  │        ├─ delivery
+│  │  │        │  ├─ dashboard.html
+│  │  │        │  └─ dashboard.js
+│  │  │        ├─ forgot-password-confirmation.html
+│  │  │        ├─ forgot-password.html
+│  │  │        ├─ index.html
+│  │  │        ├─ reset-link.html
+│  │  │        ├─ reset-password.html
+│  │  │        └─ restaurant
+│  │  │           ├─ dashboard.html
+│  │  │           └─ dashboard.js
+│  │  └─ test
+│  │     └─ java
+│  │        └─ com
+│  │           └─ foodnow
+│  │              └─ foodnow
+│  │                 └─ FoodNowApplicationTests.java
+│  └─ target
+│     ├─ classes
+│     │  ├─ application.properties
+│     │  ├─ com
+│     │  │  └─ foodnow
+│     │  │     ├─ config
+│     │  │     │  ├─ SecurityConfig.class
+│     │  │     │  ├─ WebConfig$1.class
+│     │  │     │  ├─ WebConfig.class
+│     │  │     │  └─ WebMvcConfig.class
+│     │  │     ├─ controller
+│     │  │     │  ├─ AdminController.class
+│     │  │     │  ├─ AuthController.class
+│     │  │     │  ├─ CartController.class
+│     │  │     │  ├─ DeliveryController.class
+│     │  │     │  ├─ FileUploadController.class
+│     │  │     │  ├─ OrderController.class
+│     │  │     │  ├─ OrderManagementController.class
+│     │  │     │  ├─ PaymentController.class
+│     │  │     │  ├─ ProfileController.class
+│     │  │     │  ├─ PublicController.class
+│     │  │     │  ├─ RestaurantApplicationController.class
+│     │  │     │  ├─ RestaurantController.class
+│     │  │     │  └─ ReviewController.class
+│     │  │     ├─ DataSeeder.class
+│     │  │     ├─ dto
+│     │  │     │  ├─ AdminDtos$AnalyticsDto.class
+│     │  │     │  ├─ AdminDtos$OrderDto.class
+│     │  │     │  ├─ AdminDtos$RestaurantDto.class
+│     │  │     │  ├─ AdminDtos$UserDto.class
+│     │  │     │  ├─ AdminDtos.class
+│     │  │     │  ├─ AnalyticsDto.class
+│     │  │     │  ├─ ApiResponse.class
+│     │  │     │  ├─ CartDto.class
+│     │  │     │  ├─ CartItemDto.class
+│     │  │     │  ├─ DeliveryPersonnelSignUpRequest.class
+│     │  │     │  ├─ FoodItemDto.class
+│     │  │     │  ├─ ForgotPasswordRequest.class
+│     │  │     │  ├─ JwtAuthenticationResponse.class
+│     │  │     │  ├─ JwtAuthResponseDto.class
+│     │  │     │  ├─ LoginRequest.class
+│     │  │     │  ├─ OrderDto.class
+│     │  │     │  ├─ OrderItemDto.class
+│     │  │     │  ├─ OrderRequestDto.class
+│     │  │     │  ├─ OrderTrackingDto.class
+│     │  │     │  ├─ PaymentDto.class
+│     │  │     │  ├─ ProfileDto.class
+│     │  │     │  ├─ ResetPasswordRequest.class
+│     │  │     │  ├─ RestaurantApplicationRequest.class
+│     │  │     │  ├─ RestaurantDashboardDto.class
+│     │  │     │  ├─ RestaurantDto.class
+│     │  │     │  ├─ ReviewDto.class
+│     │  │     │  ├─ ReviewRequest.class
+│     │  │     │  ├─ SignUpRequest.class
+│     │  │     │  ├─ UpdateOrderStatusRequest.class
+│     │  │     │  ├─ UpdateProfileRequest.class
+│     │  │     │  └─ UserDto.class
+│     │  │     ├─ exception
+│     │  │     │  ├─ GlobalExceptionHandler.class
+│     │  │     │  └─ ResourceNotFoundException.class
+│     │  │     ├─ FoodNowApplication.class
+│     │  │     ├─ model
+│     │  │     │  ├─ Address.class
+│     │  │     │  ├─ ApplicationStatus.class
+│     │  │     │  ├─ Cart.class
+│     │  │     │  ├─ CartItem.class
+│     │  │     │  ├─ DeliveryAgentStatus.class
+│     │  │     │  ├─ DietaryType.class
+│     │  │     │  ├─ FoodCategory.class
+│     │  │     │  ├─ FoodItem.class
+│     │  │     │  ├─ Order.class
+│     │  │     │  ├─ OrderItem.class
+│     │  │     │  ├─ OrderStatus.class
+│     │  │     │  ├─ PasswordResetToken.class
+│     │  │     │  ├─ Payment.class
+│     │  │     │  ├─ PaymentStatus.class
+│     │  │     │  ├─ Rating.class
+│     │  │     │  ├─ Restaurant$RestaurantStatus.class
+│     │  │     │  ├─ Restaurant.class
+│     │  │     │  ├─ RestaurantApplication.class
+│     │  │     │  ├─ Review.class
+│     │  │     │  ├─ Role.class
+│     │  │     │  └─ User.class
+│     │  │     ├─ repository
+│     │  │     │  ├─ CartItemRepository.class
+│     │  │     │  ├─ CartRepository.class
+│     │  │     │  ├─ FoodItemRepository.class
+│     │  │     │  ├─ OrderItemRepository.class
+│     │  │     │  ├─ OrderRepository.class
+│     │  │     │  ├─ PasswordResetTokenRepository.class
+│     │  │     │  ├─ PaymentRepository.class
+│     │  │     │  ├─ RestaurantApplicationRepository.class
+│     │  │     │  ├─ RestaurantRepository.class
+│     │  │     │  ├─ ReviewRepository.class
+│     │  │     │  └─ UserRepository.class
+│     │  │     ├─ security
+│     │  │     │  ├─ JwtAuthenticationFilter.class
+│     │  │     │  ├─ JwtTokenProvider.class
+│     │  │     │  ├─ UserDetailsImpl.class
+│     │  │     │  └─ UserDetailsServiceImpl.class
+│     │  │     └─ service
+│     │  │        ├─ AdminService.class
+│     │  │        ├─ AuthenticationService.class
+│     │  │        ├─ CartService.class
+│     │  │        ├─ DeliveryService.class
+│     │  │        ├─ FileStorageService.class
+│     │  │        ├─ OrderManagementService.class
+│     │  │        ├─ OrderService.class
+│     │  │        ├─ PaymentService.class
+│     │  │        ├─ ProfileService.class
+│     │  │        ├─ PublicService.class
+│     │  │        ├─ RestaurantApplicationService.class
+│     │  │        ├─ RestaurantService.class
+│     │  │        └─ ReviewService.class
+│     │  └─ static
+│     │     ├─ admin
+│     │     │  ├─ dashboard.html
+│     │     │  └─ dashboard.js
+│     │     ├─ assets
+│     │     │  ├─ css
+│     │     │  │  └─ style.css
+│     │     │  └─ js
+│     │     │     ├─ forgot-password-confirmation.js
+│     │     │     ├─ forgot-password.js
+│     │     │     ├─ main.js
+│     │     │     └─ reset-password.js
+│     │     ├─ customer
+│     │     │  ├─ cart.html
+│     │     │  ├─ cart.js
+│     │     │  ├─ dashboard.html
+│     │     │  ├─ dashboard.js
+│     │     │  ├─ orders.html
+│     │     │  ├─ orders.js
+│     │     │  ├─ payment.html
+│     │     │  ├─ payment.js
+│     │     │  ├─ profile.html
+│     │     │  ├─ profile.js
+│     │     │  ├─ restaurant.html
+│     │     │  ├─ restaurant.js
+│     │     │  ├─ review.html
+│     │     │  ├─ review.js
+│     │     │  ├─ track-order.html
+│     │     │  └─ track-order.js
+│     │     ├─ delivery
+│     │     │  ├─ dashboard.html
+│     │     │  └─ dashboard.js
+│     │     ├─ forgot-password-confirmation.html
+│     │     ├─ forgot-password.html
+│     │     ├─ index.html
+│     │     ├─ reset-link.html
+│     │     ├─ reset-password.html
+│     │     └─ restaurant
+│     │        ├─ dashboard.html
+│     │        └─ dashboard.js
+│     ├─ foodnow-0.0.1-SNAPSHOT.jar
+│     ├─ foodnow-0.0.1-SNAPSHOT.jar.original
+│     ├─ generated-sources
+│     │  └─ annotations
+│     ├─ generated-test-sources
+│     │  └─ test-annotations
+│     ├─ maven-archiver
+│     │  └─ pom.properties
+│     ├─ maven-status
+│     │  └─ maven-compiler-plugin
+│     │     ├─ compile
+│     │     │  └─ default-compile
+│     │     │     ├─ createdFiles.lst
+│     │     │     └─ inputFiles.lst
+│     │     └─ testCompile
+│     │        └─ default-testCompile
+│     │           ├─ createdFiles.lst
+│     │           └─ inputFiles.lst
+│     └─ test-classes
+│        └─ com
+│           └─ foodnow
+│              └─ foodnow
+│                 └─ FoodNowApplicationTests.class
+├─ docker-compose.yml
+├─ Dockerfile
+├─ FiletoFile flow.png
+├─ frontend
+│  ├─ .angular
+│  │  └─ cache
+│  │     └─ 20.1.4
+│  │        └─ frontend
+│  │           ├─ .tsbuildinfo
+│  │           └─ vite
+│  │              ├─ com.chrome.devtools.json
+│  │              ├─ deps
+│  │              │  ├─ @angular_common.js
+│  │              │  ├─ @angular_common.js.map
+│  │              │  ├─ @angular_common_http.js
+│  │              │  ├─ @angular_common_http.js.map
+│  │              │  ├─ @angular_core.js
+│  │              │  ├─ @angular_core.js.map
+│  │              │  ├─ @angular_forms.js
+│  │              │  ├─ @angular_forms.js.map
+│  │              │  ├─ @angular_platform-browser.js
+│  │              │  ├─ @angular_platform-browser.js.map
+│  │              │  ├─ @angular_router.js
+│  │              │  ├─ @angular_router.js.map
+│  │              │  ├─ chunk-3KKC7HMJ.js
+│  │              │  ├─ chunk-3KKC7HMJ.js.map
+│  │              │  ├─ chunk-3OV72XIM.js
+│  │              │  ├─ chunk-3OV72XIM.js.map
+│  │              │  ├─ chunk-CJ6ABYNF.js
+│  │              │  ├─ chunk-CJ6ABYNF.js.map
+│  │              │  ├─ chunk-GGQ4LCOK.js
+│  │              │  ├─ chunk-GGQ4LCOK.js.map
+│  │              │  ├─ chunk-IZ5WOPVE.js
+│  │              │  ├─ chunk-IZ5WOPVE.js.map
+│  │              │  ├─ chunk-NDZIWK7R.js
+│  │              │  ├─ chunk-NDZIWK7R.js.map
+│  │              │  ├─ chunk-XO4SBAJ5.js
+│  │              │  ├─ chunk-XO4SBAJ5.js.map
+│  │              │  ├─ leaflet.js
+│  │              │  ├─ leaflet.js.map
+│  │              │  ├─ package.json
+│  │              │  ├─ qrcode-generator.js
+│  │              │  ├─ qrcode-generator.js.map
+│  │              │  ├─ rxjs.js
+│  │              │  ├─ rxjs.js.map
+│  │              │  ├─ zone__js.js
+│  │              │  ├─ zone__js.js.map
+│  │              │  └─ _metadata.json
+│  │              └─ deps_ssr
+│  │                 ├─ package.json
+│  │                 └─ _metadata.json
+│  ├─ .editorconfig
+│  ├─ angular.json
+│  ├─ package-lock.json
+│  ├─ package.json
+│  ├─ public
+│  │  └─ favicon.ico
+│  ├─ README.md
+│  ├─ src
+│  │  ├─ app
+│  │  │  ├─ app.config.ts
+│  │  │  ├─ app.css
+│  │  │  ├─ app.html
+│  │  │  ├─ app.routes.ts
+│  │  │  ├─ app.spec.ts
+│  │  │  ├─ app.ts
+│  │  │  ├─ auth
+│  │  │  │  ├─ auth.guard.ts
+│  │  │  │  ├─ auth.spec.ts
+│  │  │  │  ├─ auth.ts
+│  │  │  │  ├─ forgot-password
+│  │  │  │  │  ├─ forgot-password.css
+│  │  │  │  │  ├─ forgot-password.html
+│  │  │  │  │  ├─ forgot-password.spec.ts
+│  │  │  │  │  └─ forgot-password.ts
+│  │  │  │  ├─ forgot-password-confirmation
+│  │  │  │  │  ├─ forgot-password-confirmation.css
+│  │  │  │  │  ├─ forgot-password-confirmation.html
+│  │  │  │  │  ├─ forgot-password-confirmation.spec.ts
+│  │  │  │  │  └─ forgot-password-confirmation.ts
+│  │  │  │  ├─ jwt.interceptor.ts
+│  │  │  │  ├─ login
+│  │  │  │  │  ├─ login.css
+│  │  │  │  │  ├─ login.html
+│  │  │  │  │  ├─ login.spec.ts
+│  │  │  │  │  └─ login.ts
+│  │  │  │  ├─ reset-password
+│  │  │  │  │  ├─ reset-password.css
+│  │  │  │  │  ├─ reset-password.html
+│  │  │  │  │  ├─ reset-password.spec.ts
+│  │  │  │  │  └─ reset-password.ts
+│  │  │  │  └─ restaurant.guard.ts
+│  │  │  ├─ cart
+│  │  │  │  └─ cart.ts
+│  │  │  ├─ customer
+│  │  │  │  ├─ become-partner
+│  │  │  │  │  ├─ become-partner.css
+│  │  │  │  │  ├─ become-partner.html
+│  │  │  │  │  ├─ become-partner.spec.ts
+│  │  │  │  │  └─ become-partner.ts
+│  │  │  │  ├─ cart
+│  │  │  │  │  ├─ cart.css
+│  │  │  │  │  ├─ cart.html
+│  │  │  │  │  ├─ cart.spec.ts
+│  │  │  │  │  └─ cart.ts
+│  │  │  │  ├─ dashboard
+│  │  │  │  │  ├─ dashboard.css
+│  │  │  │  │  ├─ dashboard.html
+│  │  │  │  │  ├─ dashboard.spec.ts
+│  │  │  │  │  └─ dashboard.ts
+│  │  │  │  ├─ orders
+│  │  │  │  │  ├─ orders.css
+│  │  │  │  │  ├─ orders.html
+│  │  │  │  │  ├─ orders.spec.ts
+│  │  │  │  │  └─ orders.ts
+│  │  │  │  ├─ payment
+│  │  │  │  │  ├─ payment.css
+│  │  │  │  │  ├─ payment.html
+│  │  │  │  │  ├─ payment.spec.ts
+│  │  │  │  │  └─ payment.ts
+│  │  │  │  ├─ profile
+│  │  │  │  │  ├─ profile.css
+│  │  │  │  │  ├─ profile.html
+│  │  │  │  │  ├─ profile.spec.ts
+│  │  │  │  │  └─ profile.ts
+│  │  │  │  ├─ restaurant-detail
+│  │  │  │  │  ├─ restaurant-detail.css
+│  │  │  │  │  ├─ restaurant-detail.html
+│  │  │  │  │  ├─ restaurant-detail.spec.ts
+│  │  │  │  │  └─ restaurant-detail.ts
+│  │  │  │  ├─ review
+│  │  │  │  │  ├─ review.css
+│  │  │  │  │  ├─ review.html
+│  │  │  │  │  ├─ review.spec.ts
+│  │  │  │  │  └─ review.ts
+│  │  │  │  └─ track-order
+│  │  │  │     ├─ track-order.css
+│  │  │  │     ├─ track-order.html
+│  │  │  │     ├─ track-order.spec.ts
+│  │  │  │     └─ track-order.ts
+│  │  │  ├─ layouts
+│  │  │  │  └─ authenticated
+│  │  │  │     ├─ authenticated.css
+│  │  │  │     ├─ authenticated.html
+│  │  │  │     ├─ authenticated.spec.ts
+│  │  │  │     └─ authenticated.ts
+│  │  │  ├─ order
+│  │  │  │  └─ order.ts
+│  │  │  ├─ profile
+│  │  │  │  ├─ profile.spec.ts
+│  │  │  │  └─ profile.ts
+│  │  │  ├─ restaurant
+│  │  │  │  ├─ dashboard.spec.ts
+│  │  │  │  ├─ dashboard.ts
+│  │  │  │  ├─ layout
+│  │  │  │  │  ├─ layout.css
+│  │  │  │  │  ├─ layout.html
+│  │  │  │  │  ├─ layout.spec.ts
+│  │  │  │  │  └─ layout.ts
+│  │  │  │  ├─ menu
+│  │  │  │  │  ├─ menu.css
+│  │  │  │  │  ├─ menu.html
+│  │  │  │  │  ├─ menu.spec.ts
+│  │  │  │  │  └─ menu.ts
+│  │  │  │  ├─ menu-item-modal
+│  │  │  │  │  ├─ menu-item-modal.css
+│  │  │  │  │  ├─ menu-item-modal.html
+│  │  │  │  │  ├─ menu-item-modal.spec.ts
+│  │  │  │  │  └─ menu-item-modal.ts
+│  │  │  │  ├─ orders
+│  │  │  │  │  ├─ orders.css
+│  │  │  │  │  ├─ orders.html
+│  │  │  │  │  ├─ orders.spec.ts
+│  │  │  │  │  └─ orders.ts
+│  │  │  │  ├─ overview
+│  │  │  │  │  ├─ overview.css
+│  │  │  │  │  ├─ overview.html
+│  │  │  │  │  ├─ overview.spec.ts
+│  │  │  │  │  └─ overview.ts
+│  │  │  │  ├─ restaurant.ts
+│  │  │  │  └─ reviews
+│  │  │  │     ├─ reviews.css
+│  │  │  │     ├─ reviews.html
+│  │  │  │     ├─ reviews.spec.ts
+│  │  │  │     └─ reviews.ts
+│  │  │  └─ shared
+│  │  │     ├─ navbar
+│  │  │     │  ├─ navbar.css
+│  │  │     │  ├─ navbar.html
+│  │  │     │  ├─ navbar.spec.ts
+│  │  │     │  └─ navbar.ts
+│  │  │     ├─ notification
+│  │  │     │  ├─ notification.css
+│  │  │     │  ├─ notification.html
+│  │  │     │  ├─ notification.spec.ts
+│  │  │     │  └─ notification.ts
+│  │  │     ├─ notification.spec.ts
+│  │  │     ├─ notification.ts
+│  │  │     ├─ pipes
+│  │  │     │  ├─ full-url-pipe.spec.ts
+│  │  │     │  └─ full-url.ts
+│  │  │     └─ services
+│  │  │        ├─ file.ts
+│  │  │        └─ ui-interaction.ts
+│  │  ├─ environments
+│  │  │  └─ environment.ts
+│  │  ├─ index.html
+│  │  ├─ main.ts
+│  │  └─ styles.css
+│  ├─ tsconfig.app.json
+│  ├─ tsconfig.json
+│  └─ tsconfig.spec.json
+├─ Login Flow.png
+├─ mysql-dump
+│  ├─ foodnow_new_addresses.sql
+│  ├─ foodnow_new_carts.sql
+│  ├─ foodnow_new_cart_items.sql
+│  ├─ foodnow_new_food_items.sql
+│  ├─ foodnow_new_menu_items.sql
+│  ├─ foodnow_new_orders.sql
+│  ├─ foodnow_new_order_items.sql
+│  ├─ foodnow_new_payments.sql
+│  ├─ foodnow_new_ratings.sql
+│  ├─ foodnow_new_restaurants.sql
+│  ├─ foodnow_new_restaurant_applications.sql
+│  └─ foodnow_new_users.sql
+├─ Online Food Delivery Application.pdf
+├─ package-lock.json
+├─ package.json
+├─ README.md
+├─ Register Flow.png
+├─ Spring Flow.png
+└─ uploads
+   ├─ 038fe635-9e8f-4997-8bf4-a179c9171c72.jpg
+   ├─ 16727796-890b-4c45-a212-07ab814dd419.jpg
+   ├─ 17206c0f-6fe6-43ef-85bc-019da7f8dc7a.jpg
+   ├─ 1d97316c-4910-4de4-9300-3b958f9b0afc.jpg
+   ├─ 1fcd98f9-36a1-40a6-b9be-dd92397df6be.jpg
+   ├─ 239874c0-64a8-4a9d-9ba4-ade32a9d10df.jpg
+   ├─ 2da184ad-be66-4bd5-8368-abfdac245a05.png
+   ├─ 2dec01bb-dfbc-494a-9209-9ecf74de2ccf.jpg
+   ├─ 2e0709a4-e67e-4271-a099-83eafc431570.jpg
+   ├─ 36aa226c-4dca-4c0c-a519-58197930967f.png
+   ├─ 3fd9ce7c-e6c4-4e08-9a8b-56ba13d03a98.jpg
+   ├─ 415f938d-4bb7-4618-a84e-107c0bd05ee4.jpg
+   ├─ 45d68d3e-d346-48b4-b2ac-98c043a98618.jpg
+   ├─ 50ba946f-4674-494a-afd7-cb242189d51d.jpeg
+   ├─ 5c5bd9e5-9542-445b-bfbb-749085dddc19.png
+   ├─ 7993811c-cd3d-4c24-b8d8-0eee0070a91c.jpg
+   ├─ 7a9c0daf-1685-4361-ba46-3d655ef0735e.jpg
+   ├─ 9f7ea025-54c6-41a2-a477-4df4c400ccfe.png
+   ├─ bf8c3a1b-d767-4f17-b566-2391af5cad5e.jpg
+   ├─ d4227ef5-4aad-4dba-a3d0-8c99f1fd4429.jpg
+   ├─ d5d2389b-0dba-4ed3-9f1f-2fce856c09fb.png
+   ├─ ec3f220e-aaf4-44bd-8a69-6fd780f61526.jpg
+   ├─ f01c7e85-0af4-43eb-8d8c-ff7f0ccdaa3e.jpg
+   └─ fba05bf7-8b0b-43a7-baeb-71b184c12d21.jpg
+
+```
