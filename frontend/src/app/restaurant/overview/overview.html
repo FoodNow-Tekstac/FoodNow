@@ -1,0 +1,14 @@
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+  <div class="bg-surface p-6 rounded-lg">
+    <p class="text-sm text-text-muted">Pending Orders</p>
+    <p class="text-4xl font-bold">{{ pendingOrders() }}</p>
+  </div>
+  <div class="bg-surface p-6 rounded-lg">
+    <p class="text-sm text-text-muted">Total Menu Items</p>
+    <p class="text-4xl font-bold">{{ totalMenuItems() }}</p>
+  </div>
+  <div class="bg-surface p-6 rounded-lg">
+    <p class="text-sm text-text-muted">Total Revenue (Delivered)</p>
+    <p class="text-4xl font-bold">₹{{ totalRevenue().toFixed(2) }}</p>
+  </div>
+</div>

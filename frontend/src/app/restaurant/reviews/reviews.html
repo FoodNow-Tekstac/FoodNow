@@ -1,0 +1,22 @@
+<div>
+  @if(reviews().length > 0) {
+    <div class="space-y-4">
+      @for(review of reviews(); track review.id) {
+        <div class="bg-surface p-4 rounded-lg">
+          <div class="flex justify-between items-center">
+            <p class="font-bold">{{ review.customerName }}</p>
+            <div class="flex text-yellow-400">
+              @for(star of getStars(review.rating); track $index) {
+                <span>&#9733;</span>
+              }
+            </div>
+          </div>
+          <p class="text-sm text-text-muted mt-1">{{ review.reviewDate | date:'medium' }}</p>
+          <p class="mt-4 italic">"{{ review.comment }}"</p>
+        </div>
+      }
+    </div>
+  } @else {
+    <p class="text-text-muted">You have not received any reviews yet.</p>
+  }
+</div>

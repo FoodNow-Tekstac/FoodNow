@@ -37,7 +37,7 @@
                         Leave a Review
                     </a>
                 }
-            } @else {
+            } @else if (order.status !== 'CANCELLED') {
                 <a [routerLink]="['/customer/track-order', order.id]" class="text-primary font-semibold">
                     Track Order &rarr;
                 </a>

@@ -15,3 +15,5 @@ export class NotificationComponent {
    */
   protected notificationService = inject(NotificationService);
 }
+
+export { NotificationService };
