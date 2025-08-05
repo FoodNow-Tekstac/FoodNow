@@ -1,18 +1,15 @@
 /* src/styles.css */
-
-/* --- Global Theme & Variables --- */
 :root {
-  --primary-hue: 25;
+  --primary-hue: 45;
   --color-primary: hsl(var(--primary-hue), 95%, 58%);
   --color-primary-light: hsl(var(--primary-hue), 95%, 65%);
   --color-text: #e2e8f0;
   --color-text-muted: #94a3b8;
-  --color-bg: #111827;
+  --color-bg: #0a0a0a;
   --color-surface: #1f2937;
   --color-border: #374151;
-  --color-error: #f87171;
+  --color-error: #f472b6;
   --color-success: #4ade80;
-  --color-loading: #94a3b8;
 }
 
 body {
@@ -20,9 +17,9 @@ body {
   background-color: var(--color-bg);
   color: var(--color-text);
   margin: 0;
+  overflow-x: hidden;
 }
 
-/* --- Login Page Background Effect --- */
 .login-page-background {
   position: fixed;
   top: -5%; left: -5%;
@@ -40,11 +37,27 @@ body {
   to { transform: scale(1.1); }
 }
 
-/* --- Form & Input Styling --- */
+.title-animation { animation: fade-in-down 0.8s ease-out both; }
+.card-animation { animation: fade-in-up 0.8s 0.2s ease-out both; }
+.form-container { animation: fade-in 0.5s ease-out; }
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in-down {
+  from { opacity: 0; transform: translateY(-40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 .form-input {
   display: block;
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 0.85rem 1rem;
   box-sizing: border-box;
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -59,32 +72,52 @@ body {
   box-shadow: 0 0 0 3px hsla(var(--primary-hue), 95%, 58%, 0.3);
 }
 
+.form-input.ng-invalid.ng-touched {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 3px hsla(330, 81%, 70%, 0.3);
+}
+
+.form-error-text {
+  color: var(--color-error);
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding-left: 0.25rem;
+  margin-top: 0.35rem;
+  animation: fade-in 0.3s;
+}
+
 .form-label {
   position: absolute;
   left: 1rem;
-  top: 0.75rem;
+  top: 0.85rem;
   color: var(--color-text-muted);
   transition: all 0.3s ease;
   pointer-events: none;
-}
-
-.form-input:focus + .form-label,
-.form-input:not(:placeholder-shown) + .form-label {
-  transform: translateY(-1.5rem) scale(0.8);
-  color: var(--color-primary);
   background-color: var(--color-surface);
   padding: 0 0.25rem;
 }
 
-/* --- Button Styling --- */
+.form-input:focus + .form-label,
+.form-input:not(:placeholder-shown) + .form-label {
+  transform: translateY(-1.7rem) scale(0.8);
+  color: var(--color-primary);
+}
+
+.form-input.ng-invalid.ng-touched:focus + .form-label,
+.form-input.ng-invalid.ng-touched:not(:placeholder-shown) + .form-label {
+    color: var(--color-error);
+}
+
 .btn-primary {
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
-  padding: 0.75rem;
+  padding: 0.85rem;
   border: none;
   border-radius: 0.5rem;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 1.1rem;
   text-align: center;
   cursor: pointer;
   background-color: var(--color-primary);
@@ -95,43 +128,58 @@ body {
 .btn-primary:hover:not(:disabled) {
   background-color: var(--color-primary-light);
   transform: translateY(-2px);
+  box-shadow: 0 10px 20px -5px hsla(var(--primary-hue), 95%, 58%, 0.2);
 }
 
 .btn-primary:disabled {
   background-color: var(--color-border);
+  color: var(--color-text-muted);
   cursor: not-allowed;
 }
 
-/* --- Toast Notification Styling --- */
-#toast-container {
-  position: fixed;
-  top: 1.5rem;
-  right: 1.5rem;
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.toast {
-  display: flex; 
-  align-items: center; 
-  padding: 1rem 1.5rem; 
-  border-radius: 0.75rem;
-  color: white; 
-  font-weight: 500; 
-  box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2);
-  transform: translateX(120%); 
-  opacity: 0; 
-  transition: all 0.4s ease-out;
-}
-
-.toast.show { 
-  transform: translateX(0); 
-  opacity: 1; 
-}
-
-.toast-success { background-color: var(--color-success); }
-.toast-error { background-color: var(--color-error); }
-.toast-loading { background-color: var(--color-loading); }
 .text-primary { color: var(--color-primary); }
+a.text-primary {
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+a.text-primary:hover {
+  filter: brightness(1.2);
+  text-decoration: underline;
+}
+
+/* Fallback for the utility classes used in the HTML */
+.flex { display: flex; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.min-h-screen { min-height: 100vh; }
+.p-4 { padding: 1rem; }
+.p-8 { padding: 2rem; }
+.w-full { width: 100%; }
+.max-w-md { max-width: 28rem; }
+.mx-auto { margin-left: auto; margin-right: auto; }
+.z-10 { z-index: 10; }
+.mb-1 { margin-bottom: 0.25rem; }
+.mb-6 { margin-bottom: 1.5rem; }
+.mb-8 { margin-bottom: 2rem; }
+.mt-6 { margin-top: 1.5rem; }
+.mt-8 { margin-top: 2rem; }
+.text-center { text-align: center; }
+.text-5xl { font-size: 3rem; }
+.text-2xl { font-size: 1.5rem; }
+.text-lg { font-size: 1.125rem; }
+.text-sm { font-size: 0.875rem; }
+.font-bold { font-weight: 700; }
+.font-semibold { font-weight: 600; }
+.text-white { color: white; }
+.relative { position: relative; }
+.overflow-hidden { overflow: hidden; }
+.bg-surface { background-color: var(--color-surface); }
+.rounded-2xl { border-radius: 1rem; }
+.rounded-lg { border-radius: 0.5rem; }
+.shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+.border { border-width: 1px; }
+.border-border { border-color: var(--color-border); }
+.text-text-muted { color: var(--color-text-muted); }
+.space-y-2 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.5rem; }
+.space-y-6 > :not([hidden]) ~ :not([hidden]) { margin-top: 1.5rem; }
+.hover\:underline:hover { text-decoration: underline; }

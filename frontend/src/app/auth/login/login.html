@@ -2,70 +2,105 @@
 
 <div class="flex items-center justify-center min-h-screen p-4">
   <div class="w-full max-w-md mx-auto z-10">
-    <div class="text-center mb-8">
+    <div class="text-center mb-8 title-animation">
       <h1 class="text-5xl font-bold text-white">Food<span class="text-primary">Now</span></h1>
     </div>
+    <div class="relative overflow-hidden bg-surface rounded-2xl shadow-2xl p-8 border border-border card-animation"
+      style="min-height: 480px;">
 
-    <div class="relative overflow-hidden bg-surface rounded-2xl shadow-2xl p-8 border border-border" style="min-height: 480px;">
-      
       @if (!isRegisterMode()) {
-        <div>
-          <h2 class="text-2xl font-bold text-center mb-1 text-white">Welcome Back!</h2>
-          <p class="text-center text-text-muted mb-6">Sign in to continue</p>
-          <form (ngSubmit)="onLogin()">
-            <div class="space-y-4">
-              <div class="relative">
-                <input type="email" id="login-email" name="email" class="form-input" placeholder=" " required [(ngModel)]="loginData.email">
-                <label for="login-email" class="form-label">Email Address</label>
+      <div class="form-container">
+        <h2 class="text-2xl font-bold text-center mb-1 text-white">Welcome Back!</h2>
+        <p class="text-center text-text-muted mb-6">Sign in to continue</p>
+        <form [formGroup]="loginForm" (ngSubmit)="onLogin()" novalidate>
+          <div class="space-y-6">
+            <div class="relative">
+              <input type="email" id="login-email" class="form-input" placeholder=" " formControlName="email">
+              <label for="login-email" class="form-label">Email Address</label>
+              @if (loginEmail?.invalid && (loginEmail?.dirty || loginEmail?.touched)) {
+              <div class="form-error-text">
+                @if (loginEmail?.hasError('required')) { <span>Email is required.</span> }
+                @if (loginEmail?.hasError('email')) { <span>Please enter a valid email.</span> }
               </div>
-              <div class="relative">
-                <input type="password" id="login-password" name="password" class="form-input" placeholder=" " required [(ngModel)]="loginData.password">
-                <label for="login-password" class="form-label">Password</label>
-              </div>
+              }
             </div>
-            <button type="submit" class="btn-primary w-full py-3 mt-6 rounded-lg font-semibold text-lg" [disabled]="isLoading()">
-              {{ isLoading() ? 'Processing...' : 'Login' }}
-            </button>
-          </form>
-          <div class="text-center text-sm text-text-muted mt-6 space-y-2">
-            <p>Don't have an account? <a href="#" (click)="toggleMode($event)" class="font-semibold text-primary">Sign up</a></p>
-<p>
-<a routerLink="/forgot-password" class="text-sm text-primary hover:underline">Forgot Password?</a>
-</p>          </div>
+            <div class="relative">
+              <input type="password" id="login-password" class="form-input" placeholder=" " formControlName="password">
+              <label for="login-password" class="form-label">Password</label>
+              @if (loginPassword?.invalid && (loginPassword?.dirty || loginPassword?.touched)) {
+              <div class="form-error-text">
+                @if (loginPassword?.hasError('required')) { <span>Password is required.</span> }
+              </div>
+              }
+            </div>
+          </div>
+          <button type="submit" class="btn-primary w-full py-3 mt-8 rounded-lg font-semibold text-lg"
+            [disabled]="isLoading() || loginForm.invalid">
+            {{ isLoading() ? 'Processing...' : 'Login' }}
+          </button>
+        </form>
+        <div class="text-center text-sm text-text-muted mt-6 space-y-2">
+          <p>Don't have an account? <a href="#" (click)="toggleMode($event)" class="font-semibold text-primary">Sign
+              up</a></p>
+          <p><a routerLink="/forgot-password" class="text-sm text-primary hover:underline">Forgot Password?</a></p>
         </div>
+      </div>
       }
 
       @if (isRegisterMode()) {
-        <div>
-          <h2 class="text-2xl font-bold text-center mb-1 text-white">Create Account</h2>
-          <p class="text-center text-text-muted mb-6">Get started with FoodNow!</p>
-          <form (ngSubmit)="onRegister()">
-            <div class="space-y-4">
-              <div class="relative">
-                <input type="text" id="register-name" name="name" class="form-input" placeholder=" " required [(ngModel)]="registerData.name">
-                <label for="register-name" class="form-label">Full Name</label>
+      <div class="form-container">
+        <h2 class="text-2xl font-bold text-center mb-1 text-white">Create Account</h2>
+        <p class="text-center text-text-muted mb-6">Get started with FoodNow!</p>
+        <form [formGroup]="registerForm" (ngSubmit)="onRegister()" novalidate>
+          <div class="space-y-6">
+            <div class="relative">
+              <input type="text" id="register-name" class="form-input" placeholder=" " formControlName="name">
+              <label for="register-name" class="form-label">Full Name</label>
+              @if (registerName?.invalid && (registerName?.dirty || registerName?.touched)) {
+              <div class="form-error-text">
+                @if (registerName?.hasError('required')) { <span>Full Name is required.</span> }
               </div>
-              <div class="relative">
-                <input type="email" id="register-email" name="email" class="form-input" placeholder=" " required [(ngModel)]="registerData.email">
-                <label for="register-email" class="form-label">Email Address</label>
-              </div>
-              <div class="relative">
-                <input type="tel" id="register-phone" name="phoneNumber" class="form-input" placeholder=" " required [(ngModel)]="registerData.phoneNumber">
-                <label for="register-phone" class="form-label">Phone Number</label>
-              </div>
-              <div class="relative">
-                <input type="password" id="register-password" name="password" class="form-input" placeholder=" " required [(ngModel)]="registerData.password">
-                <label for="register-password" class="form-label">Password</label>
-              </div>
+              }
             </div>
-            <button type="submit" class="btn-primary w-full py-3 mt-6 rounded-lg font-semibold text-lg" [disabled]="isLoading()">
-              {{ isLoading() ? 'Processing...' : 'Create Account' }}
-            </button>
-          </form>
-          <p class="text-center text-sm text-text-muted mt-6">
-            Already have an account? <a href="#" (click)="toggleMode($event)" class="font-semibold text-primary">Sign in</a>
-          </p>
-        </div>
+            <div class="relative">
+              <input type="email" id="register-email" class="form-input" placeholder=" " formControlName="email">
+              <label for="register-email" class="form-label">Email Address</label>
+              @if (registerEmail?.invalid && (registerEmail?.dirty || registerEmail?.touched)) {
+              <div class="form-error-text">
+                @if (registerEmail?.hasError('required')) { <span>Email is required.</span> }
+              </div>
+              }
+            </div>
+            <div class="relative">
+              <input type="tel" id="register-phone" class="form-input" placeholder=" " formControlName="phoneNumber">
+              <label for="register-phone" class="form-label">Phone Number</label>
+              @if (registerPhone?.invalid && (registerPhone?.dirty || registerPhone?.touched)) {
+              <div class="form-error-text">
+                @if (registerPhone?.hasError('required')) { <span>Phone Number is required.</span> }
+              </div>
+              }
+            </div>
+            <div class="relative">
+              <input type="password" id="register-password" class="form-input" placeholder=" "
+                formControlName="password">
+              <label for="register-password" class="form-label">Password</label>
+              @if (registerPassword?.invalid && (registerPassword?.dirty || registerPassword?.touched)) {
+              <div class="form-error-text">
+                @if (registerPassword?.hasError('required')) { <span>Password is required.</span> }
+              </div>
+              }
+            </div>
+          </div>
+          <button type="submit" class="btn-primary w-full py-3 mt-8 rounded-lg font-semibold text-lg"
+            [disabled]="isLoading() || registerForm.invalid">
+            {{ isLoading() ? 'Processing...' : 'Create Account' }}
+          </button>
+        </form>
+        <p class="text-center text-sm text-text-muted mt-6">
+          Already have an account? <a href="#" (click)="toggleMode($event)" class="font-semibold text-primary">Sign
+            in</a>
+        </p>
+      </div>
       }
     </div>
   </div>
