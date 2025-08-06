@@ -1,0 +1,119 @@
+:host {
+  display: block;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(10, 10, 10, 0.8);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 2000;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Modal Content Box */
+.modal-content {
+  width: 100%;
+  max-width: 600px;
+  background-color: var(--bg-light);
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+}
+
+/* Modal Header */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-light);
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: var(--text-dark);
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.close-btn:hover {
+  color: var(--text-light);
+}
+
+/* Modal Body & Form */
+.modal-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .full-span {
+    grid-column: 1 / -1;
+  }
+}
+
+.form-input.file-input::file-selector-button {
+  margin-right: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  background-color: var(--primary);
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.form-input.file-input::file-selector-button:hover {
+  background-color: var(--primary-hover);
+}
+
+/* Modal Footer */
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--bg-dark);
+  flex-shrink: 0;
+}
+
+.btn-secondary, .btn-submit {
+  padding: 0.6rem 1.25rem;
+  font-weight: 600;
+}
+
+/* Entrance Animation */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

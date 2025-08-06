@@ -1,49 +1,70 @@
-<div class="flex justify-between items-center mb-6">
-  <h3 class="text-2xl font-bold">Your Menu</h3>
-  <button (click)="openAddModal()" class="btn-primary px-4 py-2 rounded-lg font-semibold">Add New Item</button>
+<div class="page-header">
+  <h2 class="page-title">Menu Management</h2>
+  <button (click)="openAddModal()" class="btn-primary">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2h6z"></path>
+    </svg>
+    <span>Add New Item</span>
+  </button>
 </div>
-<div class="bg-surface rounded-lg border border-border">
-  <table class="min-w-full">
-    <thead class="border-b border-border">
+
+<div class="table-card">
+  <table class="menu-table">
+    <thead>
       <tr>
-        <th class="px-6 py-3 text-left">Item</th>
-        <th class="px-6 py-3 text-left">Category</th>
-        <th class="px-6 py-3 text-left">Price</th>
-        <th class="px-6 py-3 text-left">Available</th>
-        <th class="px-6 py-3 text-right">Actions</th>
+        <th>Item</th>
+        <th class="hidden md:table-cell">Category</th>
+        <th class="hidden lg:table-cell">Price</th>
+        <!-- Performance Metrics Columns -->
+        <th class="hidden lg:table-cell">Times Ordered</th>
+        <th class="hidden lg:table-cell">Total Revenue</th>
+        <th>Available</th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody>
-      @for (item of menuItems(); track item.id) {
-        <tr class="border-b border-border">
-          <td class="px-6 py-4">
-            <div class="flex items-center">
-              <img class="h-10 w-10 rounded-full object-cover" [src]="(item.imageUrl | fullUrl) || 'https://placehold.co/40x40'" [alt]="item.name">
-              <div class="ml-4">
-                <div class="font-medium">{{ item.name }}</div>
-                <div class="text-sm text-text-muted">{{ item.description }}</div>
+      @for (item of menuItemsWithStats(); track item.id) {
+        <tr>
+          <td>
+            <div class="item-cell">
+              <img class="item-image" [src]="(item.imageUrl | fullUrl) || 'https://placehold.co/40x40/1e1e22/9e9e9e?text=' + item.name.charAt(0)" [alt]="item.name">
+              <div>
+                <div class="item-name">{{ item.name }}</div>
+                <div class="item-description">{{ item.description }}</div>
               </div>
             </div>
           </td>
-          <td class="px-6 py-4 text-text-muted">
+          <td class="hidden md:table-cell">
             <div class="font-semibold">{{ (item.dietaryType || '').replace('_', ' ') }}</div>
-            <div class="text-xs">{{ (item.category || '').replace('_', ' ') }}</div>
+            <div class="text-xs text-text-dark">{{ (item.category || '').replace('_', ' ') }}</div>
           </td>
-          <td class="px-6 py-4">₹{{ item.price.toFixed(2) }}</td>
-          <td class="px-6 py-4">
-            <label class="switch">
-              <input type="checkbox" [checked]="item.available" (change)="toggleAvailability(item.id)">
+          <td class="hidden lg:table-cell">
+            <span class="font-semibold">₹{{ item.price.toFixed(2) }}</span>
+          </td>
+          <td class="hidden lg:table-cell">
+            <span class="font-semibold">{{ item.timesOrdered }}</span>
+          </td>
+          <td class="hidden lg:table-cell">
+            <span class="font-semibold">₹{{ item.totalRevenue.toFixed(2) }}</span>
+          </td>
+          <td>
+            <label class="availability-switch">
+              <input type="checkbox" [checked]="item.available" (change)="toggleAvailability(item)">
               <span class="slider"></span>
             </label>
           </td>
-          <td class="px-6 py-4 text-right text-sm font-medium">
-            <button class="text-indigo-400 hover:text-indigo-300 mr-4" (click)="openEditModal(item)">Edit</button>
-            <button class="text-red-500 hover:text-red-400" (click)="deleteItem(item.id)">Delete</button>
+          <td>
+            <div class="action-buttons">
+              <button class="action-btn edit-btn" (click)="openEditModal(item)">Edit</button>
+              <button class="action-btn delete-btn" (click)="deleteItem(item.id)">Delete</button>
+            </div>
           </td>
         </tr>
       } @empty {
         <tr>
-          <td colspan="5" class="text-center text-text-muted p-6">You have not added any menu items yet.</td>
+          <td [attr.colspan]="7" class="empty-state">
+            You haven't added any menu items yet. Click "Add New Item" to get started.
+          </td>
         </tr>
       }
     </tbody>

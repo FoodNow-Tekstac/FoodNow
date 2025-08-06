@@ -9,6 +9,7 @@ import { AuthService } from '../../auth/auth';
   standalone: true,
   imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './layout.html',
+   styleUrls: ['./layout.css']
 })
 export class RestaurantLayoutComponent implements OnInit {
   private dashboardService = inject(RestaurantDashboardService);

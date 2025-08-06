@@ -1,0 +1,107 @@
+:host {
+  display: block;
+}
+
+.dashboard-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr; /* Sidebar width and main content */
+  min-height: 100vh;
+}
+
+/* --- Sidebar --- */
+.sidebar {
+  background-color: var(--bg-light);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+}
+
+.sidebar-header {
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.restaurant-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* --- Navigation Links --- */
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex-grow: 1; /* Pushes footer to the bottom */
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  font-weight: 500;
+  color: var(--text-dark);
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent;
+}
+
+.nav-link:hover {
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+}
+
+.nav-link.active {
+  background-color: rgba(var(--primary-rgb, 108, 95, 245), 0.1);
+  color: var(--primary);
+  border-left-color: var(--primary);
+}
+
+.nav-link svg {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+/* --- Sidebar Footer --- */
+.sidebar-footer {
+  margin-top: 1.5rem;
+}
+
+.logout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background: none;
+  border: none;
+  font-weight: 500;
+  color: var(--text-dark);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logout-btn:hover {
+  background-color: var(--bg-dark);
+  color: var(--error);
+}
+
+.logout-btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* --- Main Content Area --- */
+.main-content {
+  padding: 2rem;
+  overflow-y: auto; /* Allows content to scroll independently */
+}

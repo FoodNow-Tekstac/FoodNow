@@ -10,7 +10,8 @@ import { NotificationService } from '../../shared/notification';
   selector: 'app-menu-item-modal',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './menu-item-modal.html'
+  templateUrl: './menu-item-modal.html',
+   styleUrls: ['./menu-item-modal.css']
 })
 export class MenuItemModalComponent implements OnInit {
   @Input() menuItem: any | null = null; // Data passed in for editing

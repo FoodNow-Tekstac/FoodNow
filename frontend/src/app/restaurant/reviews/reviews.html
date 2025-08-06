@@ -1,22 +1,56 @@
-<div>
-  @if(reviews().length > 0) {
-    <div class="space-y-4">
-      @for(review of reviews(); track review.id) {
-        <div class="bg-surface p-4 rounded-lg">
-          <div class="flex justify-between items-center">
-            <p class="font-bold">{{ review.customerName }}</p>
-            <div class="flex text-yellow-400">
-              @for(star of getStars(review.rating); track $index) {
-                <span>&#9733;</span>
-              }
-            </div>
+<div class="page-header">
+  <h2 class="page-title">Customer Reviews</h2>
+</div>
+
+<!-- Analytics Section -->
+<div class="analytics-grid">
+  <!-- Average Rating Card -->
+  <div class="stat-card">
+    <p class="stat-label">Average Rating</p>
+    <div class="average-rating">
+      <span class="stat-value">{{ reviewStats().averageRating.toFixed(1) }}</span>
+      <span class="star">&#9733;</span>
+    </div>
+    <p class="stat-footer">{{ reviewStats().totalReviews }} Total Reviews</p>
+  </div>
+
+  <!-- Rating Breakdown Card -->
+  <div class="stat-card breakdown-card">
+    <p class="stat-label">Rating Breakdown</p>
+    <div class="breakdown-list">
+      @for (count of reviewStats().ratingBreakdown; track $index) {
+        <div class="breakdown-row">
+          <span class="breakdown-stars">{{ 5 - $index }} &#9733;</span>
+          <div class="progress-bar-container">
+            <div class="progress-bar" [style.width.%]="(count / reviewStats().totalReviews) * 100"></div>
           </div>
-          <p class="text-sm text-text-muted mt-1">{{ review.reviewDate | date:'medium' }}</p>
-          <p class="mt-4 italic">"{{ review.comment }}"</p>
+          <span class="breakdown-count">{{ count }}</span>
         </div>
       }
     </div>
-  } @else {
-    <p class="text-text-muted">You have not received any reviews yet.</p>
+  </div>
+</div>
+
+<!-- Reviews List -->
+<div class="reviews-list">
+  @for(review of reviews(); track review.id) {
+    <div class="review-card">
+      <div class="review-header">
+        <p class="customer-name">{{ review.customerName }}</p>
+        <div class="star-rating">
+          @for(isFilled of getStars(review.rating); track $index) {
+            <span class="star" [class.filled]="isFilled">&#9733;</span>
+          }
+        </div>
+      </div>
+      <p class="review-date">{{ review.reviewDate | date:'medium' }}</p>
+      @if(review.comment) {
+        <p class="review-comment">"{{ review.comment }}"</p>
+      }
+    </div>
+  } @empty {
+    <div class="empty-state">
+      You have not received any reviews yet.
+    </div>
   }
 </div>

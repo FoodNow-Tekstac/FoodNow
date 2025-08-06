@@ -1,14 +1,103 @@
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-  <div class="bg-surface p-6 rounded-lg">
-    <p class="text-sm text-text-muted">Pending Orders</p>
-    <p class="text-4xl font-bold">{{ pendingOrders() }}</p>
+<div class="overview-grid">
+  <div class="welcome-header">
+    <h2 class="welcome-title">Welcome Back!</h2>
+    <p class="welcome-subtitle">Here's a snapshot of your restaurant's activity today.</p>
   </div>
-  <div class="bg-surface p-6 rounded-lg">
-    <p class="text-sm text-text-muted">Total Menu Items</p>
-    <p class="text-4xl font-bold">{{ totalMenuItems() }}</p>
+  <div class="stat-card">
+    <div class="card-content">
+      <p class="card-label">Revenue Today</p>
+      <p class="card-value">₹{{ todayStats().revenueToday.toFixed(2) }}</p>
+    </div>
   </div>
-  <div class="bg-surface p-6 rounded-lg">
-    <p class="text-sm text-text-muted">Total Revenue (Delivered)</p>
-    <p class="text-4xl font-bold">₹{{ totalRevenue().toFixed(2) }}</p>
+  <div class="stat-card">
+    <div class="card-content">
+      <p class="card-label">Orders Today</p>
+      <p class="card-value">{{ todayStats().ordersToday }}</p>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="card-content">
+      <p class="card-label">Average Order Value</p>
+      <p class="card-value">₹{{ todayStats().avgOrderValue.toFixed(2) }}</p>
+    </div>
+  </div>
+
+  @if (unavailableItemsCount() > 0) {
+    <div class="warning-card">
+      <div class="warning-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"></path></svg>
+      </div>
+      <div class="warning-text">
+        <p class="font-bold">{{ unavailableItemsCount() }} menu items are currently unavailable.</p>
+        <a routerLink="../menu" class="font-semibold text-primary hover:underline">Manage Menu &rarr;</a>
+      </div>
+    </div>
+  }
+  <div class="stat-card">
+    <div class="card-icon icon-pending">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"></path></svg>
+    </div>
+    <div class="card-content">
+      <p class="card-label">Pending Orders</p>
+      <p class="card-value">{{ pendingOrders() }}</p>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="card-icon icon-menu">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"></path></svg>
+    </div>
+    <div class="card-content">
+      <p class="card-label">Total Menu Items</p>
+      <p class="card-value">{{ totalMenuItems() }}</p>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="card-icon icon-revenue">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"></path></svg>
+    </div>
+    <div class="card-content">
+      <p class="card-label">Total Revenue (Delivered)</p>
+      <p class="card-value">₹{{ totalRevenue().toFixed(2) }}</p>
+    </div>
+  </div>
+
+  <div class="chart-card col-span-2">
+    <h3 class="chart-title">Daily Revenue</h3>
+    @if(revenueByDay().series[0].data.length > 0) {
+      <apx-chart
+        [series]="revenueByDay().series"
+        [xaxis]="mergedRevenueXaxis"
+        [chart]="revenueChartOptions.chart"
+        [stroke]="revenueChartOptions.stroke"
+        [dataLabels]="revenueChartOptions.dataLabels"
+        [yaxis]="revenueChartOptions.yaxis"
+        [grid]="revenueChartOptions.grid"
+        [fill]="revenueChartOptions.fill"
+        [theme]="revenueChartOptions.theme"
+        [colors]="revenueChartOptions.colors"
+        [tooltip]="revenueChartOptions.tooltip">
+      </apx-chart>
+    } @else {
+      <div class="chart-empty">No revenue data available yet.</div>
+    }
+  </div>
+
+  <div class="chart-card">
+    <h3 class="chart-title">Top 5 Popular Items</h3>
+    @if(popularityChartData().series.length > 0) {
+      <apx-chart
+        [series]="popularityChartData().series"
+        [labels]="popularityChartData().labels"
+        [chart]="popularityChart_Chart"
+        [colors]="popularityChart_Colors"
+        [dataLabels]="popularityChart_DataLabels"
+        [legend]="popularityChart_Legend"
+        [theme]="popularityChart_Theme"
+        [stroke]="popularityChart_Stroke"
+        [plotOptions]="popularityChart_PlotOptions">
+      </apx-chart>
+    } @else {
+      <div class="chart-empty">No item data from delivered orders yet.</div>
+    }
   </div>
 </div>

@@ -1,0 +1,255 @@
+:host {
+  display: block;
+}
+
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.welcome-header {
+  grid-column: 1 / -1; /* Span full width */
+  padding: 1rem;
+  background-color: var(--bg-light);
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-color);
+}
+
+.welcome-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-light);
+}
+
+.welcome-subtitle {
+  font-size: 1rem;
+  color: var(--text-dark);
+  margin-top: 0.25rem;
+}
+
+/* Stat Card Styling */
+.stat-card {
+  background-color: var(--bg-light);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  border: 1px solid var(--border-color);
+  transition: all 0.2s ease-in-out;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--primary);
+}
+
+.card-icon {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.card-icon svg {
+  width: 28px;
+  height: 28px;
+  color: white;
+}
+
+/* Icon Colors */
+.icon-pending { background-color: #f59e0b; } /* Amber */
+.icon-menu { background-color: #3b82f6; } /* Blue */
+.icon-revenue { background-color: #22c55e; } /* Green */
+
+.card-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-dark);
+}
+
+.card-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-light);
+  margin-top: 0.25rem;
+}
+
+.revenue-card {
+  grid-column: 1 / -1; /* Span full width */
+}
+
+@media (min-width: 1024px) {
+  .revenue-card {
+    grid-column: span 1 / span 1; /* Revert to single column on large screens */
+  }
+}
+
+
+/* Quick Actions Card */
+.quick-actions-card {
+  grid-column: 1 / -1; /* Span full width */
+  background-color: var(--bg-light);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+}
+
+.actions-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.action-button {
+  display: block;
+  text-align: center;
+  padding: 0.75rem;
+  background-color: var(--bg-dark);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  text-decoration: none;
+  color: var(--text-light);
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.action-button:hover {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+:host {
+  display: block;
+}
+
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.welcome-header {
+  grid-column: 1 / -1;
+  padding: 1rem;
+  background-color: var(--bg-light);
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-color);
+}
+
+.welcome-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-light);
+}
+
+.welcome-subtitle {
+  font-size: 1rem;
+  color: var(--text-dark);
+  margin-top: 0.25rem;
+}
+
+/* Stat Card Styling */
+.stat-card {
+  background-color: var(--bg-light);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  border: 1px solid var(--border-color);
+}
+
+.card-icon {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+.card-icon svg { width: 28px; height: 28px; color: white; }
+.icon-pending { background-color: #f59e0b; }
+.icon-menu { background-color: #3b82f6; }
+.icon-revenue { background-color: #22c55e; }
+
+.card-label { font-size: 0.875rem; font-weight: 500; color: var(--text-dark); }
+.card-value { font-size: 2rem; font-weight: 700; color: var(--text-light); margin-top: 0.25rem; }
+
+/* NEW: Chart Card Styling */
+.chart-card {
+  grid-column: 1 / -1; /* Span full width on smaller screens */
+  background-color: var(--bg-light);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+}
+
+.chart-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.chart-empty {
+  min-height: 350px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dark);
+}
+
+/* Adjust grid for larger screens */
+@media (min-width: 1024px) {
+  .chart-card {
+    grid-column: span 1 / span 1;
+  }
+}
+
+.overview-grid {
+  display: grid;
+  /* This creates a responsive grid that adjusts the number of columns based on screen width */
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem; /* Adjust the spacing between cards */
+}
+
+/* This class will make an element span two columns in the grid */
+.col-span-2 {
+  grid-column: span 2 / span 2;
+}
+
+/* Responsive adjustment for smaller screens */
+@media (max-width: 768px) {
+  .col-span-2 {
+    grid-column: span 1 / span 1; /* On smaller screens, stack all cards in a single column */
+  }
+}
+
+/* Basic styling for cards to ensure consistency (add your own styles here) */
+.stat-card, .chart-card, .warning-card {
+  background-color: #1a1a1e; /* Example dark background */
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  color: #ffffff;
+}
+
+.chart-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.welcome-header {
+  grid-column: 1 / -1; /* Make the header span the full width */
+}

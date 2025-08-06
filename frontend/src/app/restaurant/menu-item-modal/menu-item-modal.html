@@ -1,35 +1,60 @@
-<div class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50" (click)="close.emit()">
-  <div class="bg-surface w-full max-w-lg p-8 rounded-2xl shadow-2xl border border-border" (click)="$event.stopPropagation()">
-    <h3 class="text-2xl font-bold mb-6 text-center">{{ modalTitle }}</h3>
-    <form (ngSubmit)="onSubmit()">
-      <div class="space-y-4">
-        <input type="text" name="name" class="form-input" placeholder="Item Name" required [(ngModel)]="itemData.name">
-        <textarea name="description" class="form-input" placeholder="Description" required [(ngModel)]="itemData.description"></textarea>
-        <input type="number" name="price" step="0.01" class="form-input" placeholder="Price" required [(ngModel)]="itemData.price">
-        <div class="grid grid-cols-2 gap-4">
-          <select name="category" class="form-input" required [(ngModel)]="itemData.category">
-            <option value="" disabled>Select Category</option>
+<div class="modal-overlay" (click)="close.emit()">
+  
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    
+    <div class="modal-header">
+      <h3 class="modal-title">{{ modalTitle }}</h3>
+      <button (click)="close.emit()" class="close-btn" aria-label="Close modal">&times;</button>
+    </div>
+
+    <form class="modal-body" (ngSubmit)="onSubmit()">
+      <div class="form-grid">
+        <div class="form-field full-span">
+          <label for="name">Item Name</label>
+          <input type="text" id="name" name="name" class="form-input" placeholder="e.g., Hyderabadi Biryani" required [(ngModel)]="itemData.name">
+        </div>
+
+        <div class="form-field full-span">
+          <label for="description">Description</label>
+          <textarea id="description" name="description" rows="3" class="form-input" placeholder="A short, tasty description of the item" required [(ngModel)]="itemData.description"></textarea>
+        </div>
+
+        <div class="form-field">
+          <label for="price">Price (₹)</label>
+          <input type="number" id="price" name="price" step="0.01" min="0" class="form-input" placeholder="e.g., 250.00" required [(ngModel)]="itemData.price">
+        </div>
+
+        <div class="form-field">
+          <label for="category">Category</label>
+          <select id="category" name="category" class="form-input" required [(ngModel)]="itemData.category">
+            <option value="" disabled>Select...</option>
             <option value="STARTER">Starter</option>
             <option value="MAIN_COURSE">Main Course</option>
             <option value="DESSERT">Dessert</option>
             <option value="DRINK">Drink</option>
             <option value="SIDE">Side</option>
           </select>
-          <select name="dietaryType" class="form-input" required [(ngModel)]="itemData.dietaryType">
-            <option value="" disabled>Select Dietary Type</option>
+        </div>
+
+        <div class="form-field">
+          <label for="dietaryType">Dietary Type</label>
+          <select id="dietaryType" name="dietaryType" class="form-input" required [(ngModel)]="itemData.dietaryType">
+            <option value="" disabled>Select...</option>
             <option value="VEG">Veg</option>
             <option value="NON_VEG">Non-Veg</option>
             <option value="VEGAN">Vegan</option>
           </select>
         </div>
-        <div>
-          <label class="block text-sm font-medium text-text-muted mb-2">Food Image</label>
-          <input type="file" name="image" (change)="onFileSelected($event)" class="form-input file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-black hover:file:bg-primary-light">
+        
+        <div class="form-field">
+          <label for="image">Food Image</label>
+          <input type="file" id="image" name="image" (change)="onFileSelected($event)" accept="image/*" class="form-input file-input">
         </div>
       </div>
-      <div class="mt-8 flex justify-end gap-4">
-        <button type="button" (click)="close.emit()" class="btn-secondary px-6 py-2 rounded-lg font-semibold">Cancel</button>
-        <button type="submit" class="btn-primary px-6 py-2 rounded-lg font-semibold">Save Item</button>
+
+      <div class="modal-footer">
+        <button type="button" (click)="close.emit()" class="btn-secondary">Cancel</button>
+        <button type="submit" class="btn-submit">Save Item</button>
       </div>
     </form>
   </div>
