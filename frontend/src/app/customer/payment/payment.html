@@ -1,68 +1,224 @@
-<main class="container mx-auto mt-24 px-6 pb-12">
-  <div class="max-w-4xl mx-auto">
-    <div class="mb-8">
-      <a routerLink="/customer/cart" class="text-primary hover:underline">&larr; Back to Cart</a>
-      <h1 class="text-5xl font-extrabold mt-4">Confirm Your Order</h1>
+<main class="page-container">
+  <div class="page-header">
+    <a routerLink="/customer/cart" class="back-link">&larr; Back to Cart</a>
+    <h1 class="page-title">Confirm & Pay</h1>
+  </div>
+
+  <div class="content-grid">
+    <!-- Left Column: Order Summary -->
+    <div class="receipt-card">
+      @if(cart(); as c) {
+        <div class="receipt-header">
+          <h3>Your Order Summary</h3>
+        </div>
+        <div class="receipt-body">
+          @for(item of c.items; track item.id) {
+            <div class="receipt-item">
+              <span class="item-qty">{{ item.quantity }}x</span>
+              <span class="item-name">{{ item.foodItem.name }}</span>
+              <span class="item-price">₹{{ (item.foodItem.price * item.quantity).toFixed(2) }}</span>
+            </div>
+          }
+        </div>
+        <div class="receipt-footer">
+          <div class="total-row"><span class="text-text-dark">Subtotal</span><span>₹{{ c.totalPrice.toFixed(2) }}</span></div>
+          <div class="total-row"><span class="text-text-dark">Taxes & Fees (5%)</span><span>₹{{ (c.totalPrice * 0.05).toFixed(2) }}</span></div>
+          <div class="total-final">
+            <span class="text-xl font-bold">Total Payable</span>
+            <span class="text-2xl font-bold text-primary">₹{{ (c.totalPrice * 1.05).toFixed(2) }}</span>
+          </div>
+        </div>
+      } @else {
+        <p class="text-text-dark p-6">Loading order summary...</p>
+      }
     </div>
 
-    <div class="grid lg:grid-cols-2 gap-8">
-      <div class="bg-surface rounded-lg p-8">
-        @if(cart(); as c) {
-          <h3 class="text-2xl font-bold mb-6">Order Summary</h3>
-          <div class="space-y-2">
-            @for(item of c.items; track item.id) {
-              <div class="flex justify-between items-center py-3 border-b border-border last:border-b-0">
-                <div>
-                  <p class="font-semibold text-white">{{ item.foodItem.name }}</p>
-                  <p class="text-sm text-text-muted">Quantity: {{ item.quantity }}</p>
-                </div>
-                <span class="font-bold text-primary">₹{{ (item.foodItem.price * item.quantity).toFixed(2) }}</span>
-              </div>
-            }
+    <!-- Right Column: Payment Details -->
+    <div class="payment-flow">
+      <!-- Delivery Address Form -->
+      <div class="card" [formGroup]="deliveryAddressForm">
+        <h3 class="card-title">Delivery Address</h3>
+        <div class="form-field">
+          <label for="addressLine1">Address</label>
+          <input id="addressLine1" type="text" formControlName="addressLine1" class="form-input" placeholder="Street name & number">
+        </div>
+        <div class="form-grid-half">
+          <div class="form-field">
+            <label for="city">City</label>
+            <input id="city" type="text" formControlName="city" class="form-input" placeholder="Hyderabad">
           </div>
-          <div class="mt-6 space-y-3 text-sm">
-            <div class="flex justify-between py-2"><span class="text-text-muted">Subtotal</span><span>₹{{ c.totalPrice.toFixed(2) }}</span></div>
-            <div class="flex justify-between py-2"><span class="text-text-muted">Taxes & Fees (5%)</span><span>₹{{ (c.totalPrice * 0.05).toFixed(2) }}</span></div>
-            <div class="border-t border-border pt-3">
-              <div class="flex justify-between items-center"><span class="text-xl font-bold">Total</span><span class="text-2xl font-bold text-primary">₹{{ (c.totalPrice * 1.05).toFixed(2) }}</span></div>
-            </div>
+          <div class="form-field">
+            <label for="pinCode">PIN Code</label>
+            <input id="pinCode" type="text" formControlName="pinCode" class="form-input" placeholder="e.g., 500001" maxlength="6" (input)="formatPinCode($event)">
           </div>
-        } @else {
-          <p class="text-text-muted">Loading order summary...</p>
-        }
+        </div>
+      </div>
+      
+      <!-- Payment Method Selection -->
+      <div class="card">
+        <h3 class="card-title">Payment Method</h3>
+        <div class="payment-options">
+          <div class="payment-method" (click)="selectPaymentMethod('card')" [class.selected]="selectedPaymentMethod() === 'card'">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"></path></svg>
+            <span>Card</span>
+          </div>
+          <div class="payment-method" (click)="selectPaymentMethod('upi')" [class.selected]="selectedPaymentMethod() === 'upi'">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"></path></svg>
+            <span>UPI</span>
+          </div>
+          <div class="payment-method" (click)="selectPaymentMethod('wallet')" [class.selected]="selectedPaymentMethod() === 'wallet'">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"></path></svg>
+            <span>Wallet</span>
+          </div>
+          <div class="payment-method" (click)="selectPaymentMethod('cod')" [class.selected]="selectedPaymentMethod() === 'cod'">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"></path></svg>
+            <span>Cash</span>
+          </div>
+        </div>
       </div>
 
-      <div class="space-y-6">
-        <div class="bg-surface rounded-lg p-6">
-          <h3 class="text-xl font-bold mb-4">Delivery Address</h3>
-          <p class="text-text-muted">123 Food Street, Hyderabad, 500001</p>
-        </div>
-
-        <div class="bg-surface rounded-lg p-6">
-          <h3 class="text-xl font-bold mb-4">Payment Method</h3>
-          <div class="space-y-3">
-            <div class="payment-method p-4" (click)="selectPaymentMethod('card')" [ngClass]="{'selected': selectedPaymentMethod() === 'card'}">Card</div>
-            <div class="payment-method p-4" (click)="selectPaymentMethod('upi')" [ngClass]="{'selected': selectedPaymentMethod() === 'upi'}">UPI</div>
-            <div class="payment-method p-4" (click)="selectPaymentMethod('wallet')" [ngClass]="{'selected': selectedPaymentMethod() === 'wallet'}">Wallet</div>
-            <div class="payment-method p-4" (click)="selectPaymentMethod('cod')" [ngClass]="{'selected': selectedPaymentMethod() === 'cod'}">Cash on Delivery</div>
-          </div>
-        </div>
-
-        @if(selectedPaymentMethod() === 'upi') {
-          <div class="bg-surface rounded-lg p-6">
-            <h3 class="text-xl font-bold mb-4">Scan QR to Pay</h3>
-            <div class="text-center">
-              <div #qrCodeContainer class="inline-block p-4 bg-white rounded-lg"></div>
+      <!-- Conditional Card Form -->
+      @if (selectedPaymentMethod() === 'card') {
+        <div class="card animated-card" [formGroup]="cardForm">
+          <h3 class="card-title">Enter Card Details</h3>
+          <div class="form-field">
+            <label for="cardNumber">Card Number</label>
+            <div class="input-with-icon">
+              <input id="cardNumber" type="text" formControlName="cardNumber" class="form-input" placeholder="0000 0000 0000 0000" maxlength="19" (input)="formatCardNumber($event)">
+              <div class="card-icon" [ngSwitch]="detectedCardType()">
+                <span *ngSwitchCase="'visa'">Visa</span>
+                <span *ngSwitchCase="'mastercard'">MC</span>
+                <span *ngSwitchCase="'amex'">Amex</span>
+                <span *ngSwitchCase="'discover'">Disc</span>
+              </div>
             </div>
           </div>
-        }
-
-        <div class="bg-surface rounded-lg p-6">
-          <button (click)="onPlaceOrder()" [disabled]="!cart() || cart()!.items.length === 0" class="btn-primary w-full py-4 rounded-lg font-semibold text-lg">
-            Confirm Payment & Place Order
-          </button>
+          <div class="form-field">
+            <label for="cardHolder">Card Holder</label>
+            <input id="cardHolder" type="text" formControlName="cardHolder" class="form-input" placeholder="John Doe">
+          </div>
+          <div class="form-grid-half">
+            <div class="form-field">
+              <label for="expiryDate">Expiry Date</label>
+              <input id="expiryDate" type="text" formControlName="expiryDate" class="form-input" placeholder="MM/YY" maxlength="5" (input)="formatExpiryDate($event)">
+            </div>
+            <div class="form-field">
+              <label for="cvv">CVV</label>
+              <input id="cvv" type="password" formControlName="cvv" class="form-input" placeholder="•••" maxlength="4">
+            </div>
+          </div>
         </div>
+      }
+      <!-- Conditional UPI QR -->
+      @if(selectedPaymentMethod() === 'upi') {
+        <div class="card animated-card">
+          <h3 class="card-title">Scan QR to Pay</h3>
+          <div class="qr-container">
+            <div #qrCodeContainer class="qr-code"></div>
+          </div>
+        </div>
+      }
+
+      <!-- Confirm Order Button -->
+      <div class="card">
+        <button (click)="onPlaceOrder()" [disabled]="!isPaymentValid()" class="btn-submit w-full">
+          Confirm & Place Order
+        </button>
       </div>
     </div>
   </div>
 </main>
+
+<!-- Enhanced Receipt Modal -->
+@if(isReceiptModalOpen() && receiptData(); as receipt) {
+  <div class="receipt-modal-overlay">
+    <div class="receipt-modal-content">
+      <!-- Receipt to be downloaded -->
+      <div id="receipt-to-download" class="receipt-download-area" style="background: white; color: black; padding: 30px; font-family: monospace;">
+        <div class="receipt-modal-header" style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 20px; margin-bottom: 20px;">
+          <h2 style="margin: 0; font-size: 28px; font-weight: bold;">FoodNow</h2>
+          <p style="margin: 5px 0; font-size: 16px;">Order Receipt</p>
+        </div>
+        
+        <div class="receipt-details" style="margin-bottom: 20px; line-height: 1.6;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span><strong>Order Number:</strong></span>
+            <span>{{ receipt.orderNumber }}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span><strong>Date:</strong></span>
+            <span>{{ receipt.orderDate }}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span><strong>Time:</strong></span>
+            <span>{{ receipt.orderTime }}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span><strong>Customer:</strong></span>
+            <span>{{ receipt.customerName }}</span>
+          </div>
+        </div>
+
+        <div class="delivery-info" style="margin-bottom: 20px; border-top: 1px solid #ccc; padding-top: 15px;">
+          <h4 style="margin: 0 0 10px 0; font-size: 16px;"><strong>Delivery Address:</strong></h4>
+          <p style="margin: 0; line-height: 1.4;">
+            {{ receipt.deliveryAddress.addressLine1 }}<br>
+            {{ receipt.deliveryAddress.city }}, {{ receipt.deliveryAddress.pinCode }}
+          </p>
+        </div>
+
+        <div class="payment-info" style="margin-bottom: 20px; border-top: 1px solid #ccc; padding-top: 15px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span><strong>Payment Method:</strong></span>
+            <span>{{ receipt.paymentMethod }}</span>
+          </div>
+          @if(receipt.paymentDetails) {
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+              <span><strong>Card:</strong></span>
+              <span>{{ receipt.paymentDetails }}</span>
+            </div>
+          }
+        </div>
+
+        <div class="receipt-body" style="border-top: 2px solid #000; padding-top: 15px; margin-bottom: 20px;">
+          <h4 style="margin: 0 0 15px 0; font-size: 16px;"><strong>Items Ordered:</strong></h4>
+          @for(item of receipt.items; track item.id) {
+            <div class="receipt-item" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 8px 0; border-bottom: 1px dotted #ccc;">
+              <div style="flex: 1;">
+                <span style="font-weight: bold;">{{ item.quantity }}x</span>
+                <span style="margin-left: 8px;">{{ item.foodItem.name }}</span>
+              </div>
+              <span style="font-weight: bold;">₹{{ (item.foodItem.price * item.quantity).toFixed(2) }}</span>
+            </div>
+          }
+        </div>
+
+        <div class="receipt-footer" style="border-top: 2px solid #000; padding-top: 15px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span>Subtotal:</span>
+            <span>₹{{ receipt.totalPrice.toFixed(2) }}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span>Taxes & Fees (5%):</span>
+            <span>₹{{ receipt.taxAmount.toFixed(2) }}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 18px; border-top: 1px solid #000; padding-top: 8px; margin-top: 8px;">
+            <span>Total Paid:</span>
+            <span>₹{{ receipt.finalAmount.toFixed(2) }}</span>
+          </div>
+        </div>
+
+        <div class="receipt-brand-footer" style="text-align: center; margin-top: 30px; border-top: 1px solid #ccc; padding-top: 15px;">
+          <p style="margin: 0; font-style: italic;">Thank you for ordering with FoodNow!</p>
+          <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">Visit us again for more delicious meals</p>
+        </div>
+      </div>
+
+      <!-- Modal Actions -->
+      <div class="receipt-modal-actions" style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
+        <button (click)="downloadReceipt()" class="btn-secondary" style="padding: 12px 24px; background: #6b7280; color: white; border: none; border-radius: 8px; cursor: pointer;">Download Receipt</button>
+        <button (click)="closeReceiptModalAndNavigate()" class="btn-submit" style="padding: 12px 24px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer;">Close</button>
+      </div>
+    </div>
+  </div>
+}

@@ -66,19 +66,47 @@ export class TrackOrderComponent implements OnInit, OnDestroy {
   }
 
   simulateDelivery(start: L.LatLngTuple, end: L.LatLngTuple): void {
-    const scooterIcon = L.divIcon({ className: 'scooter-icon', html: '🛵' });
-    const scooterMarker = L.marker(start, { icon: scooterIcon }).addTo(this.map);
+  const scooterIcon = L.divIcon({ className: 'scooter-icon', html: '🛵' });
+  const scooterMarker = L.marker(start, { icon: scooterIcon }).addTo(this.map);
 
-    // Let's match the backend's auto-delivery time of 20 seconds for a more realistic simulation
-    setTimeout(() => scooterMarker.setLatLng([start[0] + (end[0] - start[0]) * 0.5, start[1] + (end[1] - start[1]) * 0.5]), 10000); // 10s
-
-    setTimeout(() => {
+  const duration = 20000; // 20 seconds total
+  const fps = 60; // 60 frames per second for smooth animation
+  const frameInterval = 1000 / fps; // ~16.67ms per frame
+  const totalFrames = duration / frameInterval;
+  
+  let currentFrame = 0;
+  
+  const animateScooter = () => {
+    if (currentFrame >= totalFrames) {
+      // Animation complete
       scooterMarker.setLatLng(end);
       this.notificationService.success('Your order has arrived!');
       this.markOrderAsDelivered();
-    }, 20000); // 20s
-  }
-
+      return;
+    }
+    
+    // Calculate progress (0 to 1)
+    const progress = currentFrame / totalFrames;
+    
+    // Use easing function for more natural movement (ease-in-out)
+    const easedProgress = progress < 0.5 
+      ? 2 * progress * progress 
+      : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+    
+    // Calculate current position
+    const currentLat = start[0] + (end[0] - start[0]) * easedProgress;
+    const currentLng = start[1] + (end[1] - start[1]) * easedProgress;
+    
+    // Update scooter position
+    scooterMarker.setLatLng([currentLat, currentLng]);
+    
+    currentFrame++;
+    requestAnimationFrame(animateScooter);
+  };
+  
+  // Start the animation
+  requestAnimationFrame(animateScooter);
+}
   markOrderAsDelivered(): void {
     // --- THIS IS THE FIX FOR THE RACE CONDITION ---
     // First, check if the order is already marked as delivered.

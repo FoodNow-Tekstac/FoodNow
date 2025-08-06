@@ -12,9 +12,11 @@ export interface CartItem {
 
 export interface Cart {
   id: number;
-  items: CartItem[];
   totalPrice: number;
+  items: CartItem[];
+  [key: string]: any; // ✅ Allows any type, but loses strict type safety
 }
+
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
