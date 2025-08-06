@@ -50,14 +50,16 @@
           <thead>
             <tr>
               <th>
-                <button (click)="sortData('id')" class="sort-header">ID
+                <button (click)="sortData('id')" class="sort-header">
+                  ID
                   <span class="sort-indicator" [class.active]="state.sortConfig()['restaurants']?.column === 'id'">
                     {{ state.sortConfig()['restaurants']?.direction === 'asc' ? '▲' : '▼' }}
                   </span>
                 </button>
               </th>
               <th>
-                <button (click)="sortData('name')" class="sort-header">Name
+                <button (click)="sortData('name')" class="sort-header">
+                  Name
                   <span class="sort-indicator" [class.active]="state.sortConfig()['restaurants']?.column === 'name'">
                     {{ state.sortConfig()['restaurants']?.direction === 'asc' ? '▲' : '▼' }}
                   </span>
@@ -85,14 +87,16 @@
           <thead>
             <tr>
               <th>
-                <button (click)="sortData('id')" class="sort-header">ID
+                <button (click)="sortData('id')" class="sort-header">
+                  ID
                   <span class="sort-indicator" [class.active]="state.sortConfig()['users']?.column === 'id'">
                     {{ state.sortConfig()['users']?.direction === 'asc' ? '▲' : '▼' }}
                   </span>
                 </button>
               </th>
               <th>
-                <button (click)="sortData('name')" class="sort-header">Name
+                <button (click)="sortData('name')" class="sort-header">
+                  Name
                   <span class="sort-indicator" [class.active]="state.sortConfig()['users']?.column === 'name'">
                     {{ state.sortConfig()['users']?.direction === 'asc' ? '▲' : '▼' }}
                   </span>

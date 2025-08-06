@@ -10,7 +10,7 @@ import { FullUrlPipe } from '../../shared/pipes/full-url';
 @Component({
   selector: 'app-restaurant-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, FullUrlPipe],
+  imports: [CommonModule, FullUrlPipe],
   templateUrl: './restaurant-detail.html',
     styleUrls: ['./restaurant-detail.css'] // <-- ADD THIS LINE
 
