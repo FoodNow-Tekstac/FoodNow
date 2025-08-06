@@ -1,22 +1,46 @@
-<header class="fixed top-0 left-0 right-0 bg-surface shadow-md z-50 border-b border-border">
-  <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
-    @if (restaurantData(); as data) {
-      <h1 class="text-2xl font-bold text-white">{{ data.restaurantProfile.name }}</h1>
-    }
-    <button (click)="logout()" class="btn-secondary px-4 py-2 rounded-lg font-semibold">Logout</button>
-  </nav>
-</header>
+<div class="dashboard-layout">
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <!-- Restaurant Name / Logo -->
+    <div class="sidebar-header">
+      @if (restaurantData(); as data) {
+        <h1 class="restaurant-name">{{ data.restaurantProfile.name }}</h1>
+      } @else {
+        <h1 class="restaurant-name">Dashboard</h1>
+      }
+    </div>
 
-<main class="container mx-auto mt-24 px-6">
-  <div class="border-b border-border mb-8">
-    <nav class="flex -mb-px space-x-6">
-      <a routerLink="overview" routerLinkActive="active" class="nav-link">Overview</a>
-      <a routerLink="orders" routerLinkActive="active" class="nav-link">Order Management</a>
-      <a routerLink="menu" routerLinkActive="active" class="nav-link">Menu Management</a>
-      <a routerLink="reviews" routerLinkActive="active" class="nav-link">Customer Reviews</a>
+    <!-- Main Navigation Links -->
+    <nav class="sidebar-nav">
+      <a routerLink="overview" routerLinkActive="active" class="nav-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"></path></svg>
+        <span>Overview</span>
+      </a>
+      <a routerLink="orders" routerLinkActive="active" class="nav-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm0 15l-5-5h3V9h4v4h3l-5 5z"></path></svg>
+        <span>Order Management</span>
+      </a>
+      <a routerLink="menu" routerLinkActive="active" class="nav-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M8 2H1v12h10V2H8zm0 2h1v2H8V4zm0 3h1v2H8V7zm0 3h1v2H8v-2zM5 4h2v2H5V4zm0 3h2v2H5V7zm0 3h2v2H5v-2zM2 4h2v2H2V4zm0 3h2v2H2V7zm0 3h2v2H2v-2zm19-8v12h-9V2h9zm-2 2h-5v2h5V4zm0 3h-5v2h5V7zm0 3h-5v2h5v-2z"></path></svg>
+        <span>Menu Management</span>
+      </a>
+      <a routerLink="reviews" routerLinkActive="active" class="nav-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"></path></svg>
+        <span>Customer Reviews</span>
+      </a>
     </nav>
-  </div>
-  <div>
+
+    <!-- Logout Button -->
+    <div class="sidebar-footer">
+      <button (click)="logout()" class="logout-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"></path></svg>
+        <span>Logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="main-content">
     <router-outlet></router-outlet>
-  </div>
-</main>
+  </main>
+</div>

@@ -5,31 +5,65 @@ import { FullUrlPipe } from '../../shared/pipes/full-url';
 import { NotificationService } from '../../shared/notification';
 import { MenuItemModalComponent } from '../menu-item-modal/menu-item-modal';
 
+interface MenuItem {
+  id: number;
+  name: string;
+  price: number;
+  imageUrl?: string;
+  description?: string;
+  dietaryType?: string;
+  category?: string;
+  available: boolean;
+}
+
+interface MenuItemWithStats extends MenuItem {
+  timesOrdered: number;
+  totalRevenue: number;
+}
+
 @Component({
   selector: 'app-menu',
   standalone: true,
   imports: [CommonModule, FullUrlPipe, MenuItemModalComponent],
   templateUrl: './menu.html',
+  styleUrls: ['./menu.css']
 })
 export class RestaurantMenuComponent {
   protected dashboardService = inject(RestaurantDashboardService);
   private notificationService = inject(NotificationService);
 
-  menuItems = computed(() => this.dashboardService.dashboardData()?.menu || []);
-  
   isModalOpen = signal(false);
-  currentItemForEdit = signal<any | null>(null);
+  currentItemForEdit = signal<MenuItem | null>(null);
+
+  menuItemsWithStats = computed(() => {
+    const menu = this.dashboardService.dashboardData()?.menu || [];
+    const deliveredOrders = (this.dashboardService.dashboardData()?.orders || []).filter(o => o.status === 'DELIVERED');
+
+    return menu.map(item => {
+      let timesOrdered = 0;
+      let totalRevenue = 0;
+      for (const order of deliveredOrders) {
+        for (const orderItem of order.items) {
+          if (orderItem.itemName === item.name) {
+            timesOrdered += orderItem.quantity;
+            totalRevenue += orderItem.quantity * item.price;
+          }
+        }
+      }
+      return { ...item, timesOrdered, totalRevenue };
+    });
+  });
 
   openAddModal(): void {
     this.currentItemForEdit.set(null);
     this.isModalOpen.set(true);
   }
 
-  openEditModal(item: any): void {
-    this.currentItemForEdit.set({ ...item }); // Pass a copy to prevent accidental changes
+  openEditModal(item: MenuItem): void {
+    this.currentItemForEdit.set({ ...item });
     this.isModalOpen.set(true);
   }
-  
+
   closeModal(): void {
     this.isModalOpen.set(false);
     this.currentItemForEdit.set(null);
@@ -37,22 +71,18 @@ export class RestaurantMenuComponent {
 
   handleSave(): void {
     this.closeModal();
-    // Use a small timeout to allow the modal to close before refreshing data
     setTimeout(() => {
       this.dashboardService.fetchDashboardData().subscribe();
     }, 100);
   }
 
-  toggleAvailability(item: any): void {
-    // Immediately update the UI for a snappy feel
+  toggleAvailability(item: MenuItem): void {
     item.available = !item.available;
-    
+
     this.dashboardService.updateItemAvailability(item.id).subscribe({
-      // We don't need to do anything on success, as the UI is already updated
       error: () => {
         this.notificationService.error('Failed to update availability.');
-        // Revert the change on error
-        item.available = !item.available; 
+        item.available = !item.available;
       }
     });
   }
@@ -62,10 +92,9 @@ export class RestaurantMenuComponent {
       this.dashboardService.deleteMenuItem(itemId).subscribe({
         next: () => {
           this.notificationService.success('Item deleted successfully.');
-          this.dashboardService.fetchDashboardData().subscribe(); // Refresh data
+          this.dashboardService.fetchDashboardData().subscribe();
         },
         error: (err) => {
-          // The backend sends a detailed error message for 409 Conflict
           const errorMessage = err.status === 409 ? err.error.message : 'Failed to delete item.';
           this.notificationService.error(errorMessage);
         }

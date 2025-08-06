@@ -1,0 +1,65 @@
+<div class="page-header">
+  <h2 class="page-title">Admin Overview</h2>
+  <p class="page-subtitle">A high-level view of your platform's key metrics.</p>
+</div>
+
+<!-- KPI Cards -->
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <p class="kpi-label">Pending Applications</p>
+    <p class="kpi-value">{{ kpiData().pendingApps }}</p>
+  </div>
+  <div class="kpi-card">
+    <p class="kpi-label">Total Restaurants</p>
+    <p class="kpi-value">{{ kpiData().totalRestaurants }}</p>
+  </div>
+  <div class="kpi-card">
+    <p class="kpi-label">Total Users</p>
+    <p class="kpi-value">{{ kpiData().totalUsers }}</p>
+  </div>
+  <div class="kpi-card">
+    <p class="kpi-label">Total Revenue</p>
+    <p class="kpi-value">₹{{ kpiData().totalRevenue.toFixed(2) }}</p>
+  </div>
+</div>
+
+<!-- Charts -->
+<div class="charts-grid">
+  <div class="chart-card">
+    <h3 class="chart-title">Daily Revenue</h3>
+    @if(revenueByDay().series[0].data.length > 0) {
+      <apx-chart
+        [series]="revenueByDay().series"
+        [xaxis]="mergedRevenueXaxis"
+        [chart]="revenueChartOptions.chart"
+        [stroke]="revenueChartOptions.stroke"
+        [dataLabels]="revenueChartOptions.dataLabels"
+        [yaxis]="revenueChartOptions.yaxis"
+        [grid]="revenueChartOptions.grid"
+        [fill]="revenueChartOptions.fill"
+        [theme]="revenueChartOptions.theme"
+        [colors]="revenueChartOptions.colors"
+        [tooltip]="revenueChartOptions.tooltip">
+      </apx-chart>
+    } @else {
+      <div class="chart-empty">No revenue data available.</div>
+    }
+  </div>
+
+  <div class="chart-card">
+    <h3 class="chart-title">Orders by Status</h3>
+    @if(ordersByStatus().series.length > 0) {
+      <apx-chart
+        [series]="ordersByStatus().series"
+        [labels]="ordersByStatus().labels"
+        [chart]="ordersByStatusChartOptions.chart"
+        [dataLabels]="ordersByStatusChartOptions.dataLabels"
+        [legend]="ordersByStatusChartOptions.legend"
+        [theme]="ordersByStatusChartOptions.theme"
+        [stroke]="ordersByStatusChartOptions.stroke">
+      </apx-chart>
+    } @else {
+      <div class="chart-empty">No order data available.</div>
+    }
+  </div>
+</div>

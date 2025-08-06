@@ -1,18 +1,13 @@
-/* src/app/admin/layout/layout.css */
-.nav-link {
-  display: block;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  font-weight: 500;
-  color: var(--color-text-muted);
-  transition: background-color 0.2s, color 0.2s;
-}
-.nav-link:hover {
-  background-color: var(--color-border);
-  color: var(--color-text);
-}
-.nav-link.active {
-  background-color: var(--color-primary);
-  color: #111827; /* A dark color for contrast */
-  font-weight: 600;
-}
+.admin-layout { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+.sidebar { background-color: var(--bg-light); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 1.5rem; }
+.sidebar-header { padding-bottom: 1.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); }
+.brand-name { font-size: 1.75rem; font-weight: 700; color: var(--text-light); }
+.brand-tag { font-size: 0.875rem; color: var(--text-dark); }
+.sidebar-nav { display: flex; flex-direction: column; gap: 0.5rem; flex-grow: 1; }
+.nav-link { display: flex; align-items: center; gap: 1rem; padding: 0.75rem 1rem; border-radius: 0.5rem; text-decoration: none; font-weight: 500; color: var(--text-dark); transition: all 0.2s ease; }
+.nav-link:hover { background-color: var(--bg-dark); color: var(--text-light); }
+.nav-link.active { background-color: var(--primary); color: white; }
+.sidebar-footer { margin-top: 1.5rem; }
+.logout-btn { width: 100%; display: flex; align-items: center; justify-content: center; gap: 1rem; padding: 0.75rem 1rem; border-radius: 0.5rem; background: none; border: 1px solid var(--border-color); font-weight: 500; color: var(--text-dark); cursor: pointer; transition: all 0.2s ease; }
+.logout-btn:hover { background-color: var(--bg-dark); color: var(--error); border-color: var(--error); }
+.main-content { padding: 2rem; overflow-y: auto; }

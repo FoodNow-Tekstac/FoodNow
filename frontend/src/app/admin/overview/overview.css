@@ -1,0 +1,12 @@
+.page-header { margin-bottom: 1.5rem; }
+.page-title { font-size: 1.75rem; font-weight: 700; }
+.page-subtitle { color: var(--text-dark); margin-top: 0.25rem; }
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+.kpi-card { background-color: var(--bg-light); border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 0.75rem; }
+.kpi-label { color: var(--text-dark); font-weight: 500; font-size: 0.875rem; }
+.kpi-value { font-size: 2.25rem; font-weight: 700; color: var(--text-light); margin-top: 0.5rem; }
+.charts-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-top: 1.5rem; }
+@media (min-width: 1024px) { .charts-grid { grid-template-columns: 2fr 1fr; } }
+.chart-card { background-color: var(--bg-light); border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 0.75rem; }
+.chart-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem; }
+.chart-empty { min-height: 350px; display: flex; align-items: center; justify-content: center; color: var(--text-dark); }
