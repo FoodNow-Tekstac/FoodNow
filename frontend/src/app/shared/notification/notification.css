@@ -1,13 +1,11 @@
-/* notification.css */
-
-/* Container for all toasts, positioned in the bottom-right corner */
-.toast-container {
+/* Container for all toasts, fixed to the screen */
+#toast-container {
   position: fixed;
-  bottom: 1.5rem; /* Changed from top */
+  top: 1.5rem;
   right: 1.5rem;
   z-index: 9999;
   display: flex;
-  flex-direction: column-reverse; /* Toasts stack upwards */
+  flex-direction: column;
   gap: 1rem;
   align-items: flex-end;
 }
@@ -17,23 +15,22 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  min-width: 320px;
-  max-width: 400px;
-  padding: 1rem 1.5rem;
+  min-width: 300px;
+  max-width: 350px;
+  padding: 1rem;
   border-radius: 0.5rem;
-  background-color: var(--bg-light);
-  border: 1px solid var(--border-color);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
   box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);
 
-  /* Animation: Start off-screen below */
-  transform: translateY(calc(100% + 1.5rem));
+  /* Animation */
+  transform: translateX(calc(100% + 1.5rem));
   opacity: 0;
-  transition: transform 0.4s cubic-bezier(0.21, 1.02, 0.73, 1), opacity 0.4s ease-in-out;
+  transition: all 0.4s cubic-bezier(0.21, 1.02, 0.73, 1);
 }
 
-/* Animation for toast entrance */
 .toast.show {
-  transform: translateY(0);
+  transform: translateX(0);
   opacity: 1;
 }
 
@@ -50,22 +47,20 @@
 
 .toast-message {
   font-weight: 500;
-  color: var(--text-light);
+  color: var(--color-text);
+  word-break: break-word;
 }
 
-/* --- Type-specific styles --- */
-.toast-success { border-left: 4px solid var(--success); }
-.toast-success .toast-icon { color: var(--success); }
+/* --- Type-specific colors --- */
+.toast-success { border-left: 4px solid var(--color-success); }
+.toast-success .toast-icon { color: var(--color-success); }
 
-.toast-error { border-left: 4px solid var(--error); }
-.toast-error .toast-icon { color: var(--error); }
+.toast-error { border-left: 4px solid var(--color-error); }
+.toast-error .toast-icon { color: var(--color-error); }
 
-.toast-loading,
-.toast-info { border-left: 4px solid var(--primary); }
-.toast-loading .toast-icon,
-.toast-info .toast-icon { color: var(--primary); }
+.toast-loading { border-left: 4px solid var(--color-primary); }
+.toast-loading .toast-icon { color: var(--color-primary); }
 
-/* Animation for the loading spinner */
 .spinner {
   animation: spin 1s linear infinite;
 }

@@ -18,7 +18,6 @@ import { BecomePartnerComponent } from './customer/become-partner/become-partner
 import { PaymentComponent } from './customer/payment/payment';
 
 import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password';
-import { ForgotPasswordConfirmationComponent } from './auth/forgot-password-confirmation/forgot-password-confirmation';
 import { ResetPasswordComponent } from './auth/reset-password/reset-password';
 
 import { RestaurantOverviewComponent } from './restaurant/overview/overview';
@@ -33,7 +32,6 @@ export const routes: Routes = [
   // ✅ PUBLIC ROUTES
   { path: 'login', component: LoginComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
-  { path: 'forgot-password-confirmation', component: ForgotPasswordConfirmationComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
 
   // ✅ CUSTOMER ROUTES

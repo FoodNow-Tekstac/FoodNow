@@ -1,22 +1,13 @@
 package com.foodnow.service;
 
-import com.foodnow.dto.DeliveryPersonnelSignUpRequest;
-import com.foodnow.dto.LoginRequest;
-import com.foodnow.dto.ResetPasswordRequest;
-import com.foodnow.dto.SignUpRequest;
+import com.foodnow.dto.*;
 import com.foodnow.exception.ResourceNotFoundException;
-import com.foodnow.model.DeliveryAgentStatus;
-import com.foodnow.model.PasswordResetToken;
-import com.foodnow.model.Role;
-import com.foodnow.model.User;
+import com.foodnow.model.*;
 import com.foodnow.repository.PasswordResetTokenRepository;
 import com.foodnow.repository.UserRepository;
 import com.foodnow.security.JwtTokenProvider;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -36,39 +27,41 @@ public class AuthenticationService {
     @Autowired private PasswordEncoder passwordEncoder;
     @Autowired private JwtTokenProvider tokenProvider;
     @Autowired private PasswordResetTokenRepository tokenRepository;
-@PersistenceContext
-private EntityManager entityManager;
+    @Autowired private EmailService emailService;
+    
+    // Inject the frontend URL from your application.properties
+    @Value("${app.frontend.url}")
+    private String frontendUrl;
 
     /**
-     * Generates a one-time password reset token and returns the reset link.
-     * If a token already exists for the user, it is deleted first to avoid unique constraint violations.
+     * Generates a password reset token and sends it via email.
+     * Throws ResourceNotFoundException if the email does not exist.
      */
     @Transactional
-public String generatePasswordResetToken(String email) {
-    User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
+    public void generateAndSendPasswordResetLink(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
 
-    // Use JPQL delete instead of relying on entity flushing
-    tokenRepository.deleteByUser(user);
+        tokenRepository.deleteByUser(user); // Delete any old tokens
 
-    String token = UUID.randomUUID().toString();
-    PasswordResetToken resetToken = new PasswordResetToken();
-    resetToken.setToken(token);
-    resetToken.setUser(user);
-    resetToken.setExpiryDate(LocalDateTime.now().plusHours(1));
+        String token = UUID.randomUUID().toString();
+        PasswordResetToken resetToken = new PasswordResetToken();
+        resetToken.setToken(token);
+        resetToken.setUser(user);
+        resetToken.setExpiryDate(LocalDateTime.now().plusHours(1));
+        tokenRepository.save(resetToken);
 
-    tokenRepository.save(resetToken);
+        // Construct the full link here
+        String resetLink = frontendUrl + "/reset-password?token=" + token;
 
-return "http://localhost:4200/reset-password?token=" + token;
-}
-
-    /**
-     * Resets the user's password using a valid token.
-     */
+        // Delegate the sending of the fully-formed link to the EmailService
+        emailService.sendPasswordResetEmail(user.getEmail(), resetLink);
+    }
+    
     @Transactional
     public void resetPassword(ResetPasswordRequest request) {
         PasswordResetToken resetToken = tokenRepository.findByToken(request.getToken())
-            .orElseThrow(() -> new ResourceNotFoundException("Invalid password reset token."));
+                .orElseThrow(() -> new ResourceNotFoundException("Invalid password reset token."));
 
         if (resetToken.getExpiryDate().isBefore(LocalDateTime.now())) {
             tokenRepository.delete(resetToken);
@@ -81,6 +74,9 @@ return "http://localhost:4200/reset-password?token=" + token;
         
         tokenRepository.delete(resetToken);
     }
+    
+    // Other methods (authenticateUser, registerUser, etc.) remain the same
+
 
     /**
      * Authenticates a user and returns a JWT token.

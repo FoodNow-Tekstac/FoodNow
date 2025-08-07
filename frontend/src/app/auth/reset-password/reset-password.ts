@@ -38,7 +38,7 @@ export class ResetPasswordComponent implements OnInit {
       return;
     }
 
-    this.notificationService.show('Resetting your password...', 'loading');
+    this.notificationService.show('Resetting your password...', 'info');
     const payload = { token: this.token, newPassword: this.newPassword };
 
     this.authService.resetPassword(payload).subscribe({

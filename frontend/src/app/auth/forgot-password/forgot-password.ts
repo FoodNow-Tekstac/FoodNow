@@ -19,18 +19,28 @@ export class ForgotPasswordComponent {
   email: string = '';
 
   onSubmit(): void {
+    if (!this.email) {
+      this.notificationService.error('Please enter your email address.');
+      return;
+    }
+
+    this.notificationService.show('Sending request...', 'info');
+
+    // CHANGE: The backend now sends the email directly. We just need to
+    // display the success message it returns.
     this.authService.forgotPassword(this.email).subscribe({
-      next: (result) => {
-        if (result.resetLink) {
-          // Navigate to the confirmation page, passing the link as a query parameter
-          this.router.navigate(['/forgot-password-confirmation'], {
-            queryParams: { link: result.resetLink }
-          });
-        } else {
-          this.notificationService.success('If an account exists for this email, a reset link has been sent.');
-        }
+      next: (response: any) => {
+        // Display the generic success message from the API.
+        this.notificationService.success(response.message);
+
+        // Optional: Redirect the user back to the login page after a few seconds.
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 3000);
       },
-      error: (err) => this.notificationService.error(err.error?.message || 'An error occurred.')
+      error: (err) => {
+        this.notificationService.error(err.error?.message || 'An error occurred.');
+      }
     });
   }
 }

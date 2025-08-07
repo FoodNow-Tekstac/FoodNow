@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.5</version> <!-- Using a recent stable version -->
+        <version>3.2.5</version>
         <relativePath/>
     </parent>
 
@@ -41,6 +41,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
+        
+        <!-- Mail Support -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
 
         <!-- Database -->
         <dependency>
@@ -54,7 +60,7 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- JJWT (Modern setup) -->
+        <!-- JJWT -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -80,13 +86,15 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Devtools -->
+        <!-- DevTools - COMMENTED OUT TEMPORARILY -->
+        <!--
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
+        -->
 
         <!-- Testing -->
         <dependency>
@@ -103,13 +111,6 @@
 
     <build>
         <plugins>
-            <!--
-              The spring-boot-maven-plugin is the key to creating a runnable "fat JAR".
-              By simply including the plugin here without any <configuration> or <executions>,
-              we allow it to inherit all the correct default settings from the
-              'spring-boot-starter-parent' POM. It will automatically find your main class
-              and package everything correctly.
-            -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

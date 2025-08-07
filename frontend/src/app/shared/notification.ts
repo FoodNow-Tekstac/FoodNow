@@ -1,64 +1,70 @@
 import { Injectable, signal } from '@angular/core';
 
-/**
- * Defines the structure for a single toast message.
- */
 export interface Toast {
   id: number;
   message: string;
-  type: 'success' | 'error' | 'loading';
+  type: 'success' | 'error' | 'loading' | 'info';
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotificationService {
-  /**
-   * A signal that holds the array of currently active toasts.
-   */
   toasts = signal<Toast[]>([]);
-  
   private lastId = 0;
+  private loadingToastId: number | null = null;
 
   /**
-   * The main method to display a toast. It's called by the helper methods below.
-   * @param message The text to display in the toast.
-   * @param type The style of the toast ('success', 'error', 'loading').
-   * @param duration How long the toast should be visible in milliseconds.
+   * Shows a self-removing toast. Now correctly accepts 'loading'.
    */
-  show(message: string, type: Toast['type'] = 'success', duration: number = 4000) {
-    const newToast: Toast = { id: this.lastId++, message, type };
+  show(message: string, type: Toast['type'] = 'info', duration: number = 4000) {
+    // Hide any persistent loading toast before showing a new message
+    this.hideLoading(); 
     
-    // Add the new toast to the beginning of the array
+    const newToast: Toast = { id: this.lastId++, message, type };
     this.toasts.update(currentToasts => [newToast, ...currentToasts]);
-
-    // Automatically remove the toast after the duration, unless it's a 'loading' toast.
-    if (type !== 'loading') {
-      setTimeout(() => this.remove(newToast.id), duration);
-    }
+    
+    // Auto-hide the toast after the duration, including 'loading' toasts shown this way
+    setTimeout(() => this.remove(newToast.id), duration);
   }
 
   /**
-   * Helper method to easily show a success toast.
-   * @param message The success message to display.
+   * Shows a persistent 'loading' toast that must be hidden manually with hideLoading().
    */
+  showLoading(message: string = 'Loading...') {
+    if (this.loadingToastId !== null) {
+      this.toasts.update(toasts => toasts.map(t => 
+        t.id === this.loadingToastId ? { ...t, message } : t
+      ));
+      return;
+    }
+    const newToast: Toast = { id: this.lastId++, message, type: 'loading' };
+    this.loadingToastId = newToast.id;
+    this.toasts.update(currentToasts => [newToast, ...currentToasts]);
+  }
+
+  /**
+   * Hides the persistent loading toast.
+   */
+  hideLoading() {
+    if (this.loadingToastId !== null) {
+      this.remove(this.loadingToastId);
+      this.loadingToastId = null;
+    }
+  }
+
   success(message: string) {
     this.show(message, 'success');
   }
 
-  /**
-   * Helper method to easily show an error toast.
-   * @param message The error message to display.
-   */
   error(message: string) {
     this.show(message, 'error');
   }
 
   /**
    * Removes a toast from the array by its ID.
-   * @param id The unique ID of the toast to remove.
    */
-  remove(id: number) {
+  private remove(id: number) {
     this.toasts.update(currentToasts => currentToasts.filter(t => t.id !== id));
   }
 }
