@@ -135,3 +135,47 @@ body {
 @media (min-width: 768px) {
   .md\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
+
+/*
+ =================================================================
+ == 5. BUTTON STYLES (Add this new section)
+ =================================================================
+*/
+/*
+ =================================================================
+ == 5. GLOBAL BUTTON STYLES (Add this new section)
+ =================================================================
+*/
+
+/* Target all form submit buttons */
+form button[type="submit"] {
+  /* Sizing and Centering */
+  display: block; /* Allows margin auto to work */
+  margin: 1.5rem auto 0; /* Adds space above and centers the button */
+  max-width: 250px; /* Controls the width of the button */
+  width: 100%;
+  
+  /* Appearance */
+  padding: 0.8rem 1.5rem;
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+  background-color: var(--primary);
+  color: var(--text-light);
+  font-weight: 600;
+  font-size: 1rem; /* Smaller font size */
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Hover effect */
+form button[type="submit"]:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(108, 95, 245, 0.3);
+}
+
+/* Disabled state */
+form button[type="submit"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
