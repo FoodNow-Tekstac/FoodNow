@@ -74,7 +74,7 @@ export class AuthService {
     // Use a short timeout to allow the success toast to be seen
     setTimeout(() => {
       if (userRole === 'ROLE_ADMIN') {
-        this.router.navigate(['/admin/applications']);
+        this.router.navigate(['/admin/overview']);
       } else if (userRole === 'ROLE_RESTAURANT_OWNER') {
         this.router.navigate(['/restaurant/overview']);
       } else if (userRole === 'ROLE_DELIVERY_PERSONNEL') {
@@ -88,8 +88,8 @@ export class AuthService {
   /**
    * Requests a password reset link for the given email.
    */
-  forgotPassword(email: string): Observable<{ resetLink: string }> {
-    return this.http.post<{ resetLink: string }>(`${this.apiUrl}/forgot-password`, { email });
+  forgotPassword(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/forgot-password`, { email });
   }
 
   /**

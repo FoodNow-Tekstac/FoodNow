@@ -10,13 +10,15 @@ import { NotificationService } from '../../shared/notification';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './forgot-password.html',
+  styleUrls: ['./forgot-password.css']
 })
 export class ForgotPasswordComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
   private notificationService = inject(NotificationService);
 
-  email: string = '';
+  email = '';
+  isLoading = false;
 
   onSubmit(): void {
     if (!this.email) {
@@ -24,22 +26,22 @@ export class ForgotPasswordComponent {
       return;
     }
 
-    this.notificationService.show('Sending request...', 'info');
+    this.isLoading = true;
+    this.notificationService.showLoading('Sending reset link...');
 
-    // CHANGE: The backend now sends the email directly. We just need to
-    // display the success message it returns.
     this.authService.forgotPassword(this.email).subscribe({
-      next: (response: any) => {
-        // Display the generic success message from the API.
-        this.notificationService.success(response.message);
-
-        // Optional: Redirect the user back to the login page after a few seconds.
-        setTimeout(() => {
-          this.router.navigate(['/login']);
-        }, 3000);
+      next: (response) => {
+        this.notificationService.hideLoading();
+        this.notificationService.success(
+          response?.message || 'If an account exists, a reset link has been sent.'
+        );
+        // navigate after short delay so user can read message
+        setTimeout(() => this.router.navigate(['/login']), 2500);
       },
       error: (err) => {
-        this.notificationService.error(err.error?.message || 'An error occurred.');
+        this.isLoading = false;
+        this.notificationService.hideLoading();
+        this.notificationService.error(err?.error?.message || 'An error occurred.');
       }
     });
   }

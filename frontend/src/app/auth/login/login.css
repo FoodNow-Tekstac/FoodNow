@@ -1,98 +1,124 @@
-/* login.component.css */
+/* Login Component Specific Styles - Using Global Variables */
 
-/* Styles specific to the login page layout */
+/* Main Container */
 .auth-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
   min-height: 100vh;
 }
 
+/* Left Panel - Info Section */
 .info-panel {
-  background: linear-gradient(160deg, rgba(108, 95, 245, 0.2) 0%, rgba(19, 19, 22, 0) 50%), var(--bg-dark);
+  background: linear-gradient(135deg, rgba(108, 95, 245, 0.2) 0%, var(--bg-dark) 70%);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 4rem;
+  position: relative;
+  overflow: hidden;
 }
 
 .info-content {
-  max-width: 400px;
+  max-width: 450px;
+  z-index: 2;
 }
 
 .logo {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 1.75rem;
+  font-weight: 700;
   margin-bottom: 3rem;
   color: var(--text-light);
 }
 
+.logo svg {
+  color: var(--primary);
+}
+
 .title {
-  font-size: 2.75rem;
-  font-weight: 700;
-  line-height: 1.2;
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1.1;
   margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, var(--text-light) 0%, var(--primary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .description {
-  font-size: 1rem;
+  font-size: 1.1rem;
   color: var(--text-dark);
   line-height: 1.6;
 }
 
+/* Right Panel - Form */
 .form-panel {
-  background-color: var(--bg-light);
+  background: #000; /* black right side */
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  padding: 3rem 2rem;
 }
 
 .form-wrapper {
   width: 100%;
-  max-width: 420px;
+  max-width: 450px;
+  background: #111; /* dark form background */
+  border-radius: 1.5rem;
+  padding: 3rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
 }
 
 .form-header {
   text-align: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2.5rem;
 }
 
 .form-header h2 {
-  font-size: 1.75rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: #fff;
 }
 
 .form-header p {
-  color: var(--text-dark);
+  color: #ccc;
 }
 
 .divider {
   height: 1px;
-  background-color: var(--border-color);
+  background: linear-gradient(90deg, transparent, #444, transparent);
+  margin-bottom: 2.5rem;
+}
+
+/* Form Fields */
+.form-field {
   margin-bottom: 2rem;
+}
+
+.form-field label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: #fff;
+  font-size: 0.95rem;
+}
+
+.form-field input {
   width: 100%;
+  background: #000 !important;
+  border: 2px solid #444 !important;
+  color: #fff !important;
+  border-radius: 0.75rem !important;
+  padding: 1rem 1.25rem !important;
+  box-sizing: border-box;
 }
 
-.label-wrapper {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.forgot-password {
-  font-size: 0.8rem;
-  color: var(--primary);
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.forgot-password:hover {
-  color: var(--primary-hover);
-  text-decoration: underline;
+.form-field input:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px rgba(108, 95, 245, 0.3) !important;
 }
 
 .password-wrapper {
@@ -100,54 +126,87 @@
 }
 
 .password-wrapper input {
-  padding-right: 3rem;
+  padding-right: 3.5rem !important;
 }
 
 .toggle-password {
   position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 3rem;
+  top: 50%;
+  right: 1.25rem;
+  transform: translateY(-50%);
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--text-dark);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  color: #ccc;
+  padding: 0.5rem;
 }
 
 .toggle-password:hover {
-  color: var(--text-light);
+  color: var(--primary);
 }
 
+/* Error text */
+.error-text {
+  color: var(--error);
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  font-weight: 500;
+}
+
+/* Submit Button */
+.btn-submit {
+  width: 100%;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(108, 95, 245, 0.3);
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.btn-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.btn-submit:disabled {
+  opacity: 0.6;
+}
+
+/* Toggle Form Link */
 .toggle-form {
   text-align: center;
   margin-top: 2rem;
-  font-size: 0.9rem;
-  color: var(--text-dark);
+  font-size: 0.95rem;
+  color: #ccc;
 }
 
 .toggle-form a {
   color: var(--primary);
-  font-weight: 500;
-  text-decoration: none;
+  font-weight: 600;
 }
 
-.toggle-form a:hover {
-  text-decoration: underline;
-  color: var(--primary-hover);
-}
-
+/* Responsive */
 @media (max-width: 992px) {
   .auth-container {
     grid-template-columns: 1fr;
   }
+
   .info-panel {
     display: none;
   }
-  .form-panel {
-    background-color: var(--bg-dark);
-  }
+}
+
+
+/* You can delete the .label-wrapper class entirely */
+
+.forgot-password {
+  display: block; /* Makes it take up its own line */
+  text-align: right; /* Aligns the text to the right */
+  margin-top: 0.75rem; /* Adds space between the input box and the link */
+  font-size: 0.9rem;
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
 }

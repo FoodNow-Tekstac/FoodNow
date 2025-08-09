@@ -1,15 +1,16 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../auth';
 import { NotificationService } from '../../shared/notification';
 
 @Component({
   selector: 'app-reset-password',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './reset-password.html',
+  styleUrls: ['./reset-password.css']
 })
 export class ResetPasswordComponent implements OnInit {
   private route = inject(ActivatedRoute);
@@ -20,6 +21,7 @@ export class ResetPasswordComponent implements OnInit {
   token: string | null = null;
   newPassword = '';
   confirmPassword = '';
+  isLoading = false;
 
   ngOnInit(): void {
     this.token = this.route.snapshot.queryParamMap.get('token');
@@ -38,17 +40,23 @@ export class ResetPasswordComponent implements OnInit {
       return;
     }
 
-    this.notificationService.show('Resetting your password...', 'info');
+    this.isLoading = true;
+    this.notificationService.showLoading('Resetting your password...');
+
     const payload = { token: this.token, newPassword: this.newPassword };
 
     this.authService.resetPassword(payload).subscribe({
       next: (message) => {
+        this.isLoading = false;
+        this.notificationService.hideLoading();
         this.notificationService.success(message);
-        setTimeout(() => {
-          this.router.navigate(['/login']);
-        }, 2000);
+        setTimeout(() => this.router.navigate(['/login']), 2000);
       },
-      error: (err) => this.notificationService.error(err.error?.message || 'Failed to reset password.')
+      error: (err) => {
+        this.isLoading = false;
+        this.notificationService.hideLoading();
+        this.notificationService.error(err.error?.message || 'Failed to reset password.');
+      }
     });
   }
 }

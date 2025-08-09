@@ -11,19 +11,11 @@ import { NotificationService } from '../../shared/notification';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login.html',
-  styleUrl: './login.css',
-  animations: [
-    trigger('fadeIn', [
-      transition(':enter', [ // ':enter' is an alias for 'void => *'
-        style({ opacity: 0 }),
-        animate('500ms ease-out', style({ opacity: 1 }))
-      ])
-    ])
-  ]
+  styleUrl: './login.css'
 })
 export class LoginComponent implements OnInit {
   isLoading = signal(false);
-  isRegisterMode = signal(true);
+  isRegisterMode = signal(false);
   hidePassword = signal(true);
 
   loginForm!: FormGroup;
@@ -34,6 +26,10 @@ export class LoginComponent implements OnInit {
   private notificationService = inject(NotificationService);
 
   ngOnInit(): void {
+    this.initializeForms();
+  }
+
+  private initializeForms(): void {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]]
@@ -41,7 +37,7 @@ export class LoginComponent implements OnInit {
 
     this.registerForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
-      email: ['', [Validators.required, Validators.email]],
+      email: ['admin@foodnow.com', [Validators.required, Validators.email]],
       phoneNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
@@ -54,41 +50,66 @@ export class LoginComponent implements OnInit {
   get registerPhone() { return this.registerForm.get('phoneNumber'); }
   get registerPassword() { return this.registerForm.get('password'); }
 
-  toggleMode(event: Event) {
+  toggleMode(event: Event): void {
     event.preventDefault();
     this.isRegisterMode.update(value => !value);
+    this.resetForms();
   }
 
-  onLogin() {
+  togglePasswordVisibility(): void {
+    this.hidePassword.update(value => !value);
+  }
+
+  private resetForms(): void {
+    this.loginForm.reset();
+    this.registerForm.reset();
+    this.registerForm.patchValue({ email: 'admin@foodnow.com' });
+  }
+
+  onLogin(): void {
     this.loginForm.markAllAsTouched();
     if (this.loginForm.invalid) return;
-
     this.isLoading.set(true);
+
     this.authService.login(this.loginForm.value).subscribe({
+      next: () => this.notificationService.show('Login successful!', 'success'),
       error: (err) => {
-        this.notificationService.show(err.error?.message || 'Login failed.', 'error');
+        this.notificationService.show(err.error?.message || 'Login failed. Please try again.', 'error');
         this.isLoading.set(false);
       },
       complete: () => this.isLoading.set(false)
     });
   }
 
-  onRegister() {
+  onRegister(): void {
     this.registerForm.markAllAsTouched();
     if (this.registerForm.invalid) return;
-
     this.isLoading.set(true);
+
     this.authService.register(this.registerForm.value).subscribe({
       next: () => {
-        this.notificationService.show('Registration successful! Please log in.', 'success');
+        this.notificationService.show('Registration successful! Please log in with your credentials.', 'success');
         this.isRegisterMode.set(false);
-        this.loginForm.reset();
-        this.registerForm.reset();
+        this.resetForms();
       },
       error: (err) => {
-        this.notificationService.show(err.error?.message || 'Registration failed.', 'error');
+        this.notificationService.show(err.error?.message || 'Registration failed. Please try again.', 'error');
+        this.isLoading.set(false);
       },
       complete: () => this.isLoading.set(false)
     });
+  }
+
+  getErrorMessage(control: any, fieldName: string): string {
+    if (control?.hasError('required')) return `${fieldName} is required.`;
+    if (control?.hasError('email')) return 'Please enter a valid email address.';
+    if (control?.hasError('minlength')) {
+      const requiredLength = control.errors?.['minlength']?.requiredLength;
+      return `${fieldName} must be at least ${requiredLength} characters.`;
+    }
+    if (control?.hasError('pattern')) {
+      return fieldName === 'Phone Number' ? 'Please enter a valid 10-digit phone number.' : 'Invalid format.';
+    }
+    return '';
   }
 }

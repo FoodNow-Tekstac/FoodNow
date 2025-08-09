@@ -74,7 +74,7 @@ export const routes: Routes = [
     canActivate: [adminGuard], // Protect this whole section with the admin guard
     children: [
       { path: ':section', component: AdminPageComponent },
-      { path: '', redirectTo: 'applications', pathMatch: 'full' }
+      { path: '', redirectTo: 'overview', pathMatch: 'full' }
     ]
   },
 
