@@ -1,32 +1,32 @@
 <div class="modal-overlay" (click)="close.emit()">
-  
   <div class="modal-content" (click)="$event.stopPropagation()">
     
     <div class="modal-header">
-      <h3 class="modal-title">{{ modalTitle }}</h3>
-      <button (click)="close.emit()" class="close-btn" aria-label="Close modal">&times;</button>
+      <h3>{{ modalTitle }}</h3>
+      <button (click)="close.emit()" class="close-btn">&times;</button>
     </div>
 
-    <form class="modal-body" (ngSubmit)="onSubmit()">
-      <div class="form-grid">
-        <div class="form-field full-span">
-          <label for="name">Item Name</label>
-          <input type="text" id="name" name="name" class="form-input" placeholder="e.g., Hyderabadi Biryani" required [(ngModel)]="itemData.name">
-        </div>
+    <form class="modal-form" (ngSubmit)="onSubmit()">
+      
+      <div class="form-field">
+        <label for="name">Item Name</label>
+        <input type="text" id="name" placeholder="e.g., Hyderabadi Biryani" required [(ngModel)]="itemData.name" name="name">
+      </div>
 
-        <div class="form-field full-span">
-          <label for="description">Description</label>
-          <textarea id="description" name="description" rows="3" class="form-input" placeholder="A short, tasty description of the item" required [(ngModel)]="itemData.description"></textarea>
-        </div>
+      <div class="form-field">
+        <label for="description">Description</label>
+        <textarea id="description" rows="3" placeholder="A short, tasty description of the item" required [(ngModel)]="itemData.description" name="description"></textarea>
+      </div>
 
+      <div class="form-row">
         <div class="form-field">
           <label for="price">Price (₹)</label>
-          <input type="number" id="price" name="price" step="0.01" min="0" class="form-input" placeholder="e.g., 250.00" required [(ngModel)]="itemData.price">
+          <input type="number" id="price" step="0.01" min="0" required [(ngModel)]="itemData.price" name="price">
         </div>
-
+        
         <div class="form-field">
           <label for="category">Category</label>
-          <select id="category" name="category" class="form-input" required [(ngModel)]="itemData.category">
+          <select id="category" required [(ngModel)]="itemData.category" name="category">
             <option value="" disabled>Select...</option>
             <option value="STARTER">Starter</option>
             <option value="MAIN_COURSE">Main Course</option>
@@ -35,10 +35,12 @@
             <option value="SIDE">Side</option>
           </select>
         </div>
+      </div>
 
+      <div class="form-row">
         <div class="form-field">
           <label for="dietaryType">Dietary Type</label>
-          <select id="dietaryType" name="dietaryType" class="form-input" required [(ngModel)]="itemData.dietaryType">
+          <select id="dietaryType" required [(ngModel)]="itemData.dietaryType" name="dietaryType">
             <option value="" disabled>Select...</option>
             <option value="VEG">Veg</option>
             <option value="NON_VEG">Non-Veg</option>
@@ -48,14 +50,15 @@
         
         <div class="form-field">
           <label for="image">Food Image</label>
-          <input type="file" id="image" name="image" (change)="onFileSelected($event)" accept="image/*" class="form-input file-input">
+          <input type="file" id="image" (change)="onFileSelected($event)" accept="image/*">
         </div>
       </div>
 
-      <div class="modal-footer">
-        <button type="button" (click)="close.emit()" class="btn-secondary">Cancel</button>
-        <button type="submit" class="btn-submit">Save Item</button>
+      <div class="form-actions">
+        <button type="button" (click)="close.emit()" class="btn-cancel">Cancel</button>
+        <button type="submit" class="btn-save">{{ isEditMode ? 'Update Item' : 'Save Item' }}</button>
       </div>
+
     </form>
   </div>
 </div>

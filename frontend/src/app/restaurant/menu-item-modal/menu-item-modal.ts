@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, inject, signal } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { lastValueFrom } from 'rxjs';
@@ -11,10 +11,10 @@ import { NotificationService } from '../../shared/notification';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './menu-item-modal.html',
-   styleUrls: ['./menu-item-modal.css']
+  styleUrls: ['./menu-item-modal.css']
 })
 export class MenuItemModalComponent implements OnInit {
-  @Input() menuItem: any | null = null; // Data passed in for editing
+  @Input() menuItem: any | null = null;
   @Output() close = new EventEmitter<void>();
   @Output() save = new EventEmitter<void>();
 
@@ -24,8 +24,6 @@ export class MenuItemModalComponent implements OnInit {
 
   isEditMode = false;
   modalTitle = 'Add New Item';
-
-  // The form data model
   itemData: MenuItemPayload = this.getEmptyForm();
   selectedImageFile: File | null = null;
 
@@ -33,7 +31,6 @@ export class MenuItemModalComponent implements OnInit {
     if (this.menuItem) {
       this.isEditMode = true;
       this.modalTitle = 'Edit Item';
-      // Copy data from the input to our form model
       this.itemData = { ...this.menuItem };
     }
   }
@@ -64,8 +61,7 @@ export class MenuItemModalComponent implements OnInit {
       }
 
       this.notificationService.success(`Item ${this.isEditMode ? 'updated' : 'added'}!`);
-      this.save.emit(); // Notify the parent component
-
+      this.save.emit();
     } catch (error) {
       this.notificationService.error('Failed to save item.');
     }

@@ -20,62 +20,38 @@
 
 /*
  =================================================================
- == 2. GLOBAL STYLES
+ == 2. GLOBAL RESET & BASE STYLES
  =================================================================
 */
+
+/* Reset all margins and padding */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
 body {
   margin: 0;
+  padding: 0;
+  height: 100%;
   background-color: var(--bg-dark);
   color: var(--text-light);
   font-family: var(--font-sans);
+  /* Add this back only if you have a fixed navbar: */
+  /* padding-top: 64px; */
 }
-
-/* Add a margin-top to the body to prevent content from hiding behind the fixed navbar */
-body {
-  padding-top: 64px; /* Height of the navbar */
-}
-
-.form-input,
-.form-field input,
-.form-field select,
-.form-field textarea {
-  width: 100%;
-  padding: 0.85rem 1rem;
-  background-color: var(--bg-dark);
-  border: 1px solid var(--border-color);
-  color: var(--text-light);
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  font-family: var(--font-sans);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.form-input:focus,
-.form-field input:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(108, 95, 245, 0.3);
-}
-
-.btn-secondary {
-  background-color: var(--bg-dark);
-  color: var(--text-light);
-  border: 1px solid var(--border-color);
-  transition: all 0.2s ease;
-}
-
-.btn-secondary:hover {
-  background-color: var(--primary);
-  border-color: var(--primary);
-  color: white;
-}
-
 
 /*
  =================================================================
  == 3. LAYOUT & UTILITY CLASSES
  =================================================================
 */
+
 /* Sizing & Spacing */
 .w-full { width: 100%; }
 .min-h-screen { min-height: 100vh; }
@@ -136,46 +112,169 @@ body {
   .md\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 
+/* FORM GRID - better gaps */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .full-span {
+    grid-column: 1 / -1;
+  }
+}
+
 /*
  =================================================================
- == 5. BUTTON STYLES (Add this new section)
- =================================================================
-*/
-/*
- =================================================================
- == 5. GLOBAL BUTTON STYLES (Add this new section)
+ == 5. FORM ELEMENTS (REFINED & CONSOLIDATED)
  =================================================================
 */
 
-/* Target all form submit buttons */
+/* LABELS */
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  font-size: 0.95rem;
+  color: var(--text-light);
+}
+
+/* FORM INPUTS - Final refined version (keeping the better one from bottom) */
+.form-input,
+.form-field input,
+.form-field select,
+.form-field textarea {
+  width: 100%;
+  padding: 0.9rem 1.1rem; /* bigger padding for better UX */
+  background-color: var(--bg-light); /* Using lighter background for better contrast */
+  border: 1px solid var(--border-color);
+  color: var(--text-light);
+  border-radius: 0.65rem; /* softer corners */
+  font-size: 1rem;
+  font-family: var(--font-sans);
+  line-height: 1.5; /* better readability */
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-input:focus,
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(108, 95, 245, 0.3);
+}
+
+/* FILE INPUT */
+input[type="file"]::file-selector-button {
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  background-color: var(--primary);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border: none;
+  margin-right: 0.5rem;
+}
+
+input[type="file"]::file-selector-button:hover {
+  background-color: var(--primary-hover);
+}
+
+/*
+ =================================================================
+ == 6. BUTTON STYLES (CONSOLIDATED & REFINED)
+ =================================================================
+*/
+
+/* Base button styles */
+.btn-secondary, 
+.btn-submit,
+form button[type="submit"] {
+  padding: 0.75rem 1.25rem;
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+/* Primary/Submit buttons - Final refined version */
+.btn-submit,
 form button[type="submit"] {
   /* Sizing and Centering */
-  display: block; /* Allows margin auto to work */
-  margin: 1.5rem auto 0; /* Adds space above and centers the button */
-  max-width: 250px; /* Controls the width of the button */
+  display: block;
+  margin: 1.5rem auto 0;
+  max-width: 250px;
   width: 100%;
   
   /* Appearance */
   padding: 0.8rem 1.5rem;
-  border: 1px solid transparent;
-  border-radius: 0.5rem;
   background-color: var(--primary);
   color: var(--text-light);
+  border: none;
+  border-radius: 0.5rem;
   font-weight: 600;
-  font-size: 1rem; /* Smaller font size */
-  cursor: pointer;
-  transition: all 0.2s ease;
+  font-size: 1rem;
 }
 
-/* Hover effect */
+/* Primary button hover effects */
+.btn-submit:hover:not(:disabled),
 form button[type="submit"]:hover:not(:disabled) {
   background-color: var(--primary-hover);
   transform: translateY(-2px);
   box-shadow: 0 4px 15px rgba(108, 95, 245, 0.3);
 }
 
-/* Disabled state */
+/* Primary button disabled state */
+.btn-submit:disabled,
 form button[type="submit"]:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Secondary buttons */
+.btn-secondary {
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+/*
+ =================================================================
+ == 7. RESPONSIVE DESIGN ENHANCEMENTS
+ =================================================================
+*/
+
+/* Mobile-first improvements */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+  
+  form button[type="submit"] {
+    margin: 1rem auto 0;
+    max-width: none;
+  }
+  
+  .form-input,
+  .form-field input,
+  .form-field select,
+  .form-field textarea {
+    padding: 0.8rem 1rem; /* Slightly smaller padding on mobile */
+  }
 }

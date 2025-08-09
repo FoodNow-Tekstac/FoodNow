@@ -9,36 +9,38 @@
 
 /* Left Panel - Info Section */
 .info-panel {
-  background: linear-gradient(135deg, rgba(108, 95, 245, 0.2) 0%, var(--bg-dark) 70%);
+  background: linear-gradient(135deg, rgba(108, 95, 245, 0.15) 0%, var(--bg-dark) 70%);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4rem;
+  padding: 3rem;
   position: relative;
   overflow: hidden;
 }
 
 .info-content {
-  max-width: 450px;
+  max-width: 480px;
   z-index: 2;
 }
 
 .logo {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  font-size: 1.75rem;
+  gap: 1rem;
+  font-size: 2rem;
   font-weight: 700;
   margin-bottom: 3rem;
   color: var(--text-light);
 }
 
 .logo svg {
+  width: 48px;
+  height: 48px;
   color: var(--primary);
 }
 
 .title {
-  font-size: 3rem;
+  font-size: 3.25rem;
   font-weight: 800;
   line-height: 1.1;
   margin-bottom: 1.5rem;
@@ -48,77 +50,85 @@
 }
 
 .description {
-  font-size: 1.1rem;
+  font-size: 1.125rem;
   color: var(--text-dark);
   line-height: 1.6;
 }
 
 /* Right Panel - Form */
 .form-panel {
-  background: #000; /* black right side */
+  background: #000;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 3rem 2rem;
+  padding: 2rem;
 }
 
 .form-wrapper {
   width: 100%;
-  max-width: 450px;
-  background: #111; /* dark form background */
+  max-width: 420px;
+  background: #111;
   border-radius: 1.5rem;
-  padding: 3rem;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+  padding: 2.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
 }
 
 .form-header {
   text-align: center;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
 }
 
 .form-header h2 {
-  font-size: 2rem;
+  font-size: 1.875rem;
   font-weight: 700;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
   color: #fff;
 }
 
 .form-header p {
-  color: #ccc;
+  color: #999;
+  font-size: 0.9rem;
 }
 
 .divider {
   height: 1px;
-  background: linear-gradient(90deg, transparent, #444, transparent);
-  margin-bottom: 2.5rem;
+  background: linear-gradient(90deg, transparent, #333, transparent);
+  margin-bottom: 2rem;
 }
 
 /* Form Fields */
 .form-field {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .form-field label {
   display: block;
   font-weight: 600;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
   color: #fff;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 }
 
 .form-field input {
   width: 100%;
   background: #000 !important;
-  border: 2px solid #444 !important;
+  border: 2px solid #333 !important;
   color: #fff !important;
   border-radius: 0.75rem !important;
-  padding: 1rem 1.25rem !important;
+  padding: 0.875rem 1rem !important;
+  font-size: 0.95rem;
   box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.form-field input::placeholder {
+  color: #666;
 }
 
 .form-field input:focus {
   border-color: var(--primary) !important;
-  box-shadow: 0 0 0 3px rgba(108, 95, 245, 0.3) !important;
+  box-shadow: 0 0 0 3px rgba(108, 95, 245, 0.2) !important;
+  outline: none;
 }
 
 .password-wrapper {
@@ -126,41 +136,63 @@
 }
 
 .password-wrapper input {
-  padding-right: 3.5rem !important;
+  padding-right: 3rem !important;
 }
 
 .toggle-password {
   position: absolute;
   top: 50%;
-  right: 1.25rem;
+  right: 0.875rem;
   transform: translateY(-50%);
   background: none;
   border: none;
   cursor: pointer;
-  color: #ccc;
-  padding: 0.5rem;
+  color: #666;
+  font-size: 1.125rem;
+  padding: 0.25rem;
+  transition: color 0.3s ease;
 }
 
 .toggle-password:hover {
   color: var(--primary);
 }
 
+/* Forgot Password Link */
+.forgot-password {
+  display: block;
+  text-align: right;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.forgot-password:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
 /* Error text */
 .error-text {
   color: var(--error);
-  font-size: 0.875rem;
-  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  margin-top: 0.375rem;
   font-weight: 500;
 }
 
 /* Submit Button */
 .btn-submit {
   width: 100%;
-  padding: 1rem 2rem;
+  padding: 0.875rem 2rem;
   background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+  border: none;
   border-radius: 0.75rem;
   font-size: 1rem;
+  font-weight: 600;
   color: #fff;
+  cursor: pointer;
   box-shadow: 0 4px 15px rgba(108, 95, 245, 0.3);
   transition: all 0.3s ease;
   margin-top: 1rem;
@@ -168,23 +200,33 @@
 
 .btn-submit:hover:not(:disabled) {
   transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(108, 95, 245, 0.4);
 }
 
 .btn-submit:disabled {
   opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
 
 /* Toggle Form Link */
 .toggle-form {
   text-align: center;
-  margin-top: 2rem;
-  font-size: 0.95rem;
-  color: #ccc;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: #999;
 }
 
 .toggle-form a {
   color: var(--primary);
   font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.toggle-form a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
 }
 
 /* Responsive */
@@ -196,17 +238,28 @@
   .info-panel {
     display: none;
   }
+
+  .form-panel {
+    padding: 1.5rem;
+  }
 }
 
+@media (max-width: 480px) {
+  .form-wrapper {
+    padding: 2rem;
+    margin: 1rem;
+  }
 
-/* You can delete the .label-wrapper class entirely */
+  .title {
+    font-size: 2.5rem;
+  }
 
-.forgot-password {
-  display: block; /* Makes it take up its own line */
-  text-align: right; /* Aligns the text to the right */
-  margin-top: 0.75rem; /* Adds space between the input box and the link */
-  font-size: 0.9rem;
-  color: var(--primary);
-  text-decoration: none;
-  font-weight: 500;
+  .logo {
+    font-size: 1.75rem;
+  }
+
+  .logo svg {
+    width: 40px;
+    height: 40px;
+  }
 }

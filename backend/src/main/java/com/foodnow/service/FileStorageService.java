@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,20 +18,26 @@ import java.util.UUID;
 public class FileStorageService {
 
     private final Path fileStorageLocation;
+    private final String uploadBaseUrl;
     private static final Logger logger = LoggerFactory.getLogger(FileStorageService.class);
 
-    public FileStorageService(@Value("${file.upload-dir}") String uploadDir) {
+    public FileStorageService(
+            @Value("${file.upload-dir}") String uploadDir,
+            @Value("${file.upload-url:/uploads/}") String uploadBaseUrl) {
+
+        // Normalize path
         this.fileStorageLocation = Paths.get(uploadDir).toAbsolutePath().normalize();
-        
-        // THIS IS THE NEW LOGGING PART
+        this.uploadBaseUrl = uploadBaseUrl.endsWith("/") ? uploadBaseUrl : uploadBaseUrl + "/";
+
         logger.info("====================================================================");
-        logger.info("IMAGE UPLOAD DIRECTORY: " + this.fileStorageLocation.toString());
+        logger.info("CONFIGURED UPLOAD DIR: {}", uploadDir);
+        logger.info("RESOLVED ABSOLUTE PATH: {}", this.fileStorageLocation);
         logger.info("====================================================================");
 
         try {
             Files.createDirectories(this.fileStorageLocation);
         } catch (Exception ex) {
-            throw new RuntimeException("Could not create the directory where the uploaded files will be stored.", ex);
+            throw new RuntimeException("Could not create upload directory.", ex);
         }
     }
 
@@ -39,23 +46,23 @@ public class FileStorageService {
 
         try {
             if (originalFileName.contains("..")) {
-                throw new RuntimeException("Sorry! Filename contains invalid path sequence " + originalFileName);
+                throw new RuntimeException("Invalid path sequence in filename: " + originalFileName);
             }
 
             String fileExtension = "";
-            try {
-                fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
-            } catch (Exception e) {
-                // No extension
+            int dotIndex = originalFileName.lastIndexOf(".");
+            if (dotIndex != -1) {
+                fileExtension = originalFileName.substring(dotIndex);
             }
-            String uniqueFileName = UUID.randomUUID().toString() + fileExtension;
 
+            String uniqueFileName = UUID.randomUUID() + fileExtension;
             Path targetLocation = this.fileStorageLocation.resolve(uniqueFileName);
+
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
-            return "/uploads/" + uniqueFileName;
+            return uploadBaseUrl + uniqueFileName;
         } catch (IOException ex) {
-            throw new RuntimeException("Could not store file " + originalFileName + ". Please try again!", ex);
+            throw new RuntimeException("Could not store file " + originalFileName, ex);
         }
     }
 }
