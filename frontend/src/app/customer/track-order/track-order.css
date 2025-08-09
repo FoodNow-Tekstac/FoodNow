@@ -16,12 +16,6 @@
   color: var(--primary);
   text-decoration: none;
   font-weight: 500;
-  transition: color 0.2s ease;
-}
-
-.back-link:hover {
-  text-decoration: underline;
-  color: var(--primary-hover);
 }
 
 .page-title {
@@ -37,116 +31,97 @@
   gap: 2rem;
 }
 
-/* Map Styling */
-.map-container {
-  background-color: var(--bg-light);
+/* --- New Timer Card Styling --- */
+.timer-card {
+  background-color: var(--bg-dark);
   border: 1px solid var(--border-color);
   border-radius: 0.75rem;
   min-height: 450px;
-}
-.map-element {
-  height: 450px;
-  border-radius: 0.75rem;
-}
-.map-unavailable {
-  height: 450px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-light);
+}
+
+.timer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.timer-label {
+  font-size: 1.125rem;
+  font-weight: 500;
   color: var(--text-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-/* Order Details Card Styling */
-.details-card {
-  background-color: var(--bg-light);
-  border: 1px solid var(--border-color);
-  border-radius: 0.75rem;
-  padding: 1.5rem;
-  align-self: flex-start; /* Prevents stretching on grid */
-}
-
-.restaurant-name {
+.eta-display {
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--text-light);
 }
 
-.status-text {
-  margin-top: 0.5rem;
-  font-size: 1.125rem;
-  font-weight: 500;
+.countdown-display {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 4rem;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: 0.05em;
+  background-color: rgba(0,0,0,0.2);
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem;
+  min-width: 200px;
+}
+
+.timer-subtext {
+  font-size: 1rem;
   color: var(--text-dark);
 }
 
-.status-badge {
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  text-transform: capitalize;
+/* Delivered State */
+.delivered-state .delivered-icon {
+  font-size: 3rem;
+}
+.delivered-state .delivered-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #4ade80; /* Green color for success */
 }
 
-.status-delivered { background-color: rgba(74, 222, 128, 0.2); color: #4ade80; }
-.status-out_for_delivery { background-color: rgba(59, 130, 246, 0.2); color: #60a5fa; }
-.status-preparing, .status-confirmed { background-color: rgba(245, 158, 11, 0.2); color: #facc15; }
-.status-pending { background-color: rgba(156, 163, 175, 0.2); color: #9ca3af; }
-.status-cancelled { background-color: rgba(239, 68, 68, 0.2); color: #f87171; }
 
-.address-section, .items-section {
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--border-color);
-}
-
-.items-list {
-  list-style-type: none;
-  padding: 0;
-  margin-top: 0.5rem;
-  color: var(--text-dark);
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-/* --- LEAFLET MAP OVERRIDE STYLES --- */
-
-/* This targets the map tiles to apply a dark mode filter */
-:host ::ng-deep .leaflet-tile-pane {
-  filter: brightness(0.8) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
-}
-
-/* Style for map popups */
-:host ::ng-deep .leaflet-popup-content-wrapper,
-:host ::ng-deep .leaflet-popup-tip {
-  background: var(--bg-light);
-  color: var(--text-light);
-  box-shadow: 0 3px 14px rgba(0,0,0,0.4);
-}
-
-/* Style for map controls (zoom buttons) */
-:host ::ng-deep .leaflet-control-zoom-in,
-:host ::ng-deep .leaflet-control-zoom-out {
-  background: var(--bg-light);
-  color: var(--text-light);
+/* --- Order Details Card Styling --- */
+.details-card {
+  background-color: var(--bg-light);
   border: 1px solid var(--border-color);
-}
-:host ::ng-deep .leaflet-control-zoom-in:hover,
-:host ::ng-deep .leaflet-control-zoom-out:hover {
-  background: var(--bg-dark);
-  color: var(--text-light);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  align-self: flex-start;
 }
 
-/* Delivery scooter icon */
-.scooter-icon {
-  font-size: 2.5rem; /* Make the emoji bigger */
-  text-shadow: 0 0 5px rgba(0,0,0,0.7);
+.restaurant-name, .status-text, .address-section, .items-section, .items-list {
+  /* Unchanged from your original CSS */
+  font-family: inherit;
 }
+.restaurant-name { font-size: 1.5rem; font-weight: 700; color: var(--text-light); margin-bottom: 0.5rem; }
+.status-text { margin-top: 0.5rem; font-size: 1.125rem; font-weight: 500; color: var(--text-dark); }
+.status-badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 600; text-transform: capitalize; margin-left: 0.5rem; }
+.status-delivered { background-color: rgba(74, 222, 128, 0.2); color: #16a34a; border: 1px solid rgba(74, 222, 128, 0.3); }
+.status-out_for_delivery { background-color: rgba(59, 130, 246, 0.2); color: #2563eb; border: 1px solid rgba(59, 130, 246, 0.3); }
+.address-section, .items-section { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color); }
+.items-list { list-style-type: none; padding: 0; margin-top: 0.5rem; color: var(--text-dark); display: flex; flex-direction: column; gap: 0.5rem; }
+.font-semibold { font-weight: 600; }
+.text-text-dark { color: var(--text-dark); }
 
-
-/* Responsive Layout */
+/* --- Responsive Layout --- */
 @media (min-width: 768px) {
   .content-grid {
     grid-template-columns: 2fr 1fr;
+    align-items: start;
   }
 }

@@ -42,6 +42,8 @@
   border-radius: 0.75rem;
   border: 1px solid var(--border-color);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .order-header {
@@ -83,7 +85,7 @@
   display: inline-block;
   margin-top: 0.5rem;
   padding: 0.25rem 0.75rem;
-  border-radius: 999px;
+  border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: capitalize;
@@ -99,6 +101,7 @@
 .order-body {
   padding: 1rem 1.5rem;
   border-top: 1px solid var(--border-color);
+  flex-grow: 1; /* Allows body to take up space */
 }
 
 .items-title {
@@ -125,17 +128,31 @@
   flex-shrink: 0;
 }
 
+/* --- IMPROVED STYLES --- */
 .order-actions {
   background-color: var(--bg-dark);
   padding: 1rem 1.5rem;
   border-top: 1px solid var(--border-color);
-  text-align: right;
+  display: flex; /* Use flexbox for alignment */
+  justify-content: flex-end; /* Push content to the right */
+  align-items: center; /* Vertically center items */
 }
 
 .review-btn {
-  padding: 0.5rem 1rem;
+  display: inline-block;
+  background-color: var(--primary);
+  color: #ffffff;
+  padding: 0.6rem 1.25rem;
+  border-radius: 9999px; /* Pill shape */
   font-size: 0.875rem;
+  font-weight: 600;
   text-decoration: none;
+  transition: background-color 0.2s ease-in-out, transform 0.1s ease;
+}
+
+.review-btn:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-1px);
 }
 
 .track-order-link {
@@ -162,6 +179,7 @@
   height: 1.25rem;
 }
 
+/* --- EMPTY STATE --- */
 .empty-state-container {
   background-color: var(--bg-light);
   border-radius: 0.75rem;
