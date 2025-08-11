@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, signal, inject, effect, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { switchMap } from 'rxjs';
+import { switchMap, interval } from 'rxjs';
 import { Order, OrderService } from '../../order/order';
 import { NotificationService } from '../../shared/notification';
 
@@ -27,6 +27,7 @@ export class TrackOrderComponent implements OnInit, OnDestroy {
   countdownDisplay = '10:00'; // Initial display for 10 seconds
   etaDisplay = '';
   private countdownInterval?: number;
+  private statusCheckInterval?: number;
 
   constructor() {
     // This effect will trigger the countdown when the order status changes
@@ -34,6 +35,10 @@ export class TrackOrderComponent implements OnInit, OnDestroy {
       const currentOrder = this.order();
       if (currentOrder?.status === 'OUT_FOR_DELIVERY' && !this.countdownInterval) {
         this.startEtaCountdown();
+        this.startStatusPolling(); // Start polling for status updates
+      } else if (currentOrder?.status === 'DELIVERED') {
+        this.cleanupCountdown();
+        this.stopStatusPolling();
       }
     });
   }
@@ -66,7 +71,10 @@ export class TrackOrderComponent implements OnInit, OnDestroy {
 
       if (remainingSeconds <= 0) {
         this.countdownDisplay = '00:00';
-        this.markOrderAsDelivered();
+        this.cleanupCountdown();
+        // Don't try to update status here, let the backend handle it
+        // Just refresh the order data
+        this.refreshOrderData();
         return;
       }
 
@@ -79,18 +87,22 @@ export class TrackOrderComponent implements OnInit, OnDestroy {
     }, 1000);
   }
 
-  markOrderAsDelivered(): void {
-    this.cleanupCountdown(); // Stop the timer immediately
-    if (this.order()?.status === 'DELIVERED') return;
+  /**
+   * Start polling the backend every 2 seconds to check for status updates
+   */
+  private startStatusPolling(): void {
+    this.stopStatusPolling(); // Ensure no old polling is running
 
-    this.orderService.updateOrderStatus(this.orderId, 'DELIVERED').subscribe({
-      next: () => {
-        this.notificationService.success('Your order has arrived!');
-        // Re-fetch data to simulate a component refresh
-        this.refreshOrderData();
-      },
-      error: () => this.notificationService.error('Failed to update order status')
-    });
+    this.statusCheckInterval = window.setInterval(() => {
+      this.refreshOrderData();
+    }, 2000); // Check every 2 seconds
+  }
+
+  private stopStatusPolling(): void {
+    if (this.statusCheckInterval) {
+      clearInterval(this.statusCheckInterval);
+      this.statusCheckInterval = undefined;
+    }
   }
 
   /**
@@ -99,16 +111,21 @@ export class TrackOrderComponent implements OnInit, OnDestroy {
   private refreshOrderData(): void {
     this.orderService.getOrderById(this.orderId).subscribe({
       next: (data) => {
-        this.order.set(data);
-        // The `effect` will see the status change and the UI will update naturally.
-      },
-      error: () => {
-        // If refresh fails, at least update the local state to avoid a stale UI
-        this.notificationService.error('Could not refresh order status. Please refresh the page.');
         const currentOrder = this.order();
-        if (currentOrder) {
-          this.order.set({ ...currentOrder, status: 'DELIVERED' });
+        const newOrder = data;
+        
+        // Check if status changed to DELIVERED
+        if (currentOrder?.status !== 'DELIVERED' && newOrder.status === 'DELIVERED') {
+          this.notificationService.success('Your order has arrived!');
+          this.cleanupCountdown();
+          this.stopStatusPolling();
         }
+        
+        this.order.set(newOrder);
+      },
+      error: (err) => {
+        console.error('Failed to refresh order data:', err);
+        // Don't show error notification for polling failures to avoid spam
       }
     });
   }
@@ -122,5 +139,6 @@ export class TrackOrderComponent implements OnInit, OnDestroy {
   
   ngOnDestroy(): void {
     this.cleanupCountdown();
+    this.stopStatusPolling();
   }
 }
