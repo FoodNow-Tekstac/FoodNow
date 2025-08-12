@@ -43,7 +43,7 @@ export class OrderService {
     return this.http.get<Order>(`${this.apiUrl}/orders/my-orders/${id}`);
   }
 
-  updateOrderStatus(id: string, status: 'DELIVERED'): Observable<any> {
+  updateOrderStatus(id: string, status: 'DELIVERED' | 'CANCELLED' | 'OUT_FOR_DELIVERY' | 'PREPARING' | 'CONFIRMED' | 'PENDING'): Observable<any> {
     const payload = { status };
     return this.http.patch(`${this.apiUrl}/manage/orders/${id}/status`, payload);
   }

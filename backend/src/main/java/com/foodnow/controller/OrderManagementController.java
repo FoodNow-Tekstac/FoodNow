@@ -1,10 +1,8 @@
 package com.foodnow.controller;
 
 import com.foodnow.dto.OrderDto;
-import com.foodnow.dto.OrderItemDto;
 import com.foodnow.dto.UpdateOrderStatusRequest;
 import com.foodnow.model.Order;
-import com.foodnow.model.OrderItem;
 import com.foodnow.model.Restaurant;
 import com.foodnow.security.UserDetailsImpl;
 import com.foodnow.service.OrderManagementService;
@@ -27,46 +25,26 @@ public class OrderManagementController {
 
     @GetMapping("/restaurant")
     @PreAuthorize("hasRole('RESTAURANT_OWNER')")
-    public ResponseEntity<List<OrderDto>> getRestaurantOrders(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<List<Order>> getRestaurantOrders(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         Restaurant currentRestaurant = restaurantService.getRestaurantByOwnerId(userDetails.getId());
-        List<Order> orders = orderManagementService.getOrdersForRestaurant(currentRestaurant.getId());
-        return ResponseEntity.ok(orders.stream().map(this::toOrderDto).collect(Collectors.toList()));
+        return ResponseEntity.ok(orderManagementService.getOrdersForRestaurant(currentRestaurant.getId()));
     }
 
-    /**
-     * THIS IS THE FIX:
-     * Added 'DELIVERY_PERSONNEL' to the list of roles that can access this endpoint.
-     */
     @PatchMapping("/{orderId}/status")
-@PreAuthorize("hasAnyRole('RESTAURANT_OWNER', 'ADMIN', 'DELIVERY_PERSONNEL', 'CUSTOMER')")
+    @PreAuthorize("hasAnyRole('RESTAURANT_OWNER', 'ADMIN', 'DELIVERY_PERSONNEL', 'CUSTOMER')")
     public ResponseEntity<OrderDto> updateOrderStatus(@PathVariable int orderId, @RequestBody UpdateOrderStatusRequest request) {
-        Order updatedOrder = orderManagementService.updateOrderStatus(orderId, request.getStatus());
-        return ResponseEntity.ok(toOrderDto(updatedOrder));
+            System.out.println(">>> Entered updateOrderStatus for order " + orderId);
+
+        // The service now returns the DTO directly.
+        OrderDto updatedOrderDto = orderManagementService.updateOrderStatus(orderId, request.getStatus());
+        return ResponseEntity.ok(updatedOrderDto);
     }
 
     @GetMapping("/delivery")
     @PreAuthorize("hasRole('DELIVERY_PERSONNEL')")
-    public ResponseEntity<List<OrderDto>> getMyDeliveries(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        List<Order> orders = orderManagementService.getOrdersForDeliveryPersonnel(userDetails.getId());
-        return ResponseEntity.ok(orders.stream().map(this::toOrderDto).collect(Collectors.toList()));
+    public ResponseEntity<List<Order>> getMyDeliveries(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(orderManagementService.getOrdersForDeliveryPersonnel(userDetails.getId()));
     }
     
-    private OrderDto toOrderDto(Order order) {
-        OrderDto dto = new OrderDto();
-        dto.setId(order.getId());
-        dto.setRestaurantName(order.getRestaurant().getName());
-        dto.setTotalPrice(order.getTotalPrice());
-        dto.setStatus(order.getStatus());
-        dto.setOrderTime(order.getOrderTime());
-        dto.setItems(order.getItems().stream().map(this::toOrderItemDto).collect(Collectors.toList()));
-        return dto;
-    }
-
-    private OrderItemDto toOrderItemDto(OrderItem orderItem) {
-        OrderItemDto dto = new OrderItemDto();
-        dto.setItemName(orderItem.getFoodItem().getName()); 
-        dto.setQuantity(orderItem.getQuantity());
-        dto.setPrice(orderItem.getPrice());
-        return dto;
-    }
+    // DTO helper methods are no longer needed here.
 }

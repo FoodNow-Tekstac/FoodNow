@@ -6,6 +6,8 @@ import com.foodnow.model.Payment;
 import com.foodnow.model.PaymentStatus;
 import com.foodnow.repository.OrderRepository;
 import com.foodnow.repository.PaymentRepository;
+
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,8 +33,6 @@ public class PaymentService {
             throw new IllegalStateException("Payment can only be processed for PENDING orders.");
         }
 
-        // --- This is our Mock Payment Gateway Logic ---
-        // We'll simulate a 90% success rate.
         boolean isPaymentSuccessful = Math.random() > 0.1;
 
         Payment payment = new Payment();
@@ -43,13 +43,30 @@ public class PaymentService {
 
         if (isPaymentSuccessful) {
             payment.setStatus(PaymentStatus.SUCCESSFUL);
-            order.setStatus(OrderStatus.CONFIRMED); // Update the order status
+            order.setStatus(OrderStatus.CONFIRMED);
         } else {
             payment.setStatus(PaymentStatus.FAILED);
-            // We could also set the order to CANCELLED here if we wanted.
         }
 
         orderRepository.save(order);
         return paymentRepository.save(payment);
+    }
+
+    @Transactional
+    public void initiateRefund(int orderId) {
+        // Find the payment associated with the order. It might not exist.
+        Optional<Payment> paymentOptional = paymentRepository.findByOrderId(orderId);
+
+        // Check if a payment record exists AND it was successful.
+        if (paymentOptional.isPresent() && paymentOptional.get().getStatus() == PaymentStatus.SUCCESSFUL) {
+            Payment paymentToRefund = paymentOptional.get();
+            paymentToRefund.setStatus(PaymentStatus.REFUNDED);
+            paymentRepository.save(paymentToRefund);
+            System.out.println("✅ Refund processed for order ID: " + orderId);
+        } else {
+            // If no successful payment was found, simply log it and continue.
+            // This prevents the server from crashing when canceling a PENDING order.
+            System.out.println("ℹ️ No successful payment found for order ID " + orderId + ". No refund required.");
+        }
     }
 }

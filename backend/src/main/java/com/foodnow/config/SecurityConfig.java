@@ -42,27 +42,35 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource())) // ✅ Enable CORS
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                // --- PRIORITIZE MANAGEMENT AND ADMIN ENDPOINTS ---
+                .requestMatchers("/api/manage/orders/**") // ✅ MOVED UP!
+                    .hasAnyRole("ADMIN", "RESTAURANT_OWNER", "DELIVERY_PERSONNEL", "CUSTOMER")
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                
+                // --- General authenticated endpoints ---
+                .requestMatchers("/api/profile/**").authenticated()
+                .requestMatchers("/api/restaurant/apply").hasRole("CUSTOMER")
+                .requestMatchers(HttpMethod.POST, "/api/files/upload").hasAnyRole("CUSTOMER", "RESTAURANT_OWNER")
+                .requestMatchers("/api/restaurant/**").hasRole("RESTAURANT_OWNER")
+                .requestMatchers("/api/cart/**").hasRole("CUSTOMER")
+                .requestMatchers("/api/delivery/**").hasRole("DELIVERY_PERSONNEL")
+                
+                // --- Place broad customer rule last ---
+                .requestMatchers(HttpMethod.POST, "/api/orders/{orderId}/review").hasRole("CUSTOMER")
+                .requestMatchers("/api/orders/**").hasRole("CUSTOMER") // ✅ Stays here, at a lower priority
+                
+                // --- Public endpoints ---
                 .requestMatchers(
-                    "/", "/index.html", "/forgot-password.html", "/reset-password.html",
-                    "/assets/**", "/uploads/**", "/forgot-password-confirmation.html",
+                    "/", "/index.html", "/assets/**", "/uploads/**",
                     "/customer/**", "/admin/**", "/restaurant/**", "/delivery/**"
                 ).permitAll()
                 .requestMatchers("/api/auth/**", "/api/public/**").permitAll()
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .requestMatchers("/api/profile/**").authenticated()
-                .requestMatchers("/api/restaurant/apply").hasRole("CUSTOMER")
-.requestMatchers(HttpMethod.POST, "/api/files/upload")
-    .hasAnyRole("CUSTOMER", "RESTAURANT_OWNER")
-                .requestMatchers("/api/restaurant/**").hasRole("RESTAURANT_OWNER")
-                .requestMatchers("/api/cart/**").hasRole("CUSTOMER")
-                .requestMatchers(HttpMethod.POST, "/api/orders/{orderId}/review").hasRole("CUSTOMER")
-                .requestMatchers("/api/orders/**").hasRole("CUSTOMER")
-                .requestMatchers("/api/delivery/**").hasRole("DELIVERY_PERSONNEL")
-                .requestMatchers("/api/manage/orders/**").hasAnyRole("ADMIN", "RESTAURANT_OWNER", "DELIVERY_PERSONNEL")
+                
+                // --- Default deny ---
                 .anyRequest().authenticated()
             );
 

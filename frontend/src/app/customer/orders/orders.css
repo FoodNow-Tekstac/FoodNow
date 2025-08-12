@@ -11,6 +11,22 @@
 .page-header {
   margin-bottom: 2rem;
 }
+.cancel-btn {
+  display: inline-block;
+  background-color: #ef4444; /* red-500 */
+  color: #ffffff;
+  padding: 0.6rem 1.25rem;
+  border-radius: 9999px; /* pill shape */
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.2s ease-in-out, transform 0.1s ease;
+}
+
+.cancel-btn:hover {
+  background-color: #dc2626; /* red-600 */
+  transform: translateY(-1px);
+}
 
 .back-link {
   color: var(--primary);
