@@ -128,14 +128,14 @@ export class PaymentComponent implements OnInit {
 
   ngOnInit(): void {
     this.deliveryAddressForm = this.fb.group({
-      addressLine1: ['', Validators.required],
-      city: ['', Validators.required],
-      pinCode: ['', [Validators.required, Validators.pattern(/^[1-9]\d{5}$/)]]
+      addressLine1: ['123 Food Street', Validators.required],
+      city: ['Hyderabad', Validators.required],
+      pinCode: ['500001', [Validators.required, Validators.pattern(/^[1-9]\d{5}$/)]]
     });
 
     this.cardForm = this.fb.group({
       cardNumber: ['', [Validators.required, this.validateCardNumber]],
-      cardHolder: ['', [Validators.required, Validators.minLength(3)]],
+      cardHolder: ['John Doe', [Validators.required, Validators.minLength(3)]],
       expiryDate: ['', [Validators.required, expiryDateValidator]],
       cvv: ['', [Validators.required, Validators.pattern(/^\d{3,4}$/)]]
     });
