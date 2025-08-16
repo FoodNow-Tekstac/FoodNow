@@ -12,8 +12,7 @@ import { FullUrlPipe } from '../../shared/pipes/full-url';
   standalone: true,
   imports: [CommonModule, RouterLink, FullUrlPipe],
   templateUrl: './restaurant-detail.html',
-    styleUrls: ['./restaurant-detail.css'] // <-- ADD THIS LINE
-
+  styleUrls: ['./restaurant-detail.css'] 
 })
 export class RestaurantDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
@@ -24,20 +23,36 @@ export class RestaurantDetailComponent implements OnInit {
   restaurant = signal<Restaurant | null>(null);
 
   ngOnInit() {
-    // Get the 'id' from the URL and then fetch the restaurant data
     this.route.paramMap.pipe(
       switchMap(params => {
         const restaurantId = params.get('id');
-        if (!restaurantId) {
-          // Handle case where ID is missing, though router should prevent this
-          return []; 
-        }
+        if (!restaurantId) return []; 
         return this.restaurantService.getRestaurantById(restaurantId);
       })
     ).subscribe({
       next: data => this.restaurant.set(data),
       error: () => this.notificationService.error('Could not load restaurant details.')
     });
+  }
+
+  increaseQuantity(input: HTMLInputElement) {
+    input.value = (parseInt(input.value, 10) + 1).toString();
+  }
+
+  decreaseQuantity(input: HTMLInputElement) {
+    const currentValue = parseInt(input.value, 10);
+    if (currentValue > 1) {
+      input.value = (currentValue - 1).toString();
+    }
+  }
+
+  getStars(rating: number): boolean[] {
+    const fullStars = Math.floor(rating);
+    const stars = Array(5).fill(false);
+    for (let i = 0; i < fullStars; i++) {
+      stars[i] = true;
+    }
+    return stars;
   }
 
   addToCart(item: MenuItem, quantityInput: HTMLInputElement) {
@@ -51,7 +66,7 @@ export class RestaurantDetailComponent implements OnInit {
     this.cartService.addToCart(item.id, quantity).subscribe({
       next: () => {
         this.notificationService.success(`${quantity} x ${item.name} added to cart!`);
-        quantityInput.value = '1'; // Reset quantity input
+        quantityInput.value = '1';
       },
       error: () => this.notificationService.error('Failed to add item to cart.')
     });

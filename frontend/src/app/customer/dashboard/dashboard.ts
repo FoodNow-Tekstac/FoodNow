@@ -77,17 +77,31 @@ export class CustomerDashboardComponent implements OnInit {
   ngOnInit() {
     this.restaurantService.getRestaurants().subscribe({
       next: (data: Restaurant[]) => {
-        // Pre-process data to add dietary counts for the UI
         const displayData: DisplayRestaurant[] = data.map(restaurant => {
           const counts = { VEG: 0, NON_VEG: 0, VEGAN: 0 };
+          let totalRatingPoints = 0;
+          let totalRatingCount = 0;
+
           if (restaurant.menu) {
             for (const item of restaurant.menu) {
+              // Dietary counts logic (existing)
               if (item.dietaryType === 'VEG') counts.VEG++;
               else if (item.dietaryType === 'NON_VEG') counts.NON_VEG++;
               else if (item.dietaryType === 'VEGAN') counts.VEGAN++;
+              
+              // --- START: New Rating Calculation Logic ---
+              if (item.averageRating && item.ratingCount) {
+                totalRatingPoints += item.averageRating * item.ratingCount;
+                totalRatingCount += item.ratingCount;
+              }
+              // --- END: New Rating Calculation Logic ---
             }
           }
-          return { ...restaurant, dietaryCounts: counts };
+          
+          // Calculate the final weighted average rating for the restaurant
+          const averageRating = totalRatingCount > 0 ? totalRatingPoints / totalRatingCount : 0;
+
+          return { ...restaurant, dietaryCounts: counts, averageRating: averageRating };
         });
         this.allRestaurants.set(displayData);
       },

@@ -22,7 +22,7 @@ public class PublicService {
     @Transactional(readOnly = true)
     public List<RestaurantDto> getAllActiveRestaurants() {
         return restaurantRepository.findAll().stream()
-                .map(this::toRestaurantDtoWithMenu) // Use the detailed helper to send full menu
+                .map(this::toRestaurantDtoWithMenu)
                 .collect(Collectors.toList());
     }
 
@@ -44,6 +44,9 @@ public class PublicService {
         dto.setAvailable(item.isAvailable());
         dto.setCategory(item.getCategory());
         dto.setDietaryType(item.getDietaryType());
+        // ADD THESE LINES to send rating data to the frontend
+        dto.setAverageRating(item.getAverageRating());
+        dto.setRatingCount(item.getRatingCount());
         return dto;
     }
 

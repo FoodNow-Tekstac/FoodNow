@@ -48,7 +48,7 @@ interface ReceiptData {
     pinCode: string;
   };
   paymentMethod: string;
-  paymentDetails?: string;
+  paymentDetails ? : string;
   items: any[];
   totalPrice: number;
   taxAmount: number;
@@ -60,7 +60,9 @@ export function expiryDateValidator(control: AbstractControl): ValidationErrors 
   if (!control.value) return null;
   const [month, year] = control.value.split('/');
   if (!month || !year || month.length !== 2 || year.length !== 2) {
-    return { invalidFormat: true };
+    return {
+      invalidFormat: true
+    };
   }
   const expiryMonth = Number(month);
   const expiryYear = Number(`20${year}`);
@@ -69,7 +71,9 @@ export function expiryDateValidator(control: AbstractControl): ValidationErrors 
   const currentYear = now.getFullYear();
 
   if (expiryYear < currentYear || (expiryYear === currentYear && expiryMonth < currentMonth)) {
-    return { expired: true };
+    return {
+      expired: true
+    };
   }
   return null;
 }
@@ -88,22 +92,30 @@ export class PaymentComponent implements OnInit {
   private notificationService = inject(NotificationService);
   private fb = inject(FormBuilder);
 
-  cart = signal<Cart | null>(null);
+  cart = signal < Cart | null > (null);
   selectedPaymentMethod = signal('card');
   cardForm!: FormGroup;
   deliveryAddressForm!: FormGroup;
-  detectedCardType = signal<'visa' | 'mastercard' | 'amex' | 'discover' | 'unknown'>('unknown');
+  detectedCardType = signal < 'visa' | 'mastercard' | 'amex' | 'discover' | 'unknown' > ('unknown');
   isReceiptModalOpen = signal(false);
-  receiptData = signal<ReceiptData | null>(null);
-  cardFormStatus = signal<'VALID' | 'INVALID'>('INVALID');
+  receiptData = signal < ReceiptData | null > (null);
+  cardFormStatus = signal < 'VALID' | 'INVALID' > ('INVALID');
 
-  @ViewChild('qrCodeContainer') qrCodeContainer!: ElementRef<HTMLDivElement>;
+  // Mock wallet implementation
+  mockWalletBalance = signal(5000); // Mock starting balance of ₹5000
+  isSufficientBalance = computed(() => {
+    const cartTotal = (this.cart() ?.totalPrice ?? 0) * 1.05;
+    return this.mockWalletBalance() >= cartTotal;
+  });
+
+  @ViewChild('qrCodeContainer') qrCodeContainer!: ElementRef < HTMLDivElement > ;
 
   isPaymentValid = computed(() => {
     if (!this.deliveryAddressForm.valid) return false;
     const method = this.selectedPaymentMethod();
     if (method === 'card') return this.cardFormStatus() === 'VALID';
-    return ['upi', 'wallet', 'cod'].includes(method);
+    if (method === 'wallet') return this.isSufficientBalance();
+    return ['upi', 'cod'].includes(method);
   });
 
   constructor() {
@@ -132,7 +144,7 @@ export class PaymentComponent implements OnInit {
       this.cardFormStatus.set(status as 'VALID' | 'INVALID');
     });
 
-    this.cardForm.get('cardNumber')?.valueChanges.subscribe(value => {
+    this.cardForm.get('cardNumber') ?.valueChanges.subscribe(value => {
       this.detectCardType(value);
     });
 
@@ -143,8 +155,10 @@ export class PaymentComponent implements OnInit {
   }
 
   validateCardNumber(control: AbstractControl) {
-    const value = control.value?.replace(/\s/g, '') || '';
-    if (value.length !== 16 || !/^\d+$/.test(value)) return { invalidCard: true };
+    const value = control.value ?.replace(/\s/g, '') || '';
+    if (value.length !== 16 || !/^\d+$/.test(value)) return {
+      invalidCard: true
+    };
     return null;
   }
 
@@ -166,28 +180,37 @@ export class PaymentComponent implements OnInit {
     let value = input.value.replace(/\D/g, '');
     if (value.length > 16) value = value.substring(0, 16);
     const formattedValue = value.replace(/(\d{4})(?=\d)/g, '$1 ').trim();
-    this.cardForm.get('cardNumber')?.setValue(formattedValue);
+    this.cardForm.get('cardNumber') ?.setValue(formattedValue);
   }
 
   formatExpiryDate(event: any): void {
     let input = event.target.value.replace(/\D/g, '');
+
     if (input.length >= 2) {
       let month = input.substring(0, 2);
-      if (parseInt(month) > 12) {
+      let monthNum = parseInt(month, 10);
+
+      if (monthNum < 1) {
+        month = '01';
+      } else if (monthNum > 12) {
         month = '12';
-        input = month + input.substring(2);
+      } else {
+        month = monthNum.toString().padStart(2, '0');
       }
+
       const year = input.substring(2, 4);
       input = month + (year ? '/' + year : '');
     }
-    this.cardForm.get('expiryDate')?.setValue(input);
+
+    this.cardForm.get('expiryDate') ?.setValue(input);
   }
+
 
   formatPinCode(event: any): void {
     const input = event.target as HTMLInputElement;
     let value = input.value.replace(/\D/g, '');
     if (value.length > 6) value = value.substring(0, 6);
-    this.deliveryAddressForm.get('pinCode')?.setValue(value);
+    this.deliveryAddressForm.get('pinCode') ?.setValue(value);
   }
 
   generateQRCode(): void {
@@ -195,7 +218,7 @@ export class PaymentComponent implements OnInit {
       if (this.qrCodeContainer && this.cart()) {
         const container = this.qrCodeContainer.nativeElement;
         container.innerHTML = '';
-        const totalPrice = (this.cart()!.totalPrice * 1.05).toFixed(2);
+        const totalPrice = (this.cart() !.totalPrice * 1.05).toFixed(2);
         const upiString = `upi://pay?pa=foodnow-demo@paytm&pn=FoodNow&am=${totalPrice}&cu=INR`;
         const qr = qrcode(0, 'M');
         qr.addData(upiString);
@@ -213,20 +236,28 @@ export class PaymentComponent implements OnInit {
   getPaymentMethodName(): string {
     const method = this.selectedPaymentMethod();
     switch (method) {
-      case 'card': return 'Credit/Debit Card';
-      case 'upi': return 'UPI Payment';
-      case 'wallet': return 'Digital Wallet';
-      case 'cod': return 'Cash on Delivery';
-      default: return method;
+      case 'card':
+        return 'Credit/Debit Card';
+      case 'upi':
+        return 'UPI Payment';
+      case 'wallet':
+        return 'Digital Wallet';
+      case 'cod':
+        return 'Cash on Delivery';
+      default:
+        return method;
     }
   }
 
   getPaymentDetails(): string {
     const method = this.selectedPaymentMethod();
     if (method === 'card') {
-      const cardNumber = this.cardForm.get('cardNumber')?.value || '';
+      const cardNumber = this.cardForm.get('cardNumber') ?.value || '';
       const last4 = cardNumber.replace(/\s/g, '').slice(-4);
       return `**** **** **** ${last4}`;
+    }
+    if (method === 'wallet') {
+      return `FoodNow Wallet`;
     }
     return '';
   }
@@ -239,11 +270,13 @@ export class PaymentComponent implements OnInit {
     }
 
     // Use modern approach with dynamic import
-    import('html2canvas').then(({ default: html2canvas }) => {
-      return html2canvas(receiptElement, { 
+    import ('html2canvas').then(({
+      default: html2canvas
+    }) => {
+      return html2canvas(receiptElement, {
         backgroundColor: '#ffffff',
         scale: 2,
-        useCORS: true 
+        useCORS: true
       });
     }).then(canvas => {
       // Create PDF content
@@ -275,7 +308,7 @@ ${receipt.deliveryAddress.addressLine1}
 ${receipt.deliveryAddress.city}, ${receipt.deliveryAddress.pinCode}
 
 Payment Method: ${receipt.paymentMethod}
-${receipt.paymentDetails ? 'Card: ' + receipt.paymentDetails : ''}
+${receipt.paymentDetails ? 'Details: ' + receipt.paymentDetails : ''}
 
 Items Ordered:
 `;
@@ -292,7 +325,9 @@ Total Paid: ₹${receipt.finalAmount.toFixed(2)}
 Thank you for ordering with FoodNow!
 `;
 
-    const blob = new Blob([receiptText], { type: 'text/plain' });
+    const blob = new Blob([receiptText], {
+      type: 'text/plain'
+    });
     const link = document.createElement('a');
     link.download = `FoodNow-Receipt-${receipt.orderNumber}.txt`;
     link.href = URL.createObjectURL(blob);
@@ -327,20 +362,26 @@ Thank you for ordering with FoodNow!
       orderNumber: this.generateOrderNumber(),
       orderDate: now.toLocaleDateString('en-IN'),
       orderTime: now.toLocaleTimeString('en-IN'),
-      customerName: this.selectedPaymentMethod() === 'card' ? 
-        this.cardForm.get('cardHolder')?.value || 'Customer' : 'Customer',
+      customerName: this.selectedPaymentMethod() === 'card' ?
+        this.cardForm.get('cardHolder') ?.value || 'Customer' : 'Customer',
       deliveryAddress: this.deliveryAddressForm.value,
       paymentMethod: this.getPaymentMethodName(),
       paymentDetails: this.getPaymentDetails(),
-      items: currentCart?.items || [],
-      totalPrice: currentCart?.totalPrice || 0,
-      taxAmount: (currentCart?.totalPrice || 0) * 0.05,
-      finalAmount: (currentCart?.totalPrice || 0) * 1.05
+      items: currentCart ?.items || [],
+      totalPrice: currentCart ?.totalPrice || 0,
+      taxAmount: (currentCart ?.totalPrice || 0) * 0.05,
+      finalAmount: (currentCart ?.totalPrice || 0) * 1.05
     };
 
     this.orderService.placeOrder().subscribe({
       next: () => {
         this.notificationService.success('Order placed successfully!');
+        
+        // Deduct amount from mock wallet if it was the selected payment method
+        if (this.selectedPaymentMethod() === 'wallet') {
+          this.mockWalletBalance.update(balance => balance - receiptData.finalAmount);
+        }
+        
         this.cartService.getCart().subscribe();
         this.receiptData.set(receiptData);
         this.isReceiptModalOpen.set(true);

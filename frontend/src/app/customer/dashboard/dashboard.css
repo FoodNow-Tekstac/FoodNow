@@ -171,3 +171,39 @@
   padding: 4rem;
   min-height: 300px;
 }
+
+/* ... other styles ... */
+
+/* Dietary Tags */
+.dietary-tags {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* --- ADD THESE NEW STYLES --- */
+.card-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.card-rating .star {
+  color: #f59e0b; /* A nice gold/amber color */
+  font-size: 1.1rem;
+}
+/* --- END OF NEW STYLES --- */
+
+.tag {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  border: 1px solid;
+}
+
+/* ... rest of the styles ... */

@@ -46,12 +46,10 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // --- PRIORITIZE MANAGEMENT AND ADMIN ENDPOINTS ---
                 .requestMatchers("/api/manage/orders/**") // ✅ MOVED UP!
                     .hasAnyRole("ADMIN", "RESTAURANT_OWNER", "DELIVERY_PERSONNEL", "CUSTOMER")
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 
-                // --- General authenticated endpoints ---
                 .requestMatchers("/api/profile/**").authenticated()
                 .requestMatchers("/api/restaurant/apply").hasRole("CUSTOMER")
                 .requestMatchers(HttpMethod.POST, "/api/files/upload").hasAnyRole("CUSTOMER", "RESTAURANT_OWNER")
@@ -59,18 +57,15 @@ public class SecurityConfig {
                 .requestMatchers("/api/cart/**").hasRole("CUSTOMER")
                 .requestMatchers("/api/delivery/**").hasRole("DELIVERY_PERSONNEL")
                 
-                // --- Place broad customer rule last ---
                 .requestMatchers(HttpMethod.POST, "/api/orders/{orderId}/review").hasRole("CUSTOMER")
                 .requestMatchers("/api/orders/**").hasRole("CUSTOMER") // ✅ Stays here, at a lower priority
                 
-                // --- Public endpoints ---
                 .requestMatchers(
                     "/", "/index.html", "/assets/**", "/uploads/**",
                     "/customer/**", "/admin/**", "/restaurant/**", "/delivery/**"
                 ).permitAll()
                 .requestMatchers("/api/auth/**", "/api/public/**").permitAll()
                 
-                // --- Default deny ---
                 .anyRequest().authenticated()
             );
 
@@ -85,7 +80,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200")); // Angular dev origin
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS","PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
-        configuration.setAllowCredentials(true); // Needed for cookies or auth headers
+        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

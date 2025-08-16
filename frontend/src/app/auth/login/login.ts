@@ -1,11 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { AuthService } from '../auth';
@@ -16,7 +11,7 @@ import { NotificationService } from '../../shared/notification';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login.html',
-  styleUrl: './login.css',
+  styleUrl: './login.css'
 })
 export class LoginComponent implements OnInit {
   isLoading = signal(false);
@@ -37,53 +32,61 @@ export class LoginComponent implements OnInit {
   private initializeForms(): void {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required]],
+      password: ['', [Validators.required]]
     });
 
     this.registerForm = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(2)]],
+      // Name: only letters, no spaces, no numbers
+      name: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(2),
+          Validators.maxLength(50),
+          Validators.pattern(/^[A-Za-z]+$/) // Only English letters, no spaces/numbers
+          // For all languages, use: /^[\p{L}]+$/u
+        ]
+      ],
       email: ['', [Validators.required, Validators.email]],
+      // Indian phone numbers: starts with 6,7,8,9 and exactly 10 digits
       phoneNumber: [
         '',
-        [Validators.required, Validators.pattern('^[0-9]{10}$')],
+        [
+          Validators.required,
+          Validators.pattern(/^[6-9][0-9]{9}$/)
+        ]
       ],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(6)
+        ]
+      ]
     });
   }
 
-  get loginEmail() {
-    return this.loginForm.get('email');
-  }
-  get loginPassword() {
-    return this.loginForm.get('password');
-  }
-  get registerName() {
-    return this.registerForm.get('name');
-  }
-  get registerEmail() {
-    return this.registerForm.get('email');
-  }
-  get registerPhone() {
-    return this.registerForm.get('phoneNumber');
-  }
-  get registerPassword() {
-    return this.registerForm.get('password');
-  }
+  get loginEmail() { return this.loginForm.get('email'); }
+  get loginPassword() { return this.loginForm.get('password'); }
+  get registerName() { return this.registerForm.get('name'); }
+  get registerEmail() { return this.registerForm.get('email'); }
+  get registerPhone() { return this.registerForm.get('phoneNumber'); }
+  get registerPassword() { return this.registerForm.get('password'); }
 
   toggleMode(event: Event): void {
     event.preventDefault();
-    this.isRegisterMode.update((value) => !value);
+    this.isRegisterMode.update(value => !value);
     this.resetForms();
   }
 
   togglePasswordVisibility(): void {
-    this.hidePassword.update((value) => !value);
+    this.hidePassword.update(value => !value);
   }
 
   private resetForms(): void {
     this.loginForm.reset();
     this.registerForm.reset();
-    //this.registerForm.patchValue({ email: 'admin@foodnow.com' });
+    this.registerForm.patchValue({ email: 'admin@foodnow.com' });
   }
 
   onLogin(): void {
@@ -92,14 +95,12 @@ export class LoginComponent implements OnInit {
     this.isLoading.set(true);
 
     this.authService.login(this.loginForm.value).subscribe({
+      next: () => this.notificationService.show('Login successful!', 'success'),
       error: (err) => {
-        this.notificationService.show(
-          err.error?.message || 'Login failed. Please try again.',
-          'error'
-        );
+        this.notificationService.show(err.error?.message || 'Login failed. Please try again.', 'error');
         this.isLoading.set(false);
       },
-      complete: () => this.isLoading.set(false),
+      complete: () => this.isLoading.set(false)
     });
   }
 
@@ -110,36 +111,33 @@ export class LoginComponent implements OnInit {
 
     this.authService.register(this.registerForm.value).subscribe({
       next: () => {
-        this.notificationService.show(
-          'Registration successful! Please log in with your credentials.',
-          'success'
-        );
+        this.notificationService.show('Registration successful! Please log in with your credentials.', 'success');
         this.isRegisterMode.set(false);
         this.resetForms();
       },
       error: (err) => {
-        this.notificationService.show(
-          err.error?.message || 'Registration failed. Please try again.',
-          'error'
-        );
+        this.notificationService.show(err.error?.message || 'Registration failed. Please try again.', 'error');
         this.isLoading.set(false);
       },
-      complete: () => this.isLoading.set(false),
+      complete: () => this.isLoading.set(false)
     });
   }
 
-  getErrorMessage(control: any, fieldName: string): string {
+  getErrorMessage(control: AbstractControl | null, fieldName: string): string {
     if (control?.hasError('required')) return `${fieldName} is required.`;
-    if (control?.hasError('email'))
-      return 'Please enter a valid email address.';
+    if (control?.hasError('email')) return 'Please enter a valid email address.';
     if (control?.hasError('minlength')) {
       const requiredLength = control.errors?.['minlength']?.requiredLength;
       return `${fieldName} must be at least ${requiredLength} characters.`;
     }
+    if (control?.hasError('maxlength')) {
+      const requiredLength = control.errors?.['maxlength']?.requiredLength;
+      return `${fieldName} must be less than ${requiredLength} characters.`;
+    }
     if (control?.hasError('pattern')) {
-      return fieldName === 'Phone Number'
-        ? 'Please enter a valid 10-digit phone number.'
-        : 'Invalid format.';
+      if (fieldName === 'Full Name') return 'Name must contain only letters without spaces or numbers.';
+      if (fieldName === 'Phone Number') return 'Enter a valid 10-digit Indian number starting with 6, 7, 8, or 9.';
+      return 'Invalid format.';
     }
     return '';
   }
