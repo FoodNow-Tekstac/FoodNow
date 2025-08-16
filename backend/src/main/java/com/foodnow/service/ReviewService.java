@@ -3,6 +3,7 @@ package com.foodnow.service;
 import com.foodnow.dto.ReviewRequest;
 import com.foodnow.exception.ResourceNotFoundException;
 import com.foodnow.model.*;
+import com.foodnow.repository.FoodItemRepository;
 import com.foodnow.repository.OrderRepository;
 import com.foodnow.repository.ReviewRepository;
 import com.foodnow.repository.UserRepository;
@@ -20,12 +21,13 @@ public class ReviewService {
     @Autowired private ReviewRepository reviewRepository;
     @Autowired private OrderRepository orderRepository;
     @Autowired private UserRepository userRepository;
+    @Autowired private FoodItemRepository foodItemRepository; // Inject this
 
     @Transactional
     public Review createReview(int orderId, ReviewRequest reviewRequest) {
         User currentUser = getCurrentUser();
         Order order = orderRepository.findById(orderId)
-            .orElseThrow(() -> new ResourceNotFoundException("Order not found with ID: " + orderId));
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found with ID: " + orderId));
 
         // Validation checks
         if (order.getCustomer().getId() != currentUser.getId()) {
@@ -45,8 +47,26 @@ public class ReviewService {
         review.setOrder(order);
         review.setUser(currentUser);
         review.setRestaurant(order.getRestaurant());
+        
+        // --- NEW LOGIC TO UPDATE ITEM RATINGS ---
+        updateFoodItemRatings(order, reviewRequest.getRating());
 
         return reviewRepository.save(review);
+    }
+
+    private void updateFoodItemRatings(Order order, int newRating) {
+        for (OrderItem item : order.getItems()) {
+            FoodItem foodItem = item.getFoodItem();
+            
+            double currentTotalRating = foodItem.getAverageRating() * foodItem.getRatingCount();
+            int newRatingCount = foodItem.getRatingCount() + 1;
+            double newAverageRating = (currentTotalRating + newRating) / newRatingCount;
+            
+            foodItem.setAverageRating(newAverageRating);
+            foodItem.setRatingCount(newRatingCount);
+            
+            foodItemRepository.save(foodItem);
+        }
     }
 
     private User getCurrentUser() {

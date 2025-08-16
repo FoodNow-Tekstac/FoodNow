@@ -1,49 +1,56 @@
 @if (restaurant(); as res) {
-  <!-- Restaurant Header Section -->
   <div class="detail-header">
-    <div class="header-bg" [style.backgroundImage]="'url(' + ((res.imageUrl | fullUrl) || 'https://placehold.co/1200x400/131316/9ca3af?text=Restaurant') + ')'"></div>
+    <div class="header-bg" [style.backgroundImage]="'url(' + ((res.imageUrl | fullUrl) || 'https://placehold.co/1200x400') + ')'"></div>
     <div class="header-overlay"></div>
     <div class="header-content">
-      <h1 class="text-5xl font-extrabold text-white">{{ res.name }}</h1>
+      <a routerLink="/customer/dashboard" class="back-link">&larr; Back to Restaurants</a>
+      <h1 class="text-5xl font-extrabold text-white mt-4">{{ res.name }}</h1>
       <p class="mt-2 text-lg text-text-light">{{ res.address }}</p>
     </div>
   </div>
 
-  <!-- Menu Section -->
   <div class="menu-container">
     <h2 class="text-3xl font-bold mb-6">Full Menu</h2>
     @if (res.menu && res.menu.length > 0) {
       <div class="menu-grid">
         @for (item of res.menu; track item.id) {
           <div class="menu-item-card">
+            <img [src]="(item.imageUrl | fullUrl) || 'https://placehold.co/600x400/1f2937/9ca3af?text=No+Img'" [alt]="item.name" class="item-image">
+
             <div class="item-details">
-              <div class="flex justify-between items-start">
+              <div class="item-header">
                 <h3 class="item-name">{{ item.name }}</h3>
                 <span class="item-price">₹{{ item.price.toFixed(2) }}</span>
               </div>
-              <p class="item-description">{{ item.description }}</p>
-              @if(item.dietaryType !== 'NONE') {
-                <span class="tag" [ngClass]="{
-                  'veg-tag': item.dietaryType === 'VEG',
-                  'non-veg-tag': item.dietaryType === 'NON_VEG',
-                  'vegan-tag': item.dietaryType === 'VEGAN'
-                }">{{ item.dietaryType | titlecase }}</span>
+              @if(item.ratingCount && item.ratingCount > 0) {
+                <div class="item-rating">
+                  <span class="font-bold text-yellow-400">{{ item.averageRating?.toFixed(1) }}</span>
+                  <div class="stars">
+                    @for (star of getStars(item.averageRating || 0); track $index) {
+                      <span [class.filled]="star">&#9733;</span>
+                    }
+                  </div>
+                  <span class="rating-count">({{ item.ratingCount }})</span>
+                </div>
               }
+              <p class="item-description">{{ item.description }}</p>
             </div>
+
             <div class="item-actions">
-              <input #quantityInput type="number" class="quantity-input" value="1" min="1">
-              <button class="add-to-cart-btn" (click)="addToCart(item, quantityInput)">Add to Cart</button>
+              <div class="quantity-stepper">
+                <button (click)="decreaseQuantity(quantityInput)" class="stepper-btn">-</button>
+                <input #quantityInput type="number" class="quantity-input" value="1" min="1">
+                <button (click)="increaseQuantity(quantityInput)" class="stepper-btn">+</button>
+              </div>
+              <button class="btn-primary add-to-cart-btn" (click)="addToCart(item, quantityInput)">Add to Cart</button>
             </div>
           </div>
         }
       </div>
     } @else {
-      <p class="text-text-dark text-center py-8">This restaurant currently has no items on its menu.</p>
+      <p class="text-text-dark text-center py-8">This restaurant has no items on its menu.</p>
     }
   </div>
 } @else {
-  <!-- Loading State -->
-  <div class="text-center p-8">
-    <p class="text-text-muted">Loading restaurant details...</p>
-  </div>
+  <div class="text-center p-8"><p class="text-text-muted">Loading...</p></div>
 }

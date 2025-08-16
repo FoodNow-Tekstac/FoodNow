@@ -169,19 +169,28 @@ export class PaymentComponent implements OnInit {
     this.cardForm.get('cardNumber')?.setValue(formattedValue);
   }
 
-  formatExpiryDate(event: any): void {
-    let input = event.target.value.replace(/\D/g, '');
-    if (input.length >= 2) {
-      let month = input.substring(0, 2);
-      if (parseInt(month) > 12) {
-        month = '12';
-        input = month + input.substring(2);
-      }
-      const year = input.substring(2, 4);
-      input = month + (year ? '/' + year : '');
+formatExpiryDate(event: any): void {
+  let input = event.target.value.replace(/\D/g, ''); 
+
+  if (input.length >= 2) {
+    let month = input.substring(0, 2);
+    let monthNum = parseInt(month, 10);
+
+    if (monthNum < 1) {
+      month = '01';
+    } else if (monthNum > 12) {
+      month = '12';
+    } else {
+      month = monthNum.toString().padStart(2, '0');
     }
-    this.cardForm.get('expiryDate')?.setValue(input);
+
+    const year = input.substring(2, 4);
+    input = month + (year ? '/' + year : '');
   }
+
+  this.cardForm.get('expiryDate')?.setValue(input);
+}
+
 
   formatPinCode(event: any): void {
     const input = event.target as HTMLInputElement;

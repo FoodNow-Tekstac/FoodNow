@@ -12,14 +12,12 @@ public class FoodItem {
     @Column(nullable = false) private double price;
     private String imageUrl;
     @Column(nullable = false) private boolean available = true;
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private FoodCategory category;
+    @Enumerated(EnumType.STRING) @Column(nullable = false) private FoodCategory category;
+    @Enumerated(EnumType.STRING) @Column(nullable = false) private DietaryType dietaryType;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private DietaryType dietaryType;
-
+    // --- NEW FIELDS FOR RATING ---
+    private double averageRating = 0.0;
+    private int ratingCount = 0;
 
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "restaurant_id", nullable = false) @JsonIgnore private Restaurant restaurant;
 
@@ -36,10 +34,14 @@ public class FoodItem {
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
     public boolean isAvailable() { return available; }
     public void setAvailable(boolean available) { this.available = available; }
+    public FoodCategory getCategory() { return category; }
+    public void setCategory(FoodCategory category) { this.category = category; }
+    public DietaryType getDietaryType() { return dietaryType; }
+    public void setDietaryType(DietaryType dietaryType) { this.dietaryType = dietaryType;}
+    public double getAverageRating() { return averageRating; } // ADD THIS
+    public void setAverageRating(double averageRating) { this.averageRating = averageRating; } // ADD THIS
+    public int getRatingCount() { return ratingCount; } // ADD THIS
+    public void setRatingCount(int ratingCount) { this.ratingCount = ratingCount; } // ADD THIS
     public Restaurant getRestaurant() { return restaurant; }
     public void setRestaurant(Restaurant restaurant) { this.restaurant = restaurant; }
-        public FoodCategory getCategory() { return category; } // ADD THIS GETTER
-    public void setCategory(FoodCategory category) { this.category = category; } // ADD THIS SETTER
-    public DietaryType getDietaryType() { return dietaryType; } // ADD THIS GETTER
-    public void setDietaryType(DietaryType dietaryType) { this.dietaryType = dietaryType;}
 }

@@ -11,7 +11,8 @@ export interface MenuItem {
   dietaryType: string;
   category: string;
     description?: string; // <-- ADD THIS LINE
-
+averageRating?: number;
+  ratingCount?: number;
   imageUrl?: string; // Add the optional 'imageUrl' property
 }
 
