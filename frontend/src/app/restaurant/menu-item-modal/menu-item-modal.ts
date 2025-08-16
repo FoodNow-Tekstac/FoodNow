@@ -43,7 +43,7 @@ export class MenuItemModalComponent implements OnInit {
   }
 
   async onSubmit(): Promise<void> {
-    this.notificationService.show('Saving item...', 'loading');
+    //this.notificationService.show('Saving item...', 'loading');
     let submissionData = { ...this.itemData };
 
     try {

@@ -318,7 +318,7 @@ Thank you for ordering with FoodNow!
       return;
     }
 
-    this.notificationService.show('Placing your order...', 'loading');
+    //this.notificationService.show('Placing your order...', 'loading');
     const currentCart = this.cart();
     const now = new Date();
 
