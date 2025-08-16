@@ -62,13 +62,15 @@
 }
 
 /* --- Single Menu Item Card --- */
+/* in restaurant-detail.css */
 .menu-item-card {
   background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
+  /* Add a fallback color like #e5e7eb (a light gray) */
+  border: 1px solid var(--color-border, #e5e7eb);
   border-radius: 0.75rem;
   padding: 1.5rem;
   display: flex;
-  flex-direction: column; /* Vertical layout on mobile */
+  flex-direction: column;
   transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 

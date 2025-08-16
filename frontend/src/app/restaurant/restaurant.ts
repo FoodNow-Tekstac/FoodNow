@@ -23,6 +23,8 @@ export interface Restaurant {
   imageUrl: string;
   menu: MenuItem[];
   matchingItems?: MenuItem[]; // Optional property for search results
+    averageRating?: number; // <-- ADD THIS LINE
+
 }
 
 @Injectable({
