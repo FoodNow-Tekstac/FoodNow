@@ -3,7 +3,6 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { RestaurantDashboardService, RestaurantOrder } from '../dashboard';
 import { NotificationService } from '../../shared/notification';
 
-// This type now correctly reflects all possible statuses
 type OrderStatus = 'PENDING' | 'CONFIRMED' | 'PREPARING' | 'OUT_FOR_DELIVERY' | 'DELIVERED' | 'CANCELLED';
 
 @Component({
@@ -20,36 +19,30 @@ export class RestaurantOrdersComponent implements OnInit, OnDestroy {
   private timerInterval: any;
   private lastPendingCount = 0;
 
-  // --- SIGNALS & COMPUTED STATE ---
-
   selectedStatus = signal<OrderStatus>('PENDING');
-
   private allOrders = computed(() => this.dashboardService.dashboardData()?.orders || []);
 
   filteredOrders = computed(() => {
     const status = this.selectedStatus();
     if (status === 'PENDING') {
-      // This will now work correctly once you update the RestaurantOrder interface
       return this.allOrders().filter(o => o.status === 'PENDING' || o.status === 'CONFIRMED');
     }
     return this.allOrders().filter(o => o.status === status);
   });
 
   orderCounts = computed(() => {
-    // Initialize with all possible statuses to avoid errors
-    const counts: Record<OrderStatus, number> = { PENDING: 0, CONFIRMED: 0, PREPARING: 0, OUT_FOR_DELIVERY: 0, DELIVERED: 0, CANCELLED: 0 };
-    let pendingAndConfirmedCount = 0;
-
+    const counts = { PENDING: 0, PREPARING: 0, OUT_FOR_DELIVERY: 0, DELIVERED: 0 };
     for (const order of this.allOrders()) {
       if (order.status === 'PENDING' || order.status === 'CONFIRMED') {
-        pendingAndConfirmedCount++;
-      } else if (counts.hasOwnProperty(order.status)) {
-        counts[order.status]++;
+        counts.PENDING++;
+      } else if (order.status === 'PREPARING') {
+        counts.PREPARING++;
+      } else if (order.status === 'OUT_FOR_DELIVERY') {
+        counts.OUT_FOR_DELIVERY++;
+      } else if (order.status === 'DELIVERED') {
+        counts.DELIVERED++;
       }
     }
-    
-    // For the UI, group PENDING and CONFIRMED together
-    counts.PENDING = pendingAndConfirmedCount;
     return counts;
   });
 
@@ -67,7 +60,6 @@ export class RestaurantOrdersComponent implements OnInit, OnDestroy {
   timeSinceOrder = signal<{ [key: number]: string }>({});
 
   constructor() {
-    // --- Sound notification for new pending orders ---
     effect(() => {
       const currentPendingCount = this.orderCounts().PENDING;
       if (currentPendingCount > this.lastPendingCount) {
@@ -78,22 +70,9 @@ export class RestaurantOrdersComponent implements OnInit, OnDestroy {
     });
   }
 
-  // --- LIFECYCLE HOOKS ---
-  ngOnInit(): void {
-    // REMOVED: this.dashboardService.loadDashboard(); 
-    // The service handles its own data loading.
-    this.startTimer();
-  }
-
-  ngOnDestroy(): void {
-    clearInterval(this.timerInterval);
-  }
-
-  // --- HELPER METHODS ---
-
-  selectStatus(status: OrderStatus): void {
-    this.selectedStatus.set(status);
-  }
+  ngOnInit(): void { this.startTimer(); }
+  ngOnDestroy(): void { clearInterval(this.timerInterval); }
+  selectStatus(status: OrderStatus): void { this.selectedStatus.set(status); }
 
   private startTimer(): void {
     this.timerInterval = setInterval(() => {
@@ -118,7 +97,7 @@ export class RestaurantOrdersComponent implements OnInit, OnDestroy {
     oscillator.connect(gainNode);
     gainNode.connect(this.audioContext.destination);
     oscillator.type = 'sine';
-    oscillator.frequency.setValueAtTime(880, this.audioContext.currentTime); // Ding sound
+    oscillator.frequency.setValueAtTime(880, this.audioContext.currentTime);
     gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
     gainNode.gain.exponentialRampToValueAtTime(0.00001, this.audioContext.currentTime + 0.5);
     oscillator.start();
@@ -135,22 +114,45 @@ export class RestaurantOrdersComponent implements OnInit, OnDestroy {
     });
   }
 
-  // --- ORDER ACTIONS ---
+  // --- ## CORRECTED ORDER ACTION METHODS ## ---
 
-  acceptOrder(order: RestaurantOrder) {
-    this.dashboardService.updateOrderStatus(order.id, 'PREPARING').subscribe({
+  // Action for PENDING -> CONFIRMED
+  confirmOrder(order: RestaurantOrder) {
+    this.dashboardService.updateOrderStatus(order.id, 'CONFIRMED').subscribe({
       next: () => {
-        this.updateLocalOrderStatus(order.id, 'PREPARING');
-        this.notificationService.success(`Order #${order.id} accepted.`);
+        this.updateLocalOrderStatus(order.id, 'CONFIRMED');
+        this.notificationService.success(`Order #${order.id} confirmed.`);
       },
-      error: () => this.notificationService.error('Failed to accept order.')
+      error: () => this.notificationService.error('Failed to confirm order.')
     });
   }
 
+  // Action for CONFIRMED -> PREPARING
+  startPreparation(order: RestaurantOrder) {
+    this.dashboardService.updateOrderStatus(order.id, 'PREPARING').subscribe({
+      next: () => {
+        this.updateLocalOrderStatus(order.id, 'PREPARING');
+        this.notificationService.success(`Started preparing order #${order.id}.`);
+      },
+      error: () => this.notificationService.error('Failed to start preparation.')
+    });
+  }
+
+  // Action for PREPARING -> OUT_FOR_DELIVERY
+  readyForPickup(order: RestaurantOrder) {
+    this.dashboardService.markOrderReadyForPickup(order.id).subscribe({
+      next: () => {
+        this.updateLocalOrderStatus(order.id, 'OUT_FOR_DELIVERY');
+        this.notificationService.success('Delivery agent assigned!');
+      },
+      error: (err) => this.notificationService.error(err.error?.message || 'No delivery agents available.')
+    });
+  }
+
+  // Action for rejecting a PENDING order
   rejectOrder(order: RestaurantOrder) {
     this.dashboardService.updateOrderStatus(order.id, 'CANCELLED').subscribe({
       next: () => {
-        // Instead of just updating status, we remove the order from the list locally
         this.dashboardService.dashboardData.update(data => {
           if (!data) return null;
           data.orders = data.orders.filter(o => o.id !== order.id);
@@ -159,17 +161,6 @@ export class RestaurantOrdersComponent implements OnInit, OnDestroy {
         this.notificationService.success(`Order #${order.id} has been cancelled.`);
       },
       error: () => this.notificationService.error('Failed to reject order.')
-    });
-  }
-
-  readyForPickup(order: RestaurantOrder) {
-    this.dashboardService.markOrderReadyForPickup(order.id).subscribe({
-      next: () => {
-        this.updateLocalOrderStatus(order.id, 'OUT_FOR_DELIVERY');
-        this.notificationService.success('Delivery agent assigned!');
-      },
-      error: (err) =>
-        this.notificationService.error(err.error?.message || 'No delivery agents available.')
     });
   }
 }

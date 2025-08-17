@@ -289,3 +289,14 @@
   line-height: 1.5;
   margin: 0;
 }
+
+/* ## ADDED STYLES FOR NEW BUTTONS ## */
+.confirm-btn {
+  background-color: var(--primary);
+  color: white;
+}
+
+.prepare-btn {
+  background-color: #f59e0b; /* An amber/orange color */
+  color: white;
+}

@@ -2,10 +2,9 @@
   <h2 class="page-title">Order Management</h2>
 </div>
 
-<!-- Filter Tabs -->
 <div class="filter-tabs">
   <button (click)="selectStatus('PENDING')" [class.active]="selectedStatus() === 'PENDING'">
-    Pending <span class="order-count">{{ orderCounts().PENDING }}</span>
+    New Orders <span class="order-count">{{ orderCounts().PENDING }}</span>
   </button>
   <button (click)="selectStatus('PREPARING')" [class.active]="selectedStatus() === 'PREPARING'">
     Preparing <span class="order-count">{{ orderCounts().PREPARING }}</span>
@@ -18,7 +17,6 @@
   </button>
 </div>
 
-<!-- Kitchen Prep Summary -->
 @if (kitchenPrepSummary().length > 0) {
   <div class="prep-summary-card">
     <h4 class="prep-summary-title">Total Items to Prepare</h4>
@@ -30,15 +28,12 @@
   </div>
 }
 
-<!-- Order List -->
 <div class="orders-list">
   @for (order of filteredOrders(); track order.id) {
     <div class="order-card">
-      <!-- Card Header with ID, Customer Name, Time, and Price -->
       <div class="card-header">
         <div class="header-details">
           <div class="order-id">#{{ order.id }}</div>
-          <!-- UPDATED: Accessing nested customer name -->
           @if(order.customer) {
             <div class="customer-info">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="customer-icon">
@@ -54,14 +49,12 @@
         </div>
       </div>
 
-      <!-- Timer for Pending and Confirmed Orders -->
       @if (order.status === 'PENDING' || order.status === 'CONFIRMED') {
         <div class="timer-bar">
           <p class="order-timer">Time Elapsed: {{ timeSinceOrder()[order.id] || '0m 0s' }}</p>
         </div>
       }
 
-      <!-- Order Items -->
       <div class="card-body">
         <ul class="items-list">
           @for(item of order.items; track $index) {
@@ -73,21 +66,19 @@
         </ul>
       </div>
 
-      <!-- Order Actions -->
-      <!-- UPDATED: Shows buttons for both PENDING and CONFIRMED statuses -->
-      @if (order.status === 'PENDING' || order.status === 'CONFIRMED') {
-        <div class="card-actions">
-          <button (click)="acceptOrder(order)" class="action-btn accept-btn">Accept</button>
+      <div class="card-actions">
+        @if (order.status === 'PENDING') {
+          <button (click)="confirmOrder(order)" class="action-btn confirm-btn">Confirm Order</button>
           <button (click)="rejectOrder(order)" class="action-btn reject-btn">Reject</button>
-        </div>
-      }
-      @if (order.status === 'PREPARING') {
-        <div class="card-actions">
+        }
+        @if (order.status === 'CONFIRMED') {
+          <button (click)="startPreparation(order)" class="action-btn prepare-btn">Start Preparation</button>
+        }
+        @if (order.status === 'PREPARING') {
           <button (click)="readyForPickup(order)" class="action-btn pickup-btn">Ready for Pickup</button>
-        </div>
-      }
+        }
+      </div>
 
-      <!-- Delivered Review -->
       @if (order.status === 'DELIVERED' && order.hasReview) {
         <div class="card-footer">
           <p class="rating">
@@ -103,7 +94,6 @@
       }
     </div>
   } @empty {
-    <!-- A completely redesigned, more professional empty state -->
     <div class="empty-state">
       <div class="empty-state__icon-wrapper">
         <svg class="empty-state__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
