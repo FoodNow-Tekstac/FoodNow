@@ -1,35 +1,102 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  inject,
+  signal,
+  effect,
+  ViewChild,
+  ElementRef,
+  computed,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
+  FormsModule,
+  ReactiveFormsModule,
   FormBuilder,
   FormGroup,
   Validators,
-  ReactiveFormsModule,
   AbstractControl,
+  ValidationErrors,
 } from '@angular/forms';
-import { RouterLink } from '@angular/router';
-import { trigger, transition, style, animate } from '@angular/animations';
-import { AuthService } from '../auth';
+import { Router, RouterLink } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+import { Cart, CartService } from '../../cart/cart';
+import { OrderService } from '../../order/order';
 import { NotificationService } from '../../shared/notification';
+
+import qrcode from 'qrcode-generator';
+import { AuthService } from '../auth';
+
+// Enhanced Receipt Interface
+interface ReceiptData {
+  orderNumber: string;
+  orderDate: string;
+  orderTime: string;
+  customerName: string;
+  deliveryAddress: {
+    addressLine1: string;
+    city: string;
+    pinCode: string;
+  };
+  paymentMethod: string;
+  paymentDetails?: string;
+  items: any[];
+  totalPrice: number;
+  taxAmount: number;
+  finalAmount: number;
+}
+
+// Custom Validator for Expiry Date
+export function expiryDateValidator(
+  control: AbstractControl
+): ValidationErrors | null {
+  if (!control.value) return null;
+  const [month, year] = control.value.split('/');
+  if (!month || !year || month.length !== 2 || year.length !== 2) {
+    return {
+      invalidFormat: true,
+    };
+  }
+  const expiryMonth = Number(month);
+  const expiryYear = Number(`20${year}`);
+  const now = new Date();
+  const currentMonth = now.getMonth() + 1;
+  const currentYear = now.getFullYear();
+
+  if (
+    expiryYear < currentYear ||
+    (expiryYear === currentYear && expiryMonth < currentMonth)
+  ) {
+    return {
+      expired: true,
+    };
+  }
+  return null;
+}
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login.html',
-  styleUrl: './login.css',
+  styleUrls: ['./login.css'],
 })
 export class LoginComponent implements OnInit {
+  private cartService = inject(CartService);
+  private orderService = inject(OrderService);
+  private router = inject(Router);
+  private notificationService = inject(NotificationService);
+  private fb = inject(FormBuilder);
+  private authService = inject(AuthService);
+
   isLoading = signal(false);
   isRegisterMode = signal(false);
   hidePassword = signal(true);
 
   loginForm!: FormGroup;
   registerForm!: FormGroup;
-
-  private fb = inject(FormBuilder);
-  private authService = inject(AuthService);
-  private notificationService = inject(NotificationService);
 
   ngOnInit(): void {
     this.initializeForms();
@@ -95,7 +162,7 @@ export class LoginComponent implements OnInit {
   private resetForms(): void {
     this.loginForm.reset();
     this.registerForm.reset();
-    this.registerForm.patchValue({ email: 'admin@foodnow.com' });
+    // this.registerForm.patchValue({ email: 'admin@foodnow.com' });
   }
 
   onLogin(): void {
@@ -122,10 +189,10 @@ export class LoginComponent implements OnInit {
 
     this.authService.register(this.registerForm.value).subscribe({
       next: () => {
-        this.notificationService.show(
-          'Registration successful! Please log in with your credentials.',
-          'success'
-        );
+        // this.notificationService.show(
+        //   'Registration successful! Please log in with your credentials.',
+        //   'success'
+        // );
         this.isRegisterMode.set(false);
         this.resetForms();
       },
