@@ -1,69 +1,90 @@
 <main class="page-container">
   <div class="page-header">
-    <a routerLink="/customer/dashboard" class="back-link">&larr; Back to Restaurants</a>
+    <a routerLink="/customer/dashboard" class="back-link"
+      >&larr; Back to Restaurants</a
+    >
     <h1 class="page-title">My Order History</h1>
   </div>
 
   <div class="orders-list">
     @for (order of orders(); track order.id) {
-      <div class="order-card">
-        <div class="order-header">
-          <div class="header-info">
-            <h3 class="restaurant-name">{{ order.restaurantName }}</h3>
-            <p class="order-meta">
-              Order #{{order.id}} <span class="meta-dot">•</span> {{ order.orderTime | date:'medium' }}
-            </p>
-          </div>
-          <div class="header-status">
-            <p class="order-total">₹{{ order.totalPrice.toFixed(2) }}</p>
-            <p class="status-badge" [ngClass]="getStatusClass(order.status)">
-              {{ order.status.replace('_', ' ') }}
-            </p>
-          </div>
+    <div class="order-card">
+      <div class="order-header">
+        <div class="header-info">
+          <h3 class="restaurant-name">{{ order.restaurantName }}</h3>
+          <p class="order-meta">
+            Order #{{ order.id }} <span class="meta-dot">•</span>
+            {{ order.orderTime | date : "medium" }}
+          </p>
         </div>
+        <div class="header-status">
+          <p class="order-total">₹{{ order.totalPrice.toFixed(2) }}</p>
+          <p class="status-badge" [ngClass]="getStatusClass(order.status)">
+            {{ order.status.replace("_", " ") }}
+          </p>
+        </div>
+      </div>
 
-        <div class="order-body">
-          <h4 class="items-title">Items Ordered</h4>
-          <div class="items-list">
-            @for (item of order.items; track $index) {
-              <div class="order-item">
-                <span class="item-quantity">{{ item.quantity }} x</span>
-                <span class="item-name">{{ item.itemName }}</span>
-              </div>
-            }
+      <div class="order-body">
+        <h4 class="items-title">Items Ordered</h4>
+        <div class="items-list">
+          @for (item of order.items; track $index) {
+          <div class="order-item">
+            <span class="item-quantity">{{ item.quantity }} x</span>
+            <span class="item-name">{{ item.itemName }}</span>
           </div>
-        </div>
-        
-        <div class="order-actions">
-          <!-- THIS IS THE NEW LOGIC FOR THE CANCEL BUTTON -->
-          @if(order.status === 'PENDING') {
-            <button (click)="cancelOrder(order.id)" class="btn cancel-btn">
-              Cancel Order
-            </button>
-          } @else if(order.status === 'DELIVERED') {
-            @if(order.hasReview) {
-              <p class="review-submitted">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg>
-                Review Submitted
-              </p>
-            } @else {
-              <a [routerLink]="['/customer/review', order.id]" class="btn review-btn">
-                Leave a Review
-              </a>
-            }
-          } @else if (order.status !== 'CANCELLED') {
-            <a [routerLink]="['/customer/track-order', order.id]" class="track-order-link">
-              Track Order &rarr;
-            </a>
           }
         </div>
       </div>
-    } @empty {
-      <div class="empty-state-container">
-        <svg xmlns="http://www.w3.org/2000/svg" class="empty-state-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M13 9h-2V7h2v2zm0 4h-2v-2h2v2zm5-9H6c-1.1 0-2 .9-2 2v14l4-4h10c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z"></path></svg>
-        <h2 class="text-2xl font-bold mt-4">No Orders Yet</h2>
-        <p class="text-text-dark mt-2">When you place an order, it will appear here.</p>
+
+      <div class="order-actions">
+        @if(order.status === 'PENDING' || order.status === 'CONFIRMED') {
+        <button (click)="cancelOrder(order.id)" class="btn cancel-btn">
+          Cancel Order
+        </button>
+        } @else if(order.status === 'DELIVERED') { @if(order.hasReview) {
+        <p class="review-submitted">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path>
+          </svg>
+          Review Submitted
+        </p>
+        } @else {
+        <a [routerLink]="['/customer/review', order.id]" class="btn review-btn">
+          Leave a Review
+        </a>
+        } } @else if (order.status !== 'CANCELLED') {
+        <a
+          [routerLink]="['/customer/track-order', order.id]"
+          class="track-order-link"
+        >
+          Track Order &rarr;
+        </a>
+        }
       </div>
+    </div>
+    } @empty {
+    <div class="empty-state">
+      <!-- Icon representing a list or orders -->
+      <svg
+        class="empty-state__icon"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+      >
+        <path
+          d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 14h-8v-2h8v2zm0-4h-8v-2h8v2zm-3-5V3.5L18.5 9H13z"
+        ></path>
+      </svg>
+      <h3 class="empty-state__title">No Orders to Display</h3>
+      <p class="empty-state__text">
+        New orders will appear here as they come in.
+      </p>
+    </div>
     }
   </div>
 </main>

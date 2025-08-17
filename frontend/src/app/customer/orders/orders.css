@@ -194,22 +194,51 @@
   width: 1.25rem;
   height: 1.25rem;
 }
-
 /* --- EMPTY STATE --- */
-.empty-state-container {
-  background-color: var(--bg-light);
-  border-radius: 0.75rem;
-  border: 1px solid var(--border-color);
+/* This is the main container for the empty message */
+.empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 4rem 2rem;
+  padding: 48px 24px;
+  margin: 20px;
   text-align: center;
+  background-color: var(--bg-light, #f9fafb); /* A very light grey background */
+  border: 1px solid var(--border-color, #e5e7eb);  /* A light, solid border */
+  border-radius: 12px;
+  opacity: 0; /* Start hidden for fade-in effect */
+  animation: fadeIn 0.5s ease-out forwards;
 }
 
-.empty-state-icon {
-  width: 4rem;
-  height: 4rem;
-  color: var(--border-color);
+/* A simple fade-in animation */
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+/* The SVG icon */
+.empty-state__icon {
+  width: 56px;
+  height: 56px;
+  margin-bottom: 16px;
+  color: var(--text-muted, #9ca3af); /* A soft, medium-grey for the icon */
+}
+
+/* The main heading like "No Orders Here" */
+.empty-state__title {
+  font-size: 1.125rem; /* 18px */
+  font-weight: 600;
+  color: var(--text-dark, #374151); /* A dark grey for better readability */
+  margin: 0 0 4px 0;
+}
+
+/* The smaller paragraph text */
+.empty-state__text {
+  font-size: 0.875rem; /* 14px */
+  color: var(--text-secondary, #6b7280); /* A slightly lighter grey for the subtext */
+  max-width: 280px;
+  line-height: 1.5;
+  margin: 0;
 }

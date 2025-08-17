@@ -49,7 +49,7 @@ export class OrdersComponent implements OnInit {
       DELIVERED: 'status-delivered',
       OUT_FOR_DELIVERY: 'status-out-for-delivery',
       PREPARING: 'status-preparing',
-      CONFIRMED: 'status-preparing', // Using same style as preparing
+      CONFIRMED: 'status-preparing',
       PENDING: 'status-pending',
       CANCELLED: 'status-cancelled',
     };

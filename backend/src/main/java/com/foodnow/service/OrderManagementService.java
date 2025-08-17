@@ -23,8 +23,9 @@ public class OrderManagementService {
     @Autowired private TaskScheduler taskScheduler;
     @Autowired private PaymentService paymentService;
 
+    // The method now uses the correct, more robust query from the repository.
     public List<Order> getOrdersForRestaurant(int restaurantId) {
-        return orderRepository.findByRestaurantId(restaurantId);
+        return orderRepository.findByRestaurantIdWithItems(restaurantId);
     }
 
     public List<Order> getOrdersForDeliveryPersonnel(int deliveryPersonnelId) {
@@ -75,3 +76,4 @@ public class OrderManagementService {
         return dto;
     }
 }
+

@@ -270,7 +270,7 @@ export class PaymentComponent implements OnInit {
     }
 
     // Use modern approach with dynamic import
-    import ('html2canvas').then(({
+    import('html2canvas').then(({
       default: html2canvas
     }) => {
       return html2canvas(receiptElement, {
@@ -339,10 +339,6 @@ Thank you for ordering with FoodNow!
     this.router.navigate(['/customer/orders']);
   }
 
-  generateOrderNumber(): string {
-    return 'FN' + Date.now().toString().slice(-8);
-  }
-
   onPlaceOrder(): void {
     if (!this.isPaymentValid()) {
       this.notificationService.error('Please complete your delivery and payment details correctly.');
@@ -354,39 +350,57 @@ Thank you for ordering with FoodNow!
     }
 
     //this.notificationService.show('Placing your order...', 'loading');
-    const currentCart = this.cart();
-    const now = new Date();
 
-    // Create comprehensive receipt data
-    const receiptData: ReceiptData = {
-      orderNumber: this.generateOrderNumber(),
-      orderDate: now.toLocaleDateString('en-IN'),
-      orderTime: now.toLocaleTimeString('en-IN'),
-      customerName: this.selectedPaymentMethod() === 'card' ?
-        this.cardForm.get('cardHolder') ?.value || 'Customer' : 'Customer',
-      deliveryAddress: this.deliveryAddressForm.value,
-      paymentMethod: this.getPaymentMethodName(),
-      paymentDetails: this.getPaymentDetails(),
-      items: currentCart ?.items || [],
-      totalPrice: currentCart ?.totalPrice || 0,
-      taxAmount: (currentCart ?.totalPrice || 0) * 0.05,
-      finalAmount: (currentCart ?.totalPrice || 0) * 1.05
-    };
-
+    // Step 1: Place the order first
     this.orderService.placeOrder().subscribe({
-      next: () => {
-        this.notificationService.success('Order placed successfully!');
-        
-        // Deduct amount from mock wallet if it was the selected payment method
-        if (this.selectedPaymentMethod() === 'wallet') {
-          this.mockWalletBalance.update(balance => balance - receiptData.finalAmount);
-        }
-        
-        this.cartService.getCart().subscribe();
-        this.receiptData.set(receiptData);
-        this.isReceiptModalOpen.set(true);
+      next: (orderDto) => {
+        // Step 2: On successful order creation, process the payment
+        this.orderService.processPayment(orderDto.id).subscribe({
+          next: () => {
+            this.notificationService.success('Order and payment processed successfully!');
+            const currentCart = this.cart();
+            const now = new Date();
+
+            // Deduct amount from mock wallet if applicable
+            if (this.selectedPaymentMethod() === 'wallet') {
+              const finalAmount = (currentCart ?.totalPrice || 0) * 1.05;
+              this.mockWalletBalance.update(balance => balance - finalAmount);
+            }
+
+            // Now, prepare the receipt data
+            this.receiptData.set({
+              orderNumber: `FN${orderDto.id}`, // Use the real order ID
+              orderDate: now.toLocaleDateString('en-IN'),
+              orderTime: now.toLocaleTimeString('en-IN'),
+              customerName: this.selectedPaymentMethod() === 'card' ?
+                this.cardForm.get('cardHolder') ?.value || 'Customer' : 'Customer',
+              deliveryAddress: this.deliveryAddressForm.value,
+              paymentMethod: this.getPaymentMethodName(),
+              paymentDetails: this.getPaymentDetails(),
+              items: currentCart ?.items || [],
+              totalPrice: currentCart ?.totalPrice || 0,
+              taxAmount: (currentCart ?.totalPrice || 0) * 0.05,
+              finalAmount: (currentCart ?.totalPrice || 0) * 1.05
+            });
+
+            // Show the receipt modal
+            this.isReceiptModalOpen.set(true);
+            
+            // Refresh the cart in the background to clear it
+            this.cartService.getCart().subscribe();
+          },
+          error: (paymentError) => {
+            // Use a more specific error message if available
+            const message = paymentError.error?.message || 'Payment processing failed.';
+            this.notificationService.error(`Payment failed: ${message}`);
+            // Optional: You could attempt to delete the created order here or let a backend job handle it
+          }
+        });
       },
-      error: () => this.notificationService.error('Could not place your order.')
+      error: (orderError) => {
+        const message = orderError.error?.message || 'Could not place your order.';
+        this.notificationService.error(message);
+      }
     });
   }
 }

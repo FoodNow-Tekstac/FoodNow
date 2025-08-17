@@ -55,4 +55,10 @@ export class OrderService {
   placeOrder(): Observable<Order> {
     return this.http.post<Order>(`${this.apiUrl}/orders`, null);
   }
+
+  // New method to process the payment
+  processPayment(orderId: number): Observable<any> {
+    const payload = { orderId: orderId };
+    return this.http.post<any>(`${this.apiUrl}/payments/process`, payload);
+  }
 }
