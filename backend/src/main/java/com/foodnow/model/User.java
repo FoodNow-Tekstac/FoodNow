@@ -34,8 +34,8 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Address> addresses = new HashSet<>();
+    //@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    //private Set<Address> addresses = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
@@ -65,10 +65,10 @@ public class User {
     public void setRole(Role role) { this.role = role; }
      public DeliveryAgentStatus getDeliveryStatus() { return deliveryStatus; } // ADD THIS GETTER
     public void setDeliveryStatus(DeliveryAgentStatus status) { this.deliveryStatus = status; } // ADD THIS SETTER
-    public Set<Address> getAddresses() { return addresses; }
+    //public Set<Address> getAddresses() { return addresses; }
     public String getProfileImageUrl() { return profileImageUrl; } // ADD THIS GETTER
     public void setProfileImageUrl(String url) { this.profileImageUrl = url; } // ADD THIS SETTER
-    public void setAddresses(Set<Address> addresses) { this.addresses = addresses; }
+    //public void setAddresses(Set<Address> addresses) { this.addresses = addresses; }
     public List<Review> getReviews() { return reviews; } // ADD THIS GETTER
     public void setReviews(List<Review> reviews) { this.reviews = reviews; } // ADD THIS SETTER
     public PasswordResetToken getPasswordResetToken() { return passwordResetToken; } // ADD THIS GETTER

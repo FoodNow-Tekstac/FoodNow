@@ -8,6 +8,12 @@ export interface OrderItemSummary {
   itemName: string;
 }
 
+export interface OrderAddressPayload {
+  line1: string;
+  city: string;
+  postalCode: string;
+}
+
 export interface Order {
   id: number;
   restaurantName: string;
@@ -18,7 +24,11 @@ export interface Order {
   hasReview: boolean;
   reviewRating?: number;
   reviewComment?: string;
-  deliveryAddress: string;
+  // --- UPDATED ADDRESS FIELDS ---
+  deliveryAddressLine1: string;
+  deliveryCity: string;
+  deliveryPostalCode: string;
+  // --------------------------
   restaurantLocationPin: string;
 }
 
@@ -52,13 +62,7 @@ export class OrderService {
     return this.http.post(`${this.apiUrl}/orders/${orderId}/review`, review);
   }
 
-  placeOrder(): Observable<Order> {
-    return this.http.post<Order>(`${this.apiUrl}/orders`, null);
-  }
-
-  // New method to process the payment
-  processPayment(orderId: number): Observable<any> {
-    const payload = { orderId: orderId };
-    return this.http.post<any>(`${this.apiUrl}/payments/process`, payload);
+  placeOrder(addressPayload: OrderAddressPayload): Observable<Order> {
+    return this.http.post<Order>(`${this.apiUrl}/orders`, addressPayload);
   }
 }

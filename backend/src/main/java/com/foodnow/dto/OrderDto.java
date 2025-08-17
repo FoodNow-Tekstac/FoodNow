@@ -15,6 +15,9 @@ public class OrderDto {
     private boolean hasReview; // ADD THIS FIELD
    private Integer reviewRating;
     private String reviewComment;
+      private String deliveryAddressLine1;
+    private String deliveryCity;
+    private String deliveryPostalCode;
     // Getters and Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
@@ -36,6 +39,27 @@ public class OrderDto {
     public void setReviewRating(Integer reviewRating) { this.reviewRating = reviewRating; } // ADD THIS SETTER
     public String getReviewComment() { return reviewComment; } // ADD THIS GETTER
     public void setReviewComment(String reviewComment) { this.reviewComment = reviewComment; } // ADD THIS SETTER
-}
+public String getDeliveryAddressLine1() {
+        return deliveryAddressLine1;
+    }
 
-//
+    public void setDeliveryAddressLine1(String deliveryAddressLine1) {
+        this.deliveryAddressLine1 = deliveryAddressLine1;
+    }
+
+    public String getDeliveryCity() {
+        return deliveryCity;
+    }
+
+    public void setDeliveryCity(String deliveryCity) {
+        this.deliveryCity = deliveryCity;
+    }
+
+    public String getDeliveryPostalCode() {
+        return deliveryPostalCode;
+    }
+
+    public void setDeliveryPostalCode(String deliveryPostalCode) {
+        this.deliveryPostalCode = deliveryPostalCode;
+}
+}

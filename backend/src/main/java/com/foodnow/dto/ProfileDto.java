@@ -1,14 +1,14 @@
 package com.foodnow.dto;
 
 import java.util.Set;
-import com.foodnow.model.Address;
+//import com.foodnow.model.Address;
 
 public class ProfileDto {
     private String name;
     private String email;
     private String phoneNumber;
     private String profileImageUrl;
-    private Set<Address> addresses;
+    //private Set<Address> addresses;
 
     // Getters and Setters
     public String getName() { return name; }
@@ -19,6 +19,6 @@ public class ProfileDto {
     public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
     public String getProfileImageUrl() { return profileImageUrl; }
     public void setProfileImageUrl(String profileImageUrl) { this.profileImageUrl = profileImageUrl; }
-    public Set<Address> getAddresses() { return addresses; }
-    public void setAddresses(Set<Address> addresses) { this.addresses = addresses; }
+    //public Set<Address> getAddresses() { return addresses; }
+    //public void setAddresses(Set<Address> addresses) { this.addresses = addresses; }
 }

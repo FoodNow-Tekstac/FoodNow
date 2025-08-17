@@ -38,9 +38,13 @@
           </span>
         </p>
         <div class="address-section">
-          <p class="font-semibold">Delivery Address:</p>
-          <p class="text-text-dark">{{ currentOrder.deliveryAddress }}</p>
-        </div>
+  <p class="font-semibold">Delivery Address:</p>
+  
+  <p class="text-text-dark">
+    {{ currentOrder.deliveryAddressLine1 }}<br>
+    {{ currentOrder.deliveryCity }}, {{ currentOrder.deliveryPostalCode }}
+  </p>
+</div>
         <div class="items-section">
             <p class="font-semibold">Items:</p>
             <ul class="items-list">

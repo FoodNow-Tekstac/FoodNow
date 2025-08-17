@@ -27,7 +27,26 @@
   background-color: #dc2626; /* red-600 */
   transform: translateY(-1px);
 }
+.order-address {
+  /* Use subtle borders instead of a background color */
+  padding: 16px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1); /* Faint white border */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 8px; /* Add some space above */
+}
 
+.address-line {
+  /* Make the main address line a brighter, light gray */
+  font-weight: 500;
+  color: #e2e8f0; 
+  margin-bottom: 4px; /* Space between the address lines */
+}
+
+.address-city-code {
+  /* Make the secondary text a dimmer gray */
+  font-size: 0.9rem;
+  color: #a0aec0;
+}
 .back-link {
   color: var(--primary);
   text-decoration: none;

@@ -2,6 +2,7 @@
 // File: src/main/java/com/foodnow/controller/OrderController.java (UPDATED)
 package com.foodnow.controller;
 
+import com.foodnow.dto.OrderAddressDto;
 import com.foodnow.dto.OrderDto;
 import com.foodnow.dto.OrderTrackingDto;
 import com.foodnow.service.OrderService;
@@ -20,15 +21,17 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<OrderDto> placeOrder() {
-        try {
-            // The service now returns the DTO directly.
-            OrderDto orderDto = orderService.placeOrderFromCart();
-            return ResponseEntity.ok(orderDto);
-        } catch (IllegalStateException e) {
-            return ResponseEntity.badRequest().body(null);
-        }
+public ResponseEntity<OrderDto> placeOrder(@RequestBody OrderAddressDto addressDto) {
+            System.out.println("--- RECEIVED IN CONTROLLER: " + addressDto.toString() + " ---");
+
+    try {
+        OrderDto orderDto = orderService.placeOrderFromCart(addressDto);
+        return ResponseEntity.ok(orderDto);
+    } catch (IllegalStateException e) {
+        return ResponseEntity.badRequest().body(null);
     }
+}
+
 
     @GetMapping("/my-orders")
     public ResponseEntity<List<OrderDto>> getMyOrders() {

@@ -8,22 +8,27 @@
 
   <div class="orders-list">
     @for (order of orders(); track order.id) {
-    <div class="order-card">
-      <div class="order-header">
-        <div class="header-info">
-          <h3 class="restaurant-name">{{ order.restaurantName }}</h3>
-          <p class="order-meta">
-            Order #{{ order.id }} <span class="meta-dot">•</span>
-            {{ order.orderTime | date : "medium" }}
-          </p>
+      <div class="order-card">
+        <div class="order-header">
+          <div class="header-info">
+            <h3 class="restaurant-name">{{ order.restaurantName }}</h3>
+            <p class="order-meta">
+              Order #{{order.id}} <span class="meta-dot">•</span> {{ order.orderTime | date:'medium' }}
+            </p>
+          </div>
+          <div class="header-status">
+            <p class="order-total">₹{{ order.totalPrice.toFixed(2) }}</p>
+            <p class="status-badge" [ngClass]="getStatusClass(order.status)">
+              {{ order.status.replace('_', ' ') }}
+            </p>
+          </div>
         </div>
-        <div class="header-status">
-          <p class="order-total">₹{{ order.totalPrice.toFixed(2) }}</p>
-          <p class="status-badge" [ngClass]="getStatusClass(order.status)">
-            {{ order.status.replace("_", " ") }}
-          </p>
+
+        <!-- ✅ NEW ADDRESS BLOCK -->
+        <div class="order-address">
+          <p class="address-line">{{ order.deliveryAddressLine1 }}</p>
+          <p class="address-city-code">{{ order.deliveryCity }}, {{ order.deliveryPostalCode }}</p>
         </div>
-      </div>
 
       <div class="order-body">
         <h4 class="items-title">Items Ordered</h4>

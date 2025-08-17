@@ -1,5 +1,6 @@
 package com.foodnow.service;
 
+import com.foodnow.dto.OrderAddressDto;
 import com.foodnow.dto.OrderDto;
 import com.foodnow.dto.OrderItemDto;
 import com.foodnow.dto.OrderTrackingDto;
@@ -45,40 +46,47 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderDto placeOrderFromCart() {
-        User currentUser = getCurrentUser();
+public OrderDto placeOrderFromCart(OrderAddressDto addressDto) {
+    User currentUser = getCurrentUser();
 
-        Cart cart = cartService.getCartEntityForCurrentUser();
-        if (cart.getItems().isEmpty()) {
-            throw new IllegalStateException("Cannot place an order with an empty cart.");
-        }
-
-        Order order = new Order();
-        order.setCustomer(currentUser);
-        order.setRestaurant(cart.getItems().get(0).getFoodItem().getRestaurant());
-        order.setTotalPrice(cart.getTotalPrice());
-        order.setStatus(OrderStatus.PENDING);
-        order.setOrderTime(LocalDateTime.now());
-
-        List<OrderItem> orderItems = cart.getItems().stream().map(cartItem -> {
-            OrderItem orderItem = new OrderItem();
-            orderItem.setOrder(order);
-            orderItem.setFoodItem(cartItem.getFoodItem());
-            orderItem.setQuantity(cartItem.getQuantity());
-            orderItem.setPrice(cartItem.getFoodItem().getPrice());
-            return orderItem;
-        }).collect(Collectors.toList());
-
-        order.setItems(orderItems);
-        Order savedOrder = orderRepository.save(order);
-
-        cartItemRepository.deleteByCartId(cart.getId());
-        cart.getItems().clear();
-        cart.setTotalPrice(0.0);
-        cartRepository.save(cart);
-
-        return toOrderDto(savedOrder);
+    Cart cart = cartService.getCartEntityForCurrentUser();
+    if (cart.getItems().isEmpty()) {
+        throw new IllegalStateException("Cannot place an order with an empty cart.");
     }
+
+    Order order = new Order();
+    order.setCustomer(currentUser);
+    order.setRestaurant(cart.getItems().get(0).getFoodItem().getRestaurant());
+    order.setTotalPrice(cart.getTotalPrice());
+    order.setStatus(OrderStatus.PENDING);
+    order.setOrderTime(LocalDateTime.now());
+
+    // ✅ Set delivery address from frontend
+    order.setDeliveryAddressLine1(addressDto.getLine1());
+    order.setDeliveryCity(addressDto.getCity());
+    order.setDeliveryPostalCode(addressDto.getPostalCode());
+
+    List<OrderItem> orderItems = cart.getItems().stream().map(cartItem -> {
+        OrderItem orderItem = new OrderItem();
+        orderItem.setOrder(order);
+        orderItem.setFoodItem(cartItem.getFoodItem());
+        orderItem.setQuantity(cartItem.getQuantity());
+        orderItem.setPrice(cartItem.getFoodItem().getPrice());
+        return orderItem;
+    }).collect(Collectors.toList());
+
+    order.setItems(orderItems);
+    Order savedOrder = orderRepository.save(order);
+
+    // clear cart
+    cartItemRepository.deleteByCartId(cart.getId());
+    cart.getItems().clear();
+    cart.setTotalPrice(0.0);
+    cartRepository.save(cart);
+
+    return toOrderDto(savedOrder);
+}
+
 
     @Transactional
     public OrderDto updateOrderStatus(int orderId, OrderStatus newStatus) {
@@ -143,17 +151,22 @@ if (agent != null) {
     }
 
     private OrderTrackingDto toOrderTrackingDto(Order order) {
-        OrderTrackingDto dto = new OrderTrackingDto();
-        dto.setId(order.getId());
-        dto.setRestaurantName(order.getRestaurant().getName());
-        dto.setTotalPrice(order.getTotalPrice());
-        dto.setStatus(order.getStatus());
-        dto.setOrderTime(order.getOrderTime());
-        dto.setItems(order.getItems().stream().map(this::toOrderItemDto).collect(Collectors.toList()));
-        dto.setRestaurantLocationPin(order.getRestaurant().getLocationPin());
-        dto.setDeliveryAddress("123 Main St, Your City"); // Dummy
-        return dto;
-    }
+    OrderTrackingDto dto = new OrderTrackingDto();
+    dto.setId(order.getId());
+    dto.setRestaurantName(order.getRestaurant().getName());
+    dto.setTotalPrice(order.getTotalPrice());
+    dto.setStatus(order.getStatus());
+    dto.setOrderTime(order.getOrderTime());
+    dto.setItems(order.getItems().stream().map(this::toOrderItemDto).collect(Collectors.toList()));
+    dto.setRestaurantLocationPin(order.getRestaurant().getLocationPin());
+
+    dto.setDeliveryAddressLine1(order.getDeliveryAddressLine1());
+    dto.setDeliveryCity(order.getDeliveryCity());
+    dto.setDeliveryPostalCode(order.getDeliveryPostalCode());
+
+    return dto;
+}
+
 
     private OrderDto toOrderDto(Order order) {
         OrderDto dto = new OrderDto();
@@ -164,7 +177,9 @@ if (agent != null) {
         dto.setOrderTime(order.getOrderTime());
         dto.setItems(order.getItems().stream().map(this::toOrderItemDto).collect(Collectors.toList()));
                 dto.setHasReview(order.getReview() != null);
-
+dto.setDeliveryAddressLine1(order.getDeliveryAddressLine1());
+    dto.setDeliveryCity(order.getDeliveryCity());
+    dto.setDeliveryPostalCode(order.getDeliveryPostalCode());
         return dto;
     }
 
