@@ -43,7 +43,7 @@ export class BecomePartnerComponent {
   }
 
   async onSubmit(): Promise<void> {
-    this.notificationService.show('Submitting application...', 'loading');
+    //this.notificationService.show('Submitting application...', 'loading');
     let submissionData: RestaurantApplication = { ...this.applicationForm };
 
     try {

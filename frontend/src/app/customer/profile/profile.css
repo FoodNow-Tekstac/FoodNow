@@ -4,12 +4,12 @@
 
 .page-container {
   max-width: 800px;
-  margin: 2rem auto;
+  margin: 6rem auto 2rem;
   padding: 0 1rem;
 }
 
 .page-header {
-  margin-bottom: 2rem;
+  margin-bottom: 3rem;
   text-align: center;
 }
 

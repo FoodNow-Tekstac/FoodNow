@@ -48,7 +48,7 @@ export class ProfileComponent implements OnInit {
   async onSubmit(): Promise<void> {
     if (!this.profile()) return;
 
-    this.notificationService.show('Saving profile...', 'loading');
+    //this.notificationService.show('Saving profile...', 'loading');
 
     // Create a copy of the profile data to modify
     let updatedProfileData = { ...this.profile()! };

@@ -33,7 +33,7 @@ export class ReviewComponent implements OnInit {
       return;
     }
 
-    this.notificationService.show('Submitting your review...', 'loading');
+    //this.notificationService.show('Submitting your review...', 'loading');
 
     const reviewPayload = {
       rating: this.rating,

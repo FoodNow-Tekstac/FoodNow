@@ -6,57 +6,70 @@
 
   <div class="cart-card">
     @if (cart()) {
-      @if (cart()!.items && cart()!.items.length > 0) {
-        <div class="cart-items-container">
-          @for (item of cart()!.items; track item.id) {
-            <div class="cart-item">
-              <div class="item-info">
-                <img [src]="(item.foodItem.imageUrl | fullUrl) || 'https://placehold.co/64x64/1e1e22/9e9e9e?text=' + item.foodItem.name.charAt(0)" [alt]="item.foodItem.name" class="item-image">
-                <div>
-                  <p class="font-bold text-text-light">{{ item.foodItem.name }}</p>
-                  <p class="text-sm text-text-dark">₹{{ item.foodItem.price.toFixed(2) }} each</p>
-                </div>
-              </div>
-              <div class="item-actions">
-                <div class="quantity-stepper">
-                  <button class="quantity-btn" (click)="updateQuantity(item, -1)" aria-label="Decrease quantity">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M5 11h14v2H5z"></path></svg>
-                  </button>
-                  <span class="quantity-display">{{ item.quantity }}</span>
-                  <button class="quantity-btn" (click)="updateQuantity(item, 1)" aria-label="Increase quantity">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2h6z"></path></svg>
-                  </button>
-                </div>
-                <p class="item-total">₹{{ (item.foodItem.price * item.quantity).toFixed(2) }}</p>
-                <button class="remove-btn" (click)="removeItem(item.id)" aria-label="Remove item">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M17 6H7v2h10V6zm0 4H7v2h10v-2zm0 4H7v2h10v-2zM7 2v2h10V2H7z"></path></svg>
-                </button>
-              </div>
-            </div>
-          }
-        </div>
-
-        <div class="cart-summary">
-          <div class="summary-total">
-            <span class="text-xl font-bold">Total:</span>
-            <span class="text-2xl font-extrabold text-primary">₹{{ cart()!.totalPrice.toFixed(2) }}</span>
+    @if (cart()!.items && cart()!.items.length > 0) {
+    <div class="cart-items-container">
+      @for (item of cart()!.items; track item.id) {
+      <div class="cart-item">
+        <div class="item-info">
+          <img
+            [src]="(item.foodItem.imageUrl | fullUrl) || 'https://placehold.co/64x64/1e1e22/9e9e9e?text=' + item.foodItem.name.charAt(0)"
+            [alt]="item.foodItem.name" class="item-image">
+          <div>
+            <p class="font-bold text-text-light">{{ item.foodItem.name }}</p>
+            <p class="text-sm text-text-dark">₹{{ item.foodItem.price.toFixed(2) }} each</p>
           </div>
-          <a routerLink="/customer/payment" class="btn-submit w-full text-center">
-            Proceed to Payment
-          </a>
         </div>
+        <div class="item-actions">
+          <div class="quantity-stepper">
+            <button class="quantity-btn" (click)="updateQuantity(item, -1)" aria-label="Decrease quantity">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M5 11h14v2H5z"></path>
+              </svg>
+            </button>
+            <span class="quantity-display">{{ item.quantity }}</span>
+            <button class="quantity-btn" (click)="updateQuantity(item, 1)" aria-label="Increase quantity">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2h6z"></path>
+              </svg>
+            </button>
+          </div>
+          <p class="item-total">₹{{ (item.foodItem.price * item.quantity).toFixed(2) }}</p>
+          <button class="remove-btn" (click)="removeItem(item.id)" aria-label="Remove item">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path>
+            </svg>
+          </button>
 
-      } @else {
-        <div class="empty-cart-container">
-          <svg xmlns="http://www.w3.org/2000/svg" class="empty-cart-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2zm-1.45-5c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1.003 1.003 0 0020.25 4H5.21l-.94-2H1v2h2l3.6 7.59-1.35 2.44C4.52 15.37 5.24 17 6.5 17H20v-2H6.75a.25.25 0 01-.25-.25l.03-.12.9-1.63h7.45z"></path></svg>
-          <h2 class="text-2xl font-bold mt-4">Your Cart is Empty</h2>
-          <p class="text-text-dark mt-2">Looks like you haven't added any items yet.</p>
         </div>
-      }
-    } @else {
-      <div class="text-center p-8">
-        <p class="text-text-dark">Loading your cart...</p>
       </div>
+      }
+    </div>
+
+    <div class="cart-summary">
+      <div class="summary-total">
+        <span class="text-xl font-bold">Total:</span>
+        <span class="text-2xl font-extrabold text-primary">₹{{ cart()!.totalPrice.toFixed(2) }}</span>
+      </div>
+      <a routerLink="/customer/payment" class="btn-submit w-full text-center">
+        Proceed to Payment
+      </a>
+    </div>
+
+    } @else {
+    <div class="empty-cart-container">
+      <svg xmlns="http://www.w3.org/2000/svg" class="empty-cart-icon" viewBox="0 0 24 24" fill="currentColor">
+        <path
+          d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2zm-1.45-5c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1.003 1.003 0 0020.25 4H5.21l-.94-2H1v2h2l3.6 7.59-1.35 2.44C4.52 15.37 5.24 17 6.5 17H20v-2H6.75a.25.25 0 01-.25-.25l.03-.12.9-1.63h7.45z">
+        </path>
+      </svg>
+      <h2 class="text-2xl font-bold mt-4">Your Cart is Empty</h2>
+      <p class="text-text-dark mt-2">Looks like you haven't added any items yet.</p>
+    </div>
+    }
+    } @else {
+    <div class="text-center p-8">
+      <p class="text-text-dark">Loading your cart...</p>
+    </div>
     }
   </div>
 </main>

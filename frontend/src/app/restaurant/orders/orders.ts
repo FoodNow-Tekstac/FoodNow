@@ -148,7 +148,7 @@ export class RestaurantOrdersComponent implements OnInit, OnDestroy {
   }
 
   readyForPickup(order: RestaurantOrder) {
-    this.notificationService.show('Finding a delivery agent...', 'loading');
+    //this.notificationService.show('Finding a delivery agent...', 'loading');
     this.dashboardService.markOrderReadyForPickup(order.id).subscribe({
       next: () => {
         this.updateLocalOrderStatus(order.id, 'OUT_FOR_DELIVERY');

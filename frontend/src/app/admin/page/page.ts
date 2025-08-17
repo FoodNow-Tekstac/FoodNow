@@ -63,7 +63,7 @@ export class AdminPageComponent implements OnInit {
   }
 
   onAddAgentSubmit(): void {
-    this.notificationService.show('Creating agent...', 'loading');
+    //this.notificationService.show('Creating agent...', 'loading');
     this.adminService.createDeliveryAgent(this.newAgentForm).subscribe({
       next: () => {
         this.notificationService.success('Agent created successfully!');
