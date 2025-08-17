@@ -50,7 +50,7 @@ public class ProfileService {
         dto.setEmail(user.getEmail());
         dto.setPhoneNumber(user.getPhoneNumber());
         dto.setProfileImageUrl(user.getProfileImageUrl());
-        dto.setAddresses(user.getAddresses());
+        //dto.setAddresses(user.getAddresses());
         return dto;
     }
 }

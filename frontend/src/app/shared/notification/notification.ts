@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NotificationService } from '../notification'; // Correctly imports the service
+import { NotificationService } from '../notification';
 
 @Component({
   selector: 'app-notification',
@@ -10,9 +10,6 @@ import { NotificationService } from '../notification'; // Correctly imports the 
   styleUrl: './notification.css'
 })
 export class NotificationComponent {
-  /**
-   * Injects the NotificationService so the template can access its `toasts` signal.
-   */
   protected notificationService = inject(NotificationService);
 }
 

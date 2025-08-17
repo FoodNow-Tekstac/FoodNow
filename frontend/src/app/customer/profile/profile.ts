@@ -1,8 +1,9 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+// profile.component.ts
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { lastValueFrom } from 'rxjs';
-import { UserProfile, ProfileService } from '../../profile/profile';
+import { ProfileService } from '../../profile/profile';
 import { FileService } from '../../shared/services/file';
 import { NotificationService } from '../../shared/notification';
 
@@ -11,24 +12,26 @@ import { NotificationService } from '../../shared/notification';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './profile.html',
-    styleUrls: ['./profile.css'] // <-- ADD THIS LINE
-
+  styleUrls: ['./profile.css']
 })
 export class ProfileComponent implements OnInit {
   private profileService = inject(ProfileService);
   private fileService = inject(FileService);
   private notificationService = inject(NotificationService);
 
-  profile = signal<UserProfile | null>(null);
+  // Use the shared profile signal from the service
+  profile = this.profileService.profileSignal;
   selectedImageFile: File | null = null;
   imagePreviewUrl: string | ArrayBuffer | null = null;
   private backendBaseUrl = 'http://localhost:8080';
 
   ngOnInit(): void {
-    this.profileService.getProfile().subscribe({
-      next: (data) => this.profile.set(data),
-      error: () => this.notificationService.error('Could not load your profile.')
-    });
+    // Only load profile if not already loaded
+    if (!this.profile()) {
+      this.profileService.getProfile().subscribe({
+        error: () => this.notificationService.error('Could not load your profile.')
+      });
+    }
   }
 
   onFileSelected(event: Event): void {
@@ -48,7 +51,7 @@ export class ProfileComponent implements OnInit {
   async onSubmit(): Promise<void> {
     if (!this.profile()) return;
 
-    //this.notificationService.show('Saving profile...', 'loading');
+    this.notificationService.show('Saving profile...', 'loading');
 
     // Create a copy of the profile data to modify
     let updatedProfileData = { ...this.profile()! };
@@ -63,10 +66,9 @@ export class ProfileComponent implements OnInit {
       }
 
       // Step 2: Update the profile with the new data.
-      const finalProfile = await lastValueFrom(this.profileService.updateProfile(updatedProfileData));
+      // This will automatically update the shared signal in the service
+      await lastValueFrom(this.profileService.updateProfile(updatedProfileData));
 
-      // Update the local signal with the saved data from the server
-      this.profile.set(finalProfile);
       this.selectedImageFile = null; // Clear the selected file
       this.imagePreviewUrl = null; // Clear the preview
 

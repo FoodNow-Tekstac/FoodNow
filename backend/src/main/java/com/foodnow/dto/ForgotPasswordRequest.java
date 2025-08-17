@@ -1,11 +1,10 @@
 package com.foodnow.dto;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Email;
 
 public class ForgotPasswordRequest {
     
-    @NotBlank(message = "Email is required")
+    @jakarta.validation.constraints.NotBlank(message = "Email is required")
     @Email(message = "Please provide a valid email address")
     private String email;
 
