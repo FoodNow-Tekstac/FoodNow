@@ -1,0 +1,21 @@
+# Backend files
+backend/target/
+backend/src/main/resources/application.properties
+# A single properties file might contain sensitive data like database credentials
+# you should always exclude it from version control.
+
+# Frontend files
+frontend/node_modules/
+frontend/dist/
+# The dist/ directory contains your compiled and minified assets which
+# can always be recreated by running the build command.
+
+# IDE-specific files
+.idea/
+.vscode/
+
+# Other common files to ignore
+*.log
+*.lock
+# e.g., package-lock.json is usually checked in, but sometimes people want to ignore it.
+# Check your project's conventions.
