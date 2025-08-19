@@ -14,11 +14,8 @@ export class AuthService {
   private notificationService = inject(NotificationService);
   private apiUrl = 'http://localhost:8080/api/auth';
 
-  /**
-   * Handles user login, showing loading and success/error notifications.
-   */
+
   login(credentials: any): Observable<any> {
-    //this.notificationService.showLoading('Logging in...');
     return this.http.post<any>(`${this.apiUrl}/login`, credentials).pipe(
       tap({
         next: (response) => {
@@ -37,9 +34,9 @@ export class AuthService {
     );
   }
 
-  /**
-   * Handles new user registration.
-   */
+  
+    //Handles new user registration.
+  
   register(userData: any): Observable<any> {
     //this.notificationService.showLoading('Creating account...');
     return this.http.post(`${this.apiUrl}/register`, userData, { responseType: 'text' }).pipe(
@@ -56,17 +53,17 @@ export class AuthService {
     );
   }
 
-  /**
-   * Logs the user out by clearing the token and navigating to the login page.
-   */
+
+   //Logs the user out by clearing the token and navigating to the login page.
+   
   logout() {
     localStorage.removeItem('foodnow_token');
     this.router.navigate(['/login']);
   }
 
-  /**
-   * Navigates the user to the correct dashboard based on their role from the JWT.
-   */
+  
+   //Navigates the user to the correct dashboard based on their role from the JWT.
+   
   private navigateUserByRole(token: string): void {
     const decodedToken = parseJwt(token);
     const userRole = decodedToken.roles?.[0];
@@ -77,8 +74,6 @@ export class AuthService {
         this.router.navigate(['/admin/overview']);
       } else if (userRole === 'ROLE_RESTAURANT_OWNER') {
         this.router.navigate(['/restaurant/overview']);
-      } else if (userRole === 'ROLE_DELIVERY_PERSONNEL') {
-        this.router.navigate(['/delivery/dashboard']);
       } else {
         this.router.navigate(['/customer/dashboard']);
       }

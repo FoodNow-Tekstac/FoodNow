@@ -29,7 +29,6 @@ import { NotificationService } from '../../shared/notification';
 import qrcode from 'qrcode-generator';
 import { AuthService } from '../auth';
 
-// Enhanced Receipt Interface
 interface ReceiptData {
   orderNumber: string;
   orderDate: string;
@@ -48,7 +47,6 @@ interface ReceiptData {
   finalAmount: number;
 }
 
-// Custom Validator for Expiry Date
 export function expiryDateValidator(
   control: AbstractControl
 ): ValidationErrors | null {
@@ -117,11 +115,9 @@ export class LoginComponent implements OnInit {
           Validators.minLength(2),
           Validators.maxLength(50),
           Validators.pattern(/^[A-Za-z]+$/), // Only English letters, no spaces/numbers
-          // For all languages, use: /^[\p{L}]+$/u
         ],
       ],
       email: ['', [Validators.required, Validators.email]],
-      // Indian phone numbers: starts with 6,7,8,9 and exactly 10 digits
       phoneNumber: [
         '',
         [Validators.required, Validators.pattern(/^[6-9][0-9]{9}$/)],
@@ -151,7 +147,7 @@ export class LoginComponent implements OnInit {
 
   toggleMode(event: Event): void {
     event.preventDefault();
-    this.isRegisterMode.update((value) => !value);
+    this.isRegisterMode.update((value) => !value); //isRegisterMode has either login or register
     this.resetForms();
   }
 
@@ -189,10 +185,10 @@ export class LoginComponent implements OnInit {
 
     this.authService.register(this.registerForm.value).subscribe({
       next: () => {
-        // this.notificationService.show(
-        //   'Registration successful! Please log in with your credentials.',
-        //   'success'
-        // );
+        this.notificationService.show(
+          'Registration successful! Please log in with your credentials.',
+          'success'
+        );
         this.isRegisterMode.set(false);
         this.resetForms();
       },

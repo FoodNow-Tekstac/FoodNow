@@ -18,17 +18,20 @@ public class PaymentController {
     @Autowired
     private PaymentService paymentService;
 
-    @PostMapping("/process")
-    public ResponseEntity<?> processPayment(@RequestBody Map<String, Integer> payload) {
-        try {
-            int orderId = payload.get("orderId");
-            Payment payment = paymentService.processPaymentForOrder(orderId);
-            return ResponseEntity.ok(toPaymentDto(payment));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
-        }
-    }
-
+@PostMapping("/process")
+public ResponseEntity<?> processPayment(@RequestBody Map<String, Object> payload) { // Changed to Object
+    // In PaymentController.java
+try {
+    // Safely get the orderId as a Number and convert it to an int
+    int orderId = ((Number) payload.get("orderId")).intValue(); // <-- This is the fix
+    String paymentMethod = (String) payload.get("paymentMethod");
+    Payment payment = paymentService.processPaymentForOrder(orderId, paymentMethod);
+    return ResponseEntity.ok(toPaymentDto(payment));
+} catch (Exception e) {
+    e.printStackTrace(); 
+    return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+}
+}
     private PaymentDto toPaymentDto(Payment payment) {
         PaymentDto dto = new PaymentDto();
         dto.setId(payment.getId());

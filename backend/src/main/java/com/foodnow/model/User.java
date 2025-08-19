@@ -34,8 +34,7 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
-    //@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    //private Set<Address> addresses = new HashSet<>();
+  
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore

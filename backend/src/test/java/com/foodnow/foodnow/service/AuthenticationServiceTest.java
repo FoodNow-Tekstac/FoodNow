@@ -74,7 +74,6 @@ class AuthenticationServiceTest {
 
         // Creating a standard user for tests
         testUser = new User();
-        // FIX: Changed from 1L (long) to 1 (int) to match the expected type.
         testUser.setId(1);
         testUser.setName("Test User");
         testUser.setEmail("test@example.com");
@@ -118,7 +117,6 @@ class AuthenticationServiceTest {
     @Test
     void resetPassword_WithValidToken_ShouldResetPassword() {
         // Arrange
-        // FIX: Use setters instead of constructor
         ResetPasswordRequest request = new ResetPasswordRequest();
         request.setToken("validToken");
         request.setNewPassword("newPassword123");
@@ -146,7 +144,6 @@ class AuthenticationServiceTest {
     @Test
     void resetPassword_WithInvalidToken_ShouldThrowResourceNotFoundException() {
         // Arrange
-        // FIX: Use setters instead of constructor
         ResetPasswordRequest request = new ResetPasswordRequest();
         request.setToken("invalidToken");
         request.setNewPassword("newPassword123");
@@ -160,7 +157,6 @@ class AuthenticationServiceTest {
     @Test
     void resetPassword_WithExpiredToken_ShouldThrowIllegalStateException() {
         // Arrange
-        // FIX: Use setters instead of constructor
         ResetPasswordRequest request = new ResetPasswordRequest();
         request.setToken("expiredToken");
         request.setNewPassword("newPassword123");
@@ -180,7 +176,6 @@ class AuthenticationServiceTest {
     @Test
     void authenticateUser_WithValidCredentials_ShouldReturnJwtToken() {
         // Arrange
-        // FIX: Use setters instead of constructor
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setEmail("test@example.com");
         loginRequest.setPassword("password");
@@ -202,7 +197,6 @@ class AuthenticationServiceTest {
     @Test
     void registerUser_WithNewEmail_ShouldCreateAndReturnUser() {
         // Arrange
-        // FIX: Use setters instead of constructor
         SignUpRequest signUpRequest = new SignUpRequest();
         signUpRequest.setName("New User");
         signUpRequest.setEmail("new@example.com");
@@ -228,7 +222,6 @@ class AuthenticationServiceTest {
     @Test
     void registerUser_WithExistingEmail_ShouldThrowIllegalStateException() {
         // Arrange
-        // FIX: Use setters instead of constructor
         SignUpRequest signUpRequest = new SignUpRequest();
         signUpRequest.setName("Existing User");
         signUpRequest.setEmail("test@example.com");
@@ -245,7 +238,6 @@ class AuthenticationServiceTest {
     @Test
     void registerDeliveryPersonnel_WithNewEmail_ShouldCreateAndReturnDeliveryUser() {
         // Arrange
-        // FIX: Use setters instead of constructor
         DeliveryPersonnelSignUpRequest signUpRequest = new DeliveryPersonnelSignUpRequest();
         signUpRequest.setName("Delivery Joe");
         signUpRequest.setEmail("delivery@example.com");

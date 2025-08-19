@@ -29,12 +29,15 @@ import {
   CartService
 } from '../../cart/cart';
 import {
+  Order,
   OrderService
 } from '../../order/order';
 import {
   NotificationService
 } from '../../shared/notification';
 import qrcode from 'qrcode-generator';
+import { PaymentService } from '../../payment/payment';
+import { switchMap } from 'rxjs/operators';
 
 // Enhanced Receipt Interface
 interface ReceiptData {
@@ -91,6 +94,8 @@ export class PaymentComponent implements OnInit {
   private router = inject(Router);
   private notificationService = inject(NotificationService);
   private fb = inject(FormBuilder);
+    private paymentService = inject(PaymentService); // <-- INJECT THE NEW SERVICE
+
 
   cart = signal < Cart | null > (null);
   selectedPaymentMethod = signal('card');
@@ -379,20 +384,49 @@ const addressPayload = {
   postalCode: this.deliveryAddressForm.value.pinCode
 };
 
-this.orderService.placeOrder(addressPayload).subscribe({
-      next: () => {
-        this.notificationService.success('Order placed successfully!');
+this.orderService.placeOrder(addressPayload).pipe(
+    // 3. Use `switchMap` to take the result of the first call (newOrder)...
+    switchMap((newOrder: Order) => {
+      this.notificationService.show('Processing payment...', 'loading');
+      // ...and use its ID to make the second API call.
+        return this.paymentService.processPayment(newOrder.id, this.getPaymentMethodName()); 
+    })
+  ).subscribe({
+    // 4. The 'next' block only runs if BOTH API calls succeed.
+    next: (paymentResult) => {
+      this.notificationService.success('Order placed and payment successful!');
 
-        // Deduct amount from mock wallet if it was the selected payment method
-        if (this.selectedPaymentMethod() === 'wallet') {
-          this.mockWalletBalance.update(balance => balance - receiptData.finalAmount);
-        }
+      // All of your original logic for showing the receipt goes here.
+      const currentCart = this.cart();
+      const now = new Date();
+      const receiptData: ReceiptData = {
+        orderNumber: this.generateOrderNumber(), // Or ideally use the ID from newOrder
+        orderDate: now.toLocaleDateString('en-IN'),
+        orderTime: now.toLocaleTimeString('en-IN'),
+        customerName: this.selectedPaymentMethod() === 'card' ?
+          this.cardForm.get('cardHolder')?.value || 'Customer' : 'Customer',
+        deliveryAddress: this.deliveryAddressForm.value,
+        paymentMethod: this.getPaymentMethodName(),
+        paymentDetails: this.getPaymentDetails(),
+        items: currentCart?.items || [],
+        totalPrice: currentCart?.totalPrice || 0,
+        taxAmount: (currentCart?.totalPrice || 0) * 0.05,
+        finalAmount: (currentCart?.totalPrice || 0) * 1.05
+      };
+      
+      if (this.selectedPaymentMethod() === 'wallet') {
+        this.mockWalletBalance.update(balance => balance - receiptData.finalAmount);
+      }
 
-        this.cartService.getCart().subscribe();
-        this.receiptData.set(receiptData);
-        this.isReceiptModalOpen.set(true);
-      },
-      error: () => this.notificationService.error('Could not place your order.')
-    });
-  }
+      this.cartService.getCart().subscribe(); // Refreshes cart item count in the header
+      this.receiptData.set(receiptData);
+      this.isReceiptModalOpen.set(true);
+    },
+    // 5. The 'error' block runs if EITHER API call fails.
+    error: (err) => {
+      console.error('Order placement or payment failed', err);
+      this.notificationService.error('There was a problem with your order. Please try again.');
+    }
+  });
+}
 }

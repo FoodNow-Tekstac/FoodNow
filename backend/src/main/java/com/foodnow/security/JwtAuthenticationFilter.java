@@ -41,7 +41,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
                 String username = tokenProvider.getUsernameFromJWT(jwt);
                 
-                // THIS IS THE FIX: We now extract the roles directly from the token's claims
                 Claims claims = tokenProvider.getClaimsFromJWT(jwt);
                 List<String> roles = claims.get("roles", List.class);
                 List<SimpleGrantedAuthority> authorities = roles.stream()

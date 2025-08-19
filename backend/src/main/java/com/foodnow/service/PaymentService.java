@@ -24,7 +24,7 @@ public class PaymentService {
     private OrderRepository orderRepository;
 
     @Transactional
-    public Payment processPaymentForOrder(int orderId) {
+    public Payment processPaymentForOrder(int orderId,String paymentMethod) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found with ID: " + orderId));
 
@@ -32,19 +32,19 @@ public class PaymentService {
             throw new IllegalStateException("Payment can only be processed for PENDING orders.");
         }
 
-        // Simulates a successful payment
-        boolean isPaymentSuccessful = Math.random() > 0.1;
-
+boolean isPaymentSuccessful = true;
         Payment payment = new Payment();
         payment.setOrder(order);
         payment.setAmount(order.getTotalPrice());
         payment.setPaymentTime(LocalDateTime.now());
         payment.setTransactionId("txn_" + UUID.randomUUID().toString().replace("-", ""));
+    payment.setPaymentMethod(paymentMethod); // <-- SET THE PAYMENT METHOD HERE
 
         if (isPaymentSuccessful) {
             payment.setStatus(PaymentStatus.SUCCESSFUL);
-            // THE FIX: The line below has been removed.
             // The order status will now remain PENDING after payment.
+                    order.setStatus(OrderStatus.PENDING); 
+
         } else {
             payment.setStatus(PaymentStatus.FAILED);
         }

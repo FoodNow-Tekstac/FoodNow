@@ -22,7 +22,6 @@ public class OrderController {
 
     @PostMapping
 public ResponseEntity<OrderDto> placeOrder(@RequestBody OrderAddressDto addressDto) {
-            System.out.println("--- RECEIVED IN CONTROLLER: " + addressDto.toString() + " ---");
 
     try {
         OrderDto orderDto = orderService.placeOrderFromCart(addressDto);

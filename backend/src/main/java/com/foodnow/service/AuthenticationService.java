@@ -74,9 +74,6 @@ public class AuthenticationService {
         
         tokenRepository.delete(resetToken);
     }
-    
-    // Other methods (authenticateUser, registerUser, etc.) remain the same
-
 
     /**
      * Authenticates a user and returns a JWT token.

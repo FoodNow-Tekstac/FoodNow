@@ -2,11 +2,11 @@ package com.foodnow;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.event.ApplicationReadyEvent; // 1. Add this import
-import org.springframework.context.event.EventListener; // 2. Add this import
-import org.springframework.core.env.Environment; // 3. Add this import
-import org.springframework.beans.factory.annotation.Autowired; // 4. Add this import
-import org.springframework.scheduling.annotation.EnableScheduling; // ADD THIS ANNOTATION
+import org.springframework.boot.context.event.ApplicationReadyEvent; 
+import org.springframework.context.event.EventListener; 
+import org.springframework.core.env.Environment; 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling; 
 
 @SpringBootApplication
 @EnableScheduling // This enables the TaskScheduler for the 10-second delay
@@ -17,9 +17,6 @@ public class FoodNowApplication {
         SpringApplication.run(FoodNowApplication.class, args);
     }
 
-    // ===============================================================
-    // 5. ADD THIS ENTIRE BLOCK OF CODE
-    // ===============================================================
     @Autowired
     private Environment environment;
 
@@ -31,6 +28,5 @@ public class FoodNowApplication {
         System.out.println("  Access it here: http://localhost:" + port);
         System.out.println("=========================================================\n");
     }
-    // ===============================================================
 
 }

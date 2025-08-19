@@ -7,4 +7,5 @@ public enum OrderStatus {
     OUT_FOR_DELIVERY,
     DELIVERED,
     CANCELLED       // Order was cancelled by user or restaurant
+, PROCESSING
 }

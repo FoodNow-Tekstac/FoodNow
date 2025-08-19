@@ -14,7 +14,8 @@ public class Payment {
     @OneToOne
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
-
+    @Column(name = "payment_method") // Make sure this matches your DB column name
+    private String paymentMethod;
     @Column(nullable = false)
     private double amount;
 
@@ -39,6 +40,12 @@ public class Payment {
     public void setStatus(PaymentStatus status) { this.status = status; }
     public LocalDateTime getPaymentTime() { return paymentTime; }
     public void setPaymentTime(LocalDateTime paymentTime) { this.paymentTime = paymentTime; }
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
     public String getTransactionId() { return transactionId; }
     public void setTransactionId(String transactionId) { this.transactionId = transactionId; }
 }
