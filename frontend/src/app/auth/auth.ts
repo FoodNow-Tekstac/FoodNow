@@ -38,7 +38,6 @@ export class AuthService {
     //Handles new user registration.
   
   register(userData: any): Observable<any> {
-    //this.notificationService.showLoading('Creating account...');
     return this.http.post(`${this.apiUrl}/register`, userData, { responseType: 'text' }).pipe(
       tap({
         next: (responseMessage) => {

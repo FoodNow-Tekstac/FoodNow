@@ -27,7 +27,6 @@ export class ForgotPasswordComponent {
     }
 
     this.isLoading = true;
-    //this.notificationService.showLoading('Sending reset link...');
 
     this.authService.forgotPassword(this.email).subscribe({
       next: (response) => {

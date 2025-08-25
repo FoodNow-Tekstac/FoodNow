@@ -1,6 +1,6 @@
 package com.foodnow.service;
 
-import com.foodnow.dto.PendingApplicationDto; // 1. Import the new DTO
+import com.foodnow.dto.PendingApplicationDto;
 import com.foodnow.dto.RestaurantApplicationRequest;
 import com.foodnow.dto.UserDto;
 import com.foodnow.exception.ResourceNotFoundException;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors; // 2. Import Collectors
+import java.util.stream.Collectors;
 
 @Service
 public class RestaurantApplicationService {
@@ -23,8 +23,8 @@ public class RestaurantApplicationService {
     @Autowired private RestaurantApplicationRepository applicationRepository;
     @Autowired private UserRepository userRepository;
     @Autowired private RestaurantRepository restaurantRepository;
-    
- 
+    @Autowired private EmailService emailService; 
+
     @Transactional(readOnly = true)
     public List<PendingApplicationDto> getPendingApplicationsForAdmin() {
         return applicationRepository.findByStatus(ApplicationStatus.PENDING).stream()
@@ -32,7 +32,8 @@ public class RestaurantApplicationService {
             .collect(Collectors.toList());
     }
 
-    // --- All other existing methods in your service ---
+    // FIX #1 is in this method
+    @Transactional // It's good practice to make this whole method a single transaction
     public RestaurantApplication applyForRestaurant(RestaurantApplicationRequest request) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User applicant = userRepository.findById(userDetails.getId())
@@ -55,9 +56,20 @@ public class RestaurantApplicationService {
         newApplication.setApplicant(applicant);
         newApplication.setStatus(ApplicationStatus.PENDING);
         
-        return applicationRepository.save(newApplication);
+        // First and ONLY save for the application
+        RestaurantApplication savedApplication = applicationRepository.save(newApplication);
+
+        emailService.sendApplicationConfirmationEmail(
+            applicant.getEmail(),
+            applicant.getName(),
+            savedApplication.getRestaurantName()
+        );
+
+        // --- FIX #1: Return the ALREADY saved object, don't save it again. ---
+        return savedApplication;
     }
 
+    // FIX #2 is in this method
     @Transactional
     public Restaurant approveApplication(int applicationId) {
         RestaurantApplication application = applicationRepository.findById(applicationId)
@@ -80,7 +92,18 @@ public class RestaurantApplicationService {
         restaurant.setBusinessId(application.getBusinessId());
         restaurant.setImageUrl(application.getImageUrl());
         restaurant.setOwner(applicant);
-        return restaurantRepository.save(restaurant);
+
+        // First and ONLY save for the restaurant
+        Restaurant savedRestaurant = restaurantRepository.save(restaurant);
+        
+        emailService.sendApplicationApprovalEmail(
+            applicant.getEmail(),
+            applicant.getName(),
+            savedRestaurant.getName()
+        );
+
+        // --- FIX #2: Return the ALREADY saved object, don't save it again. ---
+        return savedRestaurant;
     }
 
     @Transactional
@@ -94,9 +117,17 @@ public class RestaurantApplicationService {
         application.setStatus(ApplicationStatus.REJECTED);
         application.setRejectionReason(reason);
         applicationRepository.save(application);
+
+        User applicant = application.getApplicant();
+        emailService.sendApplicationRejectionEmail(
+            applicant.getEmail(),
+            applicant.getName(),
+            application.getRestaurantName(),
+            reason
+        );
     }
     
-    // --- NEW HELPER METHODS TO CONVERT TO DTOs ---
+    // --- Helper methods remain the same ---
     private PendingApplicationDto toPendingApplicationDto(RestaurantApplication app) {
         PendingApplicationDto dto = new PendingApplicationDto();
         dto.setId(app.getId());
@@ -115,7 +146,6 @@ public class RestaurantApplicationService {
         dto.setId(user.getId());
         dto.setName(user.getName());
         dto.setEmail(user.getEmail());
-        // You might want to add other fields here if needed by the DTO
         return dto;
     }
 }
