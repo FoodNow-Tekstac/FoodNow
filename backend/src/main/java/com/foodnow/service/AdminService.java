@@ -102,7 +102,7 @@ public class AdminService {
         dto.setName(restaurant.getName());
         dto.setAddress(restaurant.getAddress());
         dto.setPhoneNumber(restaurant.getPhoneNumber());
-        dto.setLocationPin(restaurant.getLocationPin());
+        dto.setBusinessId(restaurant.getBusinessId());
         
         if (restaurant.getOwner() != null) {
             dto.setOwnerName(restaurant.getOwner().getName());

@@ -1,16 +1,18 @@
 <div class="dashboard-layout">
-  <!-- Sidebar Navigation -->
   <aside class="sidebar">
-    <!-- Restaurant Name / Logo -->
     <div class="sidebar-header">
       @if (restaurantData(); as data) {
-        <h1 class="restaurant-name">{{ data.restaurantProfile.name }}</h1>
+        <div class="profile-preview">
+          <button type="button" class="profile-image-button" (click)="openViewModal()" title="View larger image">
+            <img [src]="(data.restaurantProfile.imageUrl | fullUrl) || 'https://placehold.co/64x64/374151/9ca3af?text=' + data.restaurantProfile.name.charAt(0)" alt="Logo" class="profile-image">
+          </button>
+          <h1 class="restaurant-name">{{ data.restaurantProfile.name }}</h1>
+        </div>
       } @else {
         <h1 class="restaurant-name">Dashboard</h1>
       }
     </div>
 
-    <!-- Main Navigation Links -->
     <nav class="sidebar-nav">
       <a routerLink="overview" routerLinkActive="active" class="nav-link">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"></path></svg>
@@ -28,9 +30,11 @@
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"></path></svg>
         <span>Customer Reviews</span>
       </a>
+      <button type="button" (click)="openUploadModal()" class="nav-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"></path></svg>
+        <span>Update Profile Picture</span>
+      </button>
     </nav>
-
-    <!-- Logout Button -->
     <div class="sidebar-footer">
       <button (click)="logout()" class="logout-btn">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"></path></svg>
@@ -39,8 +43,47 @@
     </div>
   </aside>
 
-  <!-- Main Content Area -->
   <main class="main-content">
     <router-outlet></router-outlet>
   </main>
 </div>
+
+@if (isUploadModalVisible()) {
+  <div class="modal-overlay" (click)="closeUploadModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">Update Profile Picture</h2>
+      <p class="modal-subtitle">Choose a new image file to upload.</p>
+      
+      <div class="form-field">
+        <label for="restaurant-image-upload" class="file-upload-label">
+          <span>Choose File</span>
+          <input type="file" id="restaurant-image-upload" (change)="onFileSelected($event)" accept="image/*" class="file-input">
+        </label>
+        @if (selectedImageFile) {
+          <span class="file-name">{{ selectedImageFile.name }}</span>
+        }
+      </div>
+
+      @if (imagePreviewUrl) {
+        <div class="image-preview-container">
+          <img [src]="imagePreviewUrl" alt="New image preview" class="image-preview">
+        </div>
+      }
+
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="closeUploadModal()">Cancel</button>
+        <button type="button" class="btn-submit" (click)="handleImageUpdate()" [disabled]="!selectedImageFile">
+          Upload and Save
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (isViewModalVisible() && restaurantData(); as data) {
+  <div class="modal-overlay" (click)="closeViewModal()">
+    <div class="view-modal-content" (click)="$event.stopPropagation()">
+      <img [src]="data.restaurantProfile.imageUrl | fullUrl" alt="{{ data.restaurantProfile.name }} Logo" class="enlarged-profile-image">
+    </div>
+  </div>
+}

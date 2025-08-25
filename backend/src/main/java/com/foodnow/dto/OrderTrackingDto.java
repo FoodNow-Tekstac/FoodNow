@@ -7,19 +7,23 @@ import com.foodnow.model.OrderStatus;
  * It includes the restaurant's location pin needed for the map,
  * as well as a structured delivery address.
  */
+
+
+/**
+ * A DTO specifically for the order tracking page. 
+ * It includes the restaurant's business ID.
+ */
 public class OrderTrackingDto extends OrderDto { // Extends the existing OrderDto
     
-    private String restaurantLocationPin;
+    private String restaurantBusinessId;
 
     
-    // Getters and Setters
-    public String getRestaurantLocationPin() {
-        return restaurantLocationPin;
+    // Getters and Setters updated
+    public String getRestaurantBusinessId() {
+        return restaurantBusinessId;
     }
 
-    public void setRestaurantLocationPin(String restaurantLocationPin) {
-        this.restaurantLocationPin = restaurantLocationPin;
+    public void setRestaurantBusinessId(String restaurantBusinessId) {
+        this.restaurantBusinessId = restaurantBusinessId;
     }
-
-    
 }

@@ -109,3 +109,173 @@
     grid-column: 1 / -1;
   }
 }
+
+:host {
+  display: block;
+}
+
+.page-container {
+  max-width: 800px;
+  margin: 2rem auto; /* Reduced top margin for better spacing */
+  padding: 0 1rem;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.page-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--text-light);
+}
+
+.page-subtitle {
+  color: var(--text-dark);
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+
+.profile-card {
+  background-color: var(--bg-light);
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+/* --- CORRECTED AVATAR SECTION STYLES --- */
+.avatar-section {
+  display: flex;
+  align-items: center; /* Vertically align items */
+  gap: 1.5rem; /* Add some space between avatar and text */
+  padding: 2rem;
+}
+
+.avatar-image-button {
+  padding: 0;
+  border: none;
+  background: none;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0; /* Prevent the button from shrinking */
+}
+
+.avatar-image {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--border-color);
+  display: block; /* Removes extra space below the image */
+}
+
+.avatar-image-button::after {
+  content: 'View';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0,0,0,0.6);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  pointer-events: none;
+}
+
+.avatar-image-button:hover::after {
+  opacity: 1;
+}
+
+.avatar-actions {
+  text-align: left;
+}
+/* --- END OF CORRECTIONS --- */
+
+.upload-btn {
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  display: inline-block;
+  background-color: var(--bg-dark); /* Added for consistency */
+  border: 1px solid var(--border-color); /* Added for consistency */
+}
+
+.upload-hint {
+  font-size: 0.75rem;
+  color: var(--text-dark);
+  margin-top: 0.5rem;
+}
+
+.hidden {
+  display: none;
+}
+
+.form-divider {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 0;
+}
+
+.form-fields {
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+.form-footer {
+  background-color: var(--bg-dark);
+  padding: 1.5rem 2rem;
+  border-top: 1px solid var(--border-color);
+  text-align: right;
+}
+
+.save-btn {
+  padding: 0.75rem 1.5rem;
+}
+
+/* --- VIEW IMAGE MODAL STYLES --- */
+.view-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  cursor: pointer;
+}
+
+.view-modal-content {
+  padding: 1rem;
+  background: none;
+  cursor: default;
+}
+
+.enlarged-image {
+  display: block;
+  max-width: 90vw;
+  max-height: 90vh;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+/* --- RESPONSIVE ADJUSTMENTS --- */
+@media (min-width: 768px) {
+  .form-fields {
+    grid-template-columns: 1fr 1fr;
+  }
+  .form-fields .form-field:first-child {
+    grid-column: 1 / -1;
+  }
+}

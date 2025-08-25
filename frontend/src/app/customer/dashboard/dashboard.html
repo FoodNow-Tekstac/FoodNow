@@ -65,10 +65,7 @@
     <a [routerLink]="['/customer/restaurant', restaurant.id]" class="card-link">
       <div class="card-image-wrapper">
         <img
-          [src]="
-            (restaurant.imageUrl | fullUrl) ||
-            'https://placehold.co/600x400/1f2937/9ca3af?text=FoodNow'
-          "
+          [src]="(restaurant.imageUrl | fullUrl) || 'https://placehold.co/600x400/1f2937/9ca3af?text=FoodNow'"
           [alt]="restaurant.name"
           class="card-image"
         />

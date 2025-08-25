@@ -6,6 +6,9 @@ import com.foodnow.exception.ResourceNotFoundException;
 import com.foodnow.model.*;
 import com.foodnow.repository.OrderRepository;
 import com.foodnow.repository.UserRepository;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
@@ -17,13 +20,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class OrderManagementService {
-
+private static final Logger log = LoggerFactory.getLogger(OrderManagementService.class);
     @Autowired private OrderRepository orderRepository;
     @Autowired private UserRepository userRepository;
     @Autowired private TaskScheduler taskScheduler;
     @Autowired private PaymentService paymentService;
 
-    // The method now uses the correct, more robust query from the repository.
     public List<Order> getOrdersForRestaurant(int restaurantId) {
         return orderRepository.findByRestaurantIdWithItems(restaurantId);
     }
@@ -37,19 +39,24 @@ public class OrderManagementService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with ID: " + orderId));
 
-        if (newStatus == OrderStatus.CANCELLED && order.getStatus() == OrderStatus.PENDING) {
-            paymentService.initiateRefund(orderId);
-        }
+if (newStatus == OrderStatus.CANCELLED && order.getStatus() == OrderStatus.PENDING) {
+    try {
+        log.info("Attempting to initiate refund for order ID: {}", orderId);
+        paymentService.initiateRefund(orderId);
+        log.info("Successfully initiated refund for order ID: {}", orderId);
+    } catch (Exception e) {
+        // This will log the specific error without crashing the server!
+        log.error("CRITICAL: Failed to process refund for order ID: {}. Error: {}", orderId, e.getMessage(), e);
+      
+    }
+}
 
         order.setStatus(newStatus);
-        
-        // ... (auto-assignment and auto-delivery logic remains the same)
-        
+                
         Order savedOrder = orderRepository.save(order);
         return toOrderDto(savedOrder); // Return the DTO from within the transaction
     }
     
-    // --- DTO Helper Methods (moved here from controller) ---
     private OrderDto toOrderDto(Order order) {
         OrderDto dto = new OrderDto();
         dto.setId(order.getId());

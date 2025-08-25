@@ -30,6 +30,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-align: center; /* Centering the name */
 }
 
 /* --- Navigation Links --- */
@@ -40,6 +41,7 @@
   flex-grow: 1; /* Pushes footer to the bottom */
 }
 
+/* This targets both <a> and <button> nav links */
 .nav-link {
   display: flex;
   align-items: center;
@@ -51,6 +53,13 @@
   color: var(--text-dark);
   transition: all 0.2s ease;
   border-left: 3px solid transparent;
+  width: 100%; /* Ensure button takes full width */
+  background: none; /* Reset button default background */
+  border: none; /* Reset button default border */
+  cursor: pointer; /* Ensure button shows pointer */
+  font-family: inherit; /* Ensure button uses the same font */
+  font-size: inherit; /* Ensure button uses the same font size */
+  text-align: left; /* Align button text to the left */
 }
 
 .nav-link:hover {
@@ -104,4 +113,371 @@
 .main-content {
   padding: 2rem;
   overflow-y: auto; /* Allows content to scroll independently */
+}
+
+/* --- Sidebar Profile Preview --- */
+.profile-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.profile-image {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border-color);
+  margin-bottom: 0.5rem;
+}
+
+/* --- CORRECTED MODAL STYLES --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(17, 24, 39, 0.8); /* Using a dark overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.modal-content {
+  background-color: var(--bg-light); /* Use theme background */
+  color: var(--text-dark); /* Use theme text color */
+  padding: 2rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--text-light); /* Use theme light text */
+}
+.modal-subtitle {
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-dark);
+}
+.form-field {
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.file-upload-label {
+  display: inline-block;
+  padding: 0.6rem 1rem;
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.file-upload-label:hover {
+  background-color: #374151; /* A slightly lighter dark shade for hover */
+}
+.file-input {
+  display: none;
+}
+.file-name {
+  color: var(--text-dark);
+  font-style: italic;
+}
+.image-preview-container {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.image-preview {
+  max-width: 150px;
+  max-height: 150px;
+  border-radius: 8px;
+  border: 2px solid var(--border-color);
+}
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+.btn-secondary {
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  padding: 0.7rem 1.2rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-submit {
+  background-color: var(--primary);
+  color: white;
+  padding: 0.7rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.btn-submit:disabled {
+  background-color: var(--primary);
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+:host {
+  display: block;
+}
+
+.dashboard-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: 100vh;
+}
+
+/* --- Sidebar --- */
+.sidebar {
+  background-color: var(--bg-light);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+}
+
+.sidebar-header {
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.restaurant-name {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+
+/* --- Navigation Links --- */
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex-grow: 1;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  font-weight: 500;
+  color: var(--text-dark);
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  text-align: left;
+}
+
+.nav-link:hover {
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+}
+
+.nav-link.active {
+  background-color: rgba(var(--primary-rgb, 108, 95, 245), 0.1);
+  color: var(--primary);
+  border-left-color: var(--primary);
+}
+
+.nav-link svg {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+/* --- Sidebar Footer --- */
+.sidebar-footer {
+  margin-top: 1.5rem;
+}
+
+.logout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background: none;
+  border: none;
+  font-weight: 500;
+  color: var(--text-dark);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logout-btn:hover {
+  background-color: var(--bg-dark);
+  color: var(--error);
+}
+
+/* --- Main Content --- */
+.main-content {
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+/* --- Sidebar Profile --- */
+.profile-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+.profile-image-button {
+  padding: 0;
+  border: none;
+  background: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.profile-image {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border-color);
+  transition: transform 0.2s ease;
+}
+.profile-image-button:hover .profile-image {
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(var(--primary-rgb), 0.5);
+}
+
+/* --- Shared Modal Overlay --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(17, 24, 39, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* --- Upload Modal --- */
+.modal-content {
+  background-color: var(--bg-light);
+  color: var(--text-dark);
+  padding: 2rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  display: flex; /* Using flexbox for better layout */
+  flex-direction: column;
+}
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--text-light);
+}
+.modal-subtitle {
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-dark);
+}
+.form-field {
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.file-upload-label {
+  display: inline-block;
+  padding: 0.6rem 1rem;
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.file-upload-label:hover {
+  background-color: #374151;
+}
+.file-input { display: none; }
+.file-name { color: var(--text-dark); font-style: italic; }
+.image-preview-container {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  margin-top: 1rem;
+}
+.image-preview {
+  max-width: 150px;
+  max-height: 150px;
+  border-radius: 8px;
+  border: 2px solid var(--border-color);
+}
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: auto; /* Pushes actions to the bottom */
+}
+.btn-secondary {
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  padding: 0.7rem 1.2rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-submit {
+  background-color: var(--primary);
+  color: white;
+  padding: 0.7rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.btn-submit:disabled {
+  background-color: var(--primary);
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* --- NEW View Image Modal --- */
+.view-modal-content {
+  background: none;
+  padding: 1rem;
+}
+.enlarged-profile-image {
+  max-width: 80vw;
+  max-height: 80vh;
+  border-radius: 8px;
+  border: 2px solid var(--border-color);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.7);
 }

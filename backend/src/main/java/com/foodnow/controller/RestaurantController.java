@@ -3,13 +3,19 @@ package com.foodnow.controller;
 import com.foodnow.dto.FoodItemDto;
 import com.foodnow.dto.RestaurantDashboardDto;
 import com.foodnow.dto.RestaurantDto;
+import com.foodnow.dto.UpdateRestaurantImageRequest;
 import com.foodnow.model.FoodItem;
 import com.foodnow.model.Restaurant;
+import com.foodnow.service.FileStorageService;
 import com.foodnow.service.RestaurantService;
+import org.slf4j.Logger; // 1. Import Logger
+import org.slf4j.LoggerFactory; // 2. Import LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,9 +25,49 @@ import java.util.stream.Collectors;
 @PreAuthorize("hasRole('RESTAURANT_OWNER')")
 public class RestaurantController {
 
+    // 3. Add a logger instance
+    private static final Logger logger = LoggerFactory.getLogger(RestaurantController.class);
+
     @Autowired
     private RestaurantService restaurantService;
+    
+    @Autowired
+    private FileStorageService fileStorageService;
 
+    // ... your other endpoints ...
+
+    @PostMapping("/profile/upload-image")
+    public ResponseEntity<RestaurantDto> uploadAndUpdateRestaurantImage(@RequestParam("file") MultipartFile file) {
+        // 4. Add a log to see if the method is being called
+        logger.info("Attempting to upload and update restaurant profile image...");
+        
+        if (file.isEmpty()) {
+            logger.error("Upload failed because the file was empty.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        try {
+            logger.info("File received: {}, size: {} bytes", file.getOriginalFilename(), file.getSize());
+            
+            // First, save the file using the storage service
+            String filePath = fileStorageService.storeFile(file);
+            
+            // 5. Add a log to see the new file path
+            logger.info("File successfully stored at path: {}", filePath);
+
+            // Then, update the database with the new file path
+            Restaurant updatedRestaurant = restaurantService.updateRestaurantImage(filePath);
+            
+            return ResponseEntity.ok(toRestaurantDto(updatedRestaurant));
+        } catch (Exception e) {
+            // 6. THIS IS THE MOST IMPORTANT LOG: It will print the exact error
+            logger.error("Failed to upload restaurant image due to an exception.", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    // ... all other methods and helper methods ...
+    
     @GetMapping("/dashboard")
     public ResponseEntity<RestaurantDashboardDto> getDashboardData() {
         return ResponseEntity.ok(restaurantService.getDashboardData());
@@ -44,13 +90,17 @@ public class RestaurantController {
         Restaurant updatedRestaurant = restaurantService.updateRestaurantProfile(restaurant);
         return ResponseEntity.ok(toRestaurantDto(updatedRestaurant));
     }
+    
+    @PutMapping("/profile/image")
+    public ResponseEntity<RestaurantDto> updateRestaurantImage(@RequestBody UpdateRestaurantImageRequest request) {
+        Restaurant updatedRestaurant = restaurantService.updateRestaurantImage(request.getImageUrl());
+        return ResponseEntity.ok(toRestaurantDto(updatedRestaurant));
+    }
 
     @GetMapping("/menu")
     public ResponseEntity<List<FoodItemDto>> getMenu() {
         List<FoodItem> menu = restaurantService.getMenuByCurrentOwner();
-        List<FoodItemDto> dtoList = menu.stream()
-                                      .map(this::toFoodItemDto)
-                                      .collect(Collectors.toList());
+        List<FoodItemDto> dtoList = menu.stream().map(this::toFoodItemDto).collect(Collectors.toList());
         return ResponseEntity.ok(dtoList);
     }
 
@@ -62,8 +112,8 @@ public class RestaurantController {
         item.setPrice(foodItemDto.getPrice());
         item.setImageUrl(foodItemDto.getImageUrl());
         item.setAvailable(true);
-item.setCategory(foodItemDto.getCategory()); // Set category
-        item.setDietaryType(foodItemDto.getDietaryType()); // Set dietary type
+        item.setCategory(foodItemDto.getCategory());
+        item.setDietaryType(foodItemDto.getDietaryType());
         FoodItem savedItem = restaurantService.addFoodItem(item);
         return ResponseEntity.ok(toFoodItemDto(savedItem));
     }
@@ -75,8 +125,8 @@ item.setCategory(foodItemDto.getCategory()); // Set category
         existingItem.setDescription(foodItemDto.getDescription());
         existingItem.setPrice(foodItemDto.getPrice());
         existingItem.setImageUrl(foodItemDto.getImageUrl());
-existingItem.setCategory(foodItemDto.getCategory()); // Update category
-        existingItem.setDietaryType(foodItemDto.getDietaryType()); // Update dietary type
+        existingItem.setCategory(foodItemDto.getCategory());
+        existingItem.setDietaryType(foodItemDto.getDietaryType());
         FoodItem updated = restaurantService.updateFoodItem(itemId, existingItem);
         return ResponseEntity.ok(toFoodItemDto(updated));
     }
@@ -92,8 +142,7 @@ existingItem.setCategory(foodItemDto.getCategory()); // Update category
         restaurantService.deleteFoodItem(itemId);
         return ResponseEntity.ok("Food item deleted successfully.");
     }
-
-    // --- Helper Methods for DTO Conversion ---
+    
     private FoodItemDto toFoodItemDto(FoodItem item) {
         FoodItemDto dto = new FoodItemDto();
         dto.setId(item.getId());
@@ -102,8 +151,8 @@ existingItem.setCategory(foodItemDto.getCategory()); // Update category
         dto.setPrice(item.getPrice());
         dto.setImageUrl(item.getImageUrl());
         dto.setAvailable(item.isAvailable());
-        dto.setCategory(item.getCategory()); // Include in DTO
-        dto.setDietaryType(item.getDietaryType()); // Include in DTO
+        dto.setCategory(item.getCategory());
+        dto.setDietaryType(item.getDietaryType());
         return dto;
     }
 
@@ -113,9 +162,8 @@ existingItem.setCategory(foodItemDto.getCategory()); // Update category
         dto.setName(restaurant.getName());
         dto.setAddress(restaurant.getAddress());
         dto.setPhoneNumber(restaurant.getPhoneNumber());
-        dto.setLocationPin(restaurant.getLocationPin());
+        dto.setBusinessId(restaurant.getBusinessId());
         dto.setImageUrl(restaurant.getImageUrl());
-
         if (restaurant.getMenu() != null) {
             List<FoodItemDto> menuDto = restaurant.getMenu().stream()
                 .map(this::toFoodItemDto)

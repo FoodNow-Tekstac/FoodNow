@@ -9,12 +9,14 @@ import com.foodnow.repository.RestaurantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class PublicService {
+    private static final Logger logger = LoggerFactory.getLogger(PublicService.class);
 
     @Autowired
     private RestaurantRepository restaurantRepository;
@@ -51,12 +53,14 @@ public class PublicService {
     }
 
     private RestaurantDto toRestaurantDtoWithMenu(Restaurant restaurant) {
+                logger.info("Mapping Restaurant to DTO: Name='{}', ImageUrl='{}'", restaurant.getName(), restaurant.getImageUrl());
+
         RestaurantDto dto = new RestaurantDto();
         dto.setId(restaurant.getId());
         dto.setName(restaurant.getName());
         dto.setAddress(restaurant.getAddress());
         dto.setPhoneNumber(restaurant.getPhoneNumber());
-        dto.setLocationPin(restaurant.getLocationPin());
+        dto.setBusinessId(restaurant.getBusinessId());
         dto.setImageUrl(restaurant.getImageUrl());
         
         List<FoodItemDto> menuDto = restaurant.getMenu().stream()

@@ -9,27 +9,38 @@ export interface RestaurantOrderItem {
   itemName: string;
 }
 
-// This is the key change to fix the errors
 export interface RestaurantOrder {
   id: number;
   orderTime: string;
   totalPrice: number;
-  // UPDATED: The status type now includes all possible values.
   status: 'PENDING' | 'CONFIRMED' | 'PREPARING' | 'OUT_FOR_DELIVERY' | 'DELIVERED' | 'CANCELLED';
   items: RestaurantOrderItem[];
   hasReview: boolean;
   reviewRating?: number;
   reviewComment?: string;
-  // UPDATED: Changed from customerName to a nested customer object.
   customer: {
     id: number;
     name: string;
   };
 }
 
+// 1. CREATE a specific interface for the restaurant profile
+export interface RestaurantProfile {
+  id: number;
+  name: string;
+  address: string;
+  phoneNumber: string;
+  businessId: string;
+  ownerName: string;
+  imageUrl: string | null;
+  // menu can be null here as it's handled separately in the dashboard
+  menu: any[] | null; 
+}
+
+// 2. USE the new RestaurantProfile interface here
 export interface DashboardData {
   orders: RestaurantOrder[];
-  restaurantProfile: { name: string; [key: string]: any };
+  restaurantProfile: RestaurantProfile; 
   menu: any[];
   reviews: any[];
 }
@@ -50,13 +61,11 @@ export interface MenuItemPayload {
 })
 export class RestaurantDashboardService {
   private http = inject(HttpClient);
-  // Using your API url structure
   private apiUrl = 'http://localhost:8080/api';
 
   dashboardData = signal<DashboardData | null>(null);
 
   constructor() {
-    // Automatically fetch data when the service is initialized
     this.fetchDashboardData().subscribe();
   }
 
@@ -67,7 +76,6 @@ export class RestaurantDashboardService {
   }
 
   // --- ORDER MANAGEMENT METHODS ---
-  // UPDATED: The status type here should match the full RestaurantOrder['status'] type
   updateOrderStatus(orderId: number, status: RestaurantOrder['status']): Observable<any> {
     return this.http.patch(`${this.apiUrl}/manage/orders/${orderId}/status`, { status });
   }

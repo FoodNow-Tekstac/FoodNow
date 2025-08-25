@@ -38,8 +38,8 @@ public class RestaurantApplicationService {
         newApplication.setRestaurantName(request.getRestaurantName());
         newApplication.setAddress(request.getRestaurantAddress());
         newApplication.setPhoneNumber(request.getRestaurantPhone());
-        newApplication.setLocationPin(request.getLocationPin()); // Set location pin from DTO
-            newApplication.setImageUrl(request.getImageUrl()); // ✅ Add this line
+        newApplication.setBusinessId(request.getBusinessId()); // Updated to use businessId
+        newApplication.setImageUrl(request.getImageUrl());
 
         newApplication.setApplicant(applicant);
         newApplication.setStatus(ApplicationStatus.PENDING);
@@ -70,7 +70,7 @@ public class RestaurantApplicationService {
         restaurant.setName(application.getRestaurantName());
         restaurant.setAddress(application.getAddress());
         restaurant.setPhoneNumber(application.getPhoneNumber());
-        restaurant.setLocationPin(application.getLocationPin()); // Set location pin from application
+        restaurant.setBusinessId(application.getBusinessId()); // Updated to use businessId
             restaurant.setImageUrl(application.getImageUrl());
 
         restaurant.setOwner(applicant);

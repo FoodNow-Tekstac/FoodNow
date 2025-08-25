@@ -22,7 +22,8 @@ public class WebConfig {
                 registry.addMapping("/api/**")
                         .allowedOrigins("*")
                         .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
-                        .allowedHeaders("*")
+                        .allowedHeaders("*") // This should allow all headers including cache-control
+                        .exposedHeaders("Cache-Control", "Pragma", "Expires") // Expose these headers to frontend
                         .allowCredentials(false);
             }
 

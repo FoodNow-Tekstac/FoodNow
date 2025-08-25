@@ -26,13 +26,15 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.slf4j.Logger; // Import logger
+import org.slf4j.LoggerFactory; // Import logger factory
 import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class RestaurantService {
+    private static final Logger logger = LoggerFactory.getLogger(RestaurantService.class);
 
     @Autowired private RestaurantRepository restaurantRepository;
     @Autowired private FoodItemRepository foodItemRepository;
@@ -186,10 +188,18 @@ public class RestaurantService {
         existingRestaurant.setAddress(updatedRestaurant.getAddress());
         existingRestaurant.setPhoneNumber(updatedRestaurant.getPhoneNumber());
         existingRestaurant.setImageUrl(updatedRestaurant.getImageUrl());
-        existingRestaurant.setLocationPin(updatedRestaurant.getLocationPin());
+        existingRestaurant.setBusinessId(updatedRestaurant.getBusinessId()); // Updated to use businessId
         return restaurantRepository.save(existingRestaurant);
     }
-
+    @Transactional
+    public Restaurant updateRestaurantImage(String newImageUrl) {
+        
+        Restaurant restaurant = getRestaurantByCurrentOwner();
+        logger.info("Updating image for restaurant '{}' (ID: {}). New URL: {}", 
+                    restaurant.getName(), restaurant.getId(), newImageUrl);
+        restaurant.setImageUrl(newImageUrl);
+        return restaurantRepository.save(restaurant);
+    }
     private User getCurrentUser() {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
@@ -204,7 +214,7 @@ public class RestaurantService {
         dto.setName(restaurant.getName());
         dto.setAddress(restaurant.getAddress());
         dto.setPhoneNumber(restaurant.getPhoneNumber());
-        dto.setLocationPin(restaurant.getLocationPin());
+        dto.setBusinessId(restaurant.getBusinessId());
         dto.setImageUrl(restaurant.getImageUrl());
         if (restaurant.getOwner() != null) {
             dto.setOwnerName(restaurant.getOwner().getName());

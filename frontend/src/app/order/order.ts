@@ -29,7 +29,7 @@ export interface Order {
   deliveryCity: string;
   deliveryPostalCode: string;
   // --------------------------
-  restaurantLocationPin: string;
+restaurantBusinessId: string;
 }
 
 export interface ReviewPayload {

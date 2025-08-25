@@ -2,26 +2,27 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { lastValueFrom } from 'rxjs';
 import { RestaurantService } from '../../restaurant/restaurant';
 import { FileService } from '../../shared/services/file';
 import { NotificationService } from '../../shared/notification';
 
+// Updated interface to use businessId
 interface RestaurantApplication {
   restaurantName: string;
   restaurantAddress: string;
   restaurantPhone: string;
-  locationPin: string;
+  businessId: string; // Renamed from locationPin
   imageUrl?: string;
 }
 
 @Component({
   selector: 'app-become-partner',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
-  templateUrl: './become-partner.html',
-    styleUrls: ['./become-partner.css'] // <-- ADD THIS LINE
+  imports: [CommonModule, FormsModule, RouterLink], 
 
+  templateUrl: './become-partner.html',
+  styleUrls: ['./become-partner.css']
 })
 export class BecomePartnerComponent {
   private router = inject(Router);
@@ -29,9 +30,7 @@ export class BecomePartnerComponent {
   private fileService = inject(FileService);
   private notificationService = inject(NotificationService);
 
-  // A signal to control whether we show the benefits text or the form
   showForm = signal(false);
-
   applicationForm: RestaurantApplication = this.getEmptyForm();
   selectedImageFile: File | null = null;
 
@@ -43,7 +42,6 @@ export class BecomePartnerComponent {
   }
 
   async onSubmit(): Promise<void> {
-    //this.notificationService.show('Submitting application...', 'loading');
     let submissionData: RestaurantApplication = { ...this.applicationForm };
 
     try {
@@ -57,7 +55,6 @@ export class BecomePartnerComponent {
       await lastValueFrom(this.restaurantService.applyForPartnership(submissionData));
       this.notificationService.success('Application submitted! We will review it shortly.');
 
-      // Navigate back to dashboard after a delay
       setTimeout(() => {
         this.router.navigate(['/customer/dashboard']);
       }, 2000);
@@ -67,12 +64,13 @@ export class BecomePartnerComponent {
     }
   }
 
+  // Updated method to use businessId
   private getEmptyForm(): RestaurantApplication {
     return {
       restaurantName: '',
       restaurantAddress: '',
       restaurantPhone: '',
-      locationPin: ''
+      businessId: '' // Renamed from locationPin
     };
   }
 }

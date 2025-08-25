@@ -6,6 +6,6 @@ public enum OrderStatus {
     PREPARING,      // Order is being prepared
     OUT_FOR_DELIVERY,
     DELIVERED,
-    CANCELLED       // Order was cancelled by user or restaurant
-, PROCESSING
+    CANCELLED,      // Order was cancelled by user or restaurant
+ PROCESSING
 }

@@ -6,7 +6,7 @@ import { Restaurant, RestaurantService, MenuItem } from '../../restaurant/restau
 import { NotificationService } from '../../shared/notification';
 import { FullUrlPipe } from '../../shared/pipes/full-url';
 
-// An enhanced interface for display purposes, holding the pre-calculated counts
+// An enhanced interface for display purposes
 interface DisplayRestaurant extends Restaurant {
   dietaryCounts?: {
     VEG: number;
@@ -20,7 +20,7 @@ interface DisplayRestaurant extends Restaurant {
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink, FullUrlPipe],
   templateUrl: './dashboard.html',
-  styleUrls: ['./dashboard.css'] // Add a new CSS file for this component's styles
+  styleUrls: ['./dashboard.css']
 })
 export class CustomerDashboardComponent implements OnInit {
   private restaurantService = inject(RestaurantService);
@@ -84,29 +84,25 @@ export class CustomerDashboardComponent implements OnInit {
 
           if (restaurant.menu) {
             for (const item of restaurant.menu) {
-              // Dietary counts logic (existing)
               if (item.dietaryType === 'VEG') counts.VEG++;
               else if (item.dietaryType === 'NON_VEG') counts.NON_VEG++;
               else if (item.dietaryType === 'VEGAN') counts.VEGAN++;
               
-              // --- START: New Rating Calculation Logic ---
               if (item.averageRating && item.ratingCount) {
                 totalRatingPoints += item.averageRating * item.ratingCount;
                 totalRatingCount += item.ratingCount;
               }
-              // --- END: New Rating Calculation Logic ---
             }
           }
           
-          // Calculate the final weighted average rating for the restaurant
           const averageRating = totalRatingCount > 0 ? totalRatingPoints / totalRatingCount : 0;
-
           return { ...restaurant, dietaryCounts: counts, averageRating: averageRating };
         });
+        
         this.allRestaurants.set(displayData);
       },
       error: (err) => {
-        this.notificationService.error('Failed to fetch restaurants');
+        this.notificationService.error('Failed to fetch restaurants.');
       }
     });
   }

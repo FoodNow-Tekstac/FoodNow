@@ -158,8 +158,8 @@ if (agent != null) {
     dto.setStatus(order.getStatus());
     dto.setOrderTime(order.getOrderTime());
     dto.setItems(order.getItems().stream().map(this::toOrderItemDto).collect(Collectors.toList()));
-    dto.setRestaurantLocationPin(order.getRestaurant().getLocationPin());
-
+// The method call is updated to use the new name
+dto.setRestaurantBusinessId(order.getRestaurant().getBusinessId());
     dto.setDeliveryAddressLine1(order.getDeliveryAddressLine1());
     dto.setDeliveryCity(order.getDeliveryCity());
     dto.setDeliveryPostalCode(order.getDeliveryPostalCode());

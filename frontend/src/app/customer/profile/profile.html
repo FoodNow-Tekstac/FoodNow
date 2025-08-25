@@ -1,17 +1,20 @@
 <main class="page-container">
-  <!-- Page Header -->
   <div class="page-header">
     <h1 class="page-title">My Profile</h1>
     <p class="page-subtitle">Manage your personal information and profile picture.</p>
   </div>
 
-  <!-- Profile Card -->
   <div class="profile-card">
     @if (profile(); as p) {
       <form (ngSubmit)="onSubmit()">
-        <!-- Avatar Section -->
         <div class="avatar-section">
-          <img [src]="getProfileImageUrl()" alt="Profile Picture" class="avatar-image">
+          <button type="button" class="avatar-image-button" (click)="openViewModal()" title="View larger image">
+            <img 
+              [src]="imagePreviewUrl ? imagePreviewUrl : (getProfileImageUrl() | fullUrl)" 
+              alt="Profile Picture" 
+              class="avatar-image"
+            >
+          </button>
           <div class="avatar-actions">
             <label for="profile-image-upload" class="btn-secondary upload-btn">
               <span>Change Picture</span>
@@ -21,10 +24,8 @@
           </div>
         </div>
 
-        <!-- Divider -->
         <hr class="form-divider">
 
-        <!-- Form Fields Section -->
         <div class="form-fields">
           <div class="form-field">
             <label for="profile-name">Full Name</label>
@@ -40,7 +41,6 @@
           </div>
         </div>
         
-        <!-- Form Footer -->
         <div class="form-footer">
           <button type="submit" class="btn-submit save-btn">Save Changes</button>
         </div>
@@ -52,3 +52,15 @@
     }
   </div>
 </main>
+
+@if (isViewModalVisible()) {
+  <div class="view-modal-overlay" (click)="closeViewModal()">
+    <div class="view-modal-content" (click)="$event.stopPropagation()">
+      <img 
+        [src]="imagePreviewUrl ? imagePreviewUrl : (getProfileImageUrl() | fullUrl)" 
+        alt="Enlarged profile picture" 
+        class="enlarged-image"
+      >
+    </div>
+  </div>
+}
