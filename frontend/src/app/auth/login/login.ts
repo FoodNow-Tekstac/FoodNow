@@ -114,7 +114,7 @@ export class LoginComponent implements OnInit {
           Validators.required,
           Validators.minLength(2),
           Validators.maxLength(50),
-          Validators.pattern(/^[A-Za-z]+$/), // Only English letters, no spaces/numbers
+          Validators.pattern('^(?!\\s*$)[A-Za-z\\s]+$'), // Only English letters, no numbers
         ],
       ],
       email: ['', [Validators.required, Validators.email]],
@@ -158,7 +158,6 @@ export class LoginComponent implements OnInit {
   private resetForms(): void {
     this.loginForm.reset();
     this.registerForm.reset();
-    // this.registerForm.patchValue({ email: 'admin@foodnow.com' });
   }
 
   onLogin(): void {

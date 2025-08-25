@@ -12,16 +12,13 @@
         </div>
         <h2 class="info-title">Grow Your Business With Us!</h2>
         <p class="info-subtitle">Joining FoodNow is a great opportunity to reach thousands of hungry customers in Hyderabad. Here are a few benefits:</p>
-        
         <ul class="benefits-list">
           <li><strong>Increased Reach:</strong> Tap into our large and growing user base.</li>
           <li><strong>Effortless Delivery:</strong> We handle the logistics so you can focus on making great food.</li>
           <li><strong>Marketing Support:</strong> Get featured in our app, promotions, and marketing campaigns.</li>
           <li><strong>Valuable Insights:</strong> Access data and analytics to understand your customers.</li>
         </ul>
-        
         <p class="info-footer">Ready to get started? Fill out our simple application form and our team will get in touch with you shortly.</p>
-        
         <div class="mt-8">
           <button (click)="showForm.set(true)" class="btn-submit start-btn">
             Start My Application
@@ -31,32 +28,78 @@
     } @else {
       <div class="form-section">
         <h3 class="form-title">Restaurant Application Form</h3>
-        <form (ngSubmit)="onSubmit()">
+        <form #appForm="ngForm" (ngSubmit)="onSubmit()">
           <div class="form-grid">
             <div class="form-field">
               <label for="restaurantName">Restaurant Name</label>
               <input type="text" id="restaurantName" name="restaurantName" class="form-input" placeholder="e.g., Paradise Biryani" required [(ngModel)]="applicationForm.restaurantName">
             </div>
+
             <div class="form-field">
               <label for="restaurantPhone">Restaurant Phone Number</label>
-              <input type="tel" id="restaurantPhone" name="restaurantPhone" class="form-input" placeholder="e.g., 9876543210" required [(ngModel)]="applicationForm.restaurantPhone">
+              <input 
+                type="tel" 
+                id="restaurantPhone" 
+                name="restaurantPhone" 
+                class="form-input" 
+                placeholder="e.g., 9876543210" 
+                required 
+                minlength="10" 
+                maxlength="10" 
+                pattern="[6789][0-9]{9}"
+                [(ngModel)]="applicationForm.restaurantPhone"
+                #phone="ngModel">
+              @if (phone.invalid && (phone.dirty || phone.touched)) {
+                <div class="error-message">
+                  @if (phone.errors?.['required']) {
+                    <span>Phone number is required.</span>
+                  }
+                  @if (phone.errors?.['pattern'] || phone.errors?.['minlength']) {
+                    <span>Enter a valid 10-digit phone number starting with 6, 7, 8, or 9.</span>
+                  }
+                </div>
+              }
             </div>
+
             <div class="form-field full-span">
               <label for="restaurantAddress">Full Restaurant Address</label>
               <input type="text" id="restaurantAddress" name="restaurantAddress" class="form-input" placeholder="e.g., 1-2-3, Main Road, Hitech City" required [(ngModel)]="applicationForm.restaurantAddress">
             </div>
-             <div class="form-field">
+            
+            <div class="form-field">
               <label for="businessId">FSSAI or Business ID</label>
-              <input type="text" id="businessId" name="businessId" class="form-input" placeholder="Enter your 14-digit FSSAI number" required [(ngModel)]="applicationForm.businessId">
+              <input 
+                type="text" 
+                id="businessId" 
+                name="businessId" 
+                class="form-input" 
+                placeholder="Enter your 14-digit FSSAI number" 
+                required 
+                minlength="14"
+                maxlength="14"
+                pattern="[0-9]{14}"
+                [(ngModel)]="applicationForm.businessId"
+                #fssai="ngModel">
+              @if (fssai.invalid && (fssai.dirty || fssai.touched)) {
+                <div class="error-message">
+                  @if (fssai.errors?.['required']) {
+                    <span>FSSAI number is required.</span>
+                  }
+                  @if (fssai.errors?.['pattern'] || fssai.errors?.['minlength']) {
+                    <span>FSSAI number must be exactly 14 digits.</span>
+                  }
+                </div>
+              }
             </div>
+
             <div class="form-field">
               <label for="restaurant-image">Restaurant Image/Logo</label>
-              <input type="file" id="restaurant-image" name="image" (change)="onFileSelected($event)" accept="image/*" class="form-input file-input">
+              <input type="file" id="restaurant-image" name="image" (change)="onFileSelected($event)" accept="image/*" class="form-input file-input" required>
             </div>
           </div>
           <div class="form-footer">
             <button type="button" (click)="showForm.set(false)" class="btn-secondary">Back</button>
-            <button type="submit" class="btn-submit">Submit Application</button>
+            <button type="submit" class="btn-submit" [disabled]="appForm.invalid">Submit Application</button>
           </div>
         </form>
       </div>

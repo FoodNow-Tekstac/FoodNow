@@ -161,3 +161,29 @@
   justify-content: flex-end;
   gap: 1rem;
 }
+
+
+/* Add these styles to your existing CSS file */
+
+/* Style for input fields when they are invalid and touched */
+.form-input.ng-invalid.ng-touched {
+  border-color: #ef4444; /* Red-500 */
+}
+
+.form-input.ng-invalid.ng-touched:focus {
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.4);
+}
+
+/* Style for the error message text */
+.error-message {
+  color: #f87171; /* Red-400 */
+  font-size: 0.875rem; /* 14px */
+  margin-top: 0.5rem;
+}
+
+/* Style for the disabled submit button */
+.btn-submit:disabled {
+  background-color: #9ca3af; /* Gray-400 */
+  cursor: not-allowed;
+  opacity: 0.7;
+}

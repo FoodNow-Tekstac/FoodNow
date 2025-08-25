@@ -64,13 +64,12 @@ export class BecomePartnerComponent {
     }
   }
 
-  // Updated method to use businessId
   private getEmptyForm(): RestaurantApplication {
     return {
       restaurantName: '',
       restaurantAddress: '',
       restaurantPhone: '',
-      businessId: '' // Renamed from locationPin
+      businessId: '' 
     };
   }
 }
