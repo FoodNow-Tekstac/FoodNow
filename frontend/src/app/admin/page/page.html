@@ -22,6 +22,8 @@
                   </span>
                 </button>
               </th>
+              <th>Address</th>
+              <th>Business ID</th>
               <th>Applicant</th>
               <th>Contact</th>
               <th>Actions</th>
@@ -30,7 +32,11 @@
           <tbody>
             @for(app of sortedApplications(); track app.id) {
               <tr>
-                <td>{{ app.restaurantName }}</td>
+                <td>
+                  <div class="font-semibold">{{ app.restaurantName }}</div>
+                </td>
+                <td>{{ app.address }}</td>
+                <td>{{ app.businessId }}</td>
                 <td>{{ app.applicant?.name }} ({{ app.applicant?.email }})</td>
                 <td>{{ app.phoneNumber }}</td>
                 <td>
@@ -41,11 +47,10 @@
                 </td>
               </tr>
             } @empty {
-              <tr><td colspan="4" class="empty-state">No pending applications.</td></tr>
+              <tr><td colspan="6" class="empty-state">No pending applications.</td></tr>
             }
           </tbody>
         }
-
         @case ('restaurants') {
           <thead>
             <tr>

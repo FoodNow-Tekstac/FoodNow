@@ -8,6 +8,8 @@ export interface PendingApplication {
   id: number;
   restaurantName: string;
   phoneNumber: string;
+  address: string;      
+  businessId: string;
   applicant: {
     name: string;
     email: string;

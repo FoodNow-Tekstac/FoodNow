@@ -4,6 +4,7 @@ import com.foodnow.dto.AnalyticsDto;
 import com.foodnow.dto.ApiResponse;
 import com.foodnow.dto.DeliveryPersonnelSignUpRequest;
 import com.foodnow.dto.OrderDto;
+import com.foodnow.dto.PendingApplicationDto;
 import com.foodnow.dto.RestaurantDto;
 import com.foodnow.dto.UserDto;
 import com.foodnow.exception.ResourceNotFoundException;
@@ -34,8 +35,8 @@ public class AdminController {
     // --- Restaurant Application Management ---
 
     @GetMapping("/applications/pending")
-    public ResponseEntity<List<RestaurantApplication>> getPendingApplications() {
-        return ResponseEntity.ok(applicationService.getPendingApplications());
+    public ResponseEntity<List<PendingApplicationDto>> getPendingApplications() {
+        return ResponseEntity.ok(applicationService.getPendingApplicationsForAdmin());
     }
 
     @PostMapping("/applications/{applicationId}/approve")

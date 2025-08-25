@@ -33,7 +33,7 @@ public class AdminService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true) // THIS IS THE FIX
+    @Transactional(readOnly = true) 
     public List<OrderDto> getAllOrders() {
         return orderRepository.findAll().stream()
                 .map(this::toOrderDto)
@@ -46,7 +46,7 @@ public class AdminService {
                 .collect(Collectors.toList());
     }
     
-    @Transactional(readOnly = true) // Also good practice to add this here
+    @Transactional(readOnly = true) 
     public AnalyticsDto getAnalytics() {
         AnalyticsDto dto = new AnalyticsDto();
         dto.setTotalUsers(userRepository.count());

@@ -1,21 +1,52 @@
-# Backend files
+# ========================
+# User Specific Ignores
+# ========================
+# Ignore the folder for uploaded images and files
+backend/uploads/
+
+# ========================
+# Backend (Maven / Spring Boot)
+# ========================
+# Ignore compiled Java classes and build artifacts
 backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
+*.jar
+*.war
+
+# Ignore sensitive configuration files. 
+# It's a good practice to commit a template like 'application.properties.example' instead.
 backend/src/main/resources/application.properties
-# A single properties file might contain sensitive data like database credentials
-# you should always exclude it from version control.
 
-# Frontend files
-frontend/node_modules/
+# ========================
+# Frontend (Angular / Node.js)
+# ========================
+# Ignore all dependency folders
+**/node_modules/
+
+# Ignore compiled/transpiled output folders
 frontend/dist/
-# The dist/ directory contains your compiled and minified assets which
-# can always be recreated by running the build command.
+frontend/.angular/cache/
 
-# IDE-specific files
-.idea/
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ========================
+# IDE & Editor Config
+# ========================
 .vscode/
+.idea/
+*.iml
 
-# Other common files to ignore
+# ========================
+# OS Generated Files
+# ========================
+.DS_Store
+Thumbs.db
+
+# ========================
+# Log & Lock Files
+# ========================
 *.log
 *.lock
-# e.g., package-lock.json is usually checked in, but sometimes people want to ignore it.
-# Check your project's conventions.
